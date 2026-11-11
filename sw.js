@@ -1,5 +1,5 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v9";
+const CACHE = "checklists-v10";
 const FILES = [
   "./",
   "manifest.json",
@@ -11,6 +11,8 @@ const FILES = [
   "img/cards/p4g.webp",
   "img/cards/halo-mcc.webp",
   "img/cards/vanquish.webp",
+  "img/cards/dmc1.webp",
+  "img/cards/sunset-overdrive.webp",
   "img/cards/stick-of-truth.webp"
 ];
 

@@ -1,21 +1,11 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v2";
+const CACHE = "checklists-v3";
 const FILES = [
   "./",
   "index.html",
   "manifest.json",
   "icon-192.png",
   "icon-512.png",
-  "checklists/re4.html",
-  "checklists/gta4.html",
-  "checklists/p4g.html",
-  "checklists/halo-mcc.html",
-  "checklists/vanquish.html",
-  "checklists/dmc.html",
-  "checklists/sunset-overdrive.html",
-  "checklists/stick-of-truth.html",
-  "checklists/sot-missables.html",
-  "checklists/sot-collection.html",
   "img/re4-hero.webp",
   "img/re4-logo.webp",
   "img/gta4-hero.webp",

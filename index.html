@@ -114,7 +114,7 @@ function render() {
     return `<a class="card ${g.cls || ""}" href="${esc(g.file)}" style="${style}">
       ${g.art ? `<img class="art" src="${esc(g.art)}" alt="" loading="lazy" decoding="async">` : ""}
       ${g.logo ? `<img class="logo" src="${esc(g.logo)}" alt="${esc(g.title)}">` : `<h2>${esc(g.title)}</h2>`}
-      <div class="prog">${parts.map(p => rowHTML(p.label, prog[p.file.split("/").pop()], p.key)).join("")}</div>
+      <div class="prog">${parts.map(p => rowHTML(p.label, (prog[p.file.split("/").pop()] || prog[p.file.split("/").pop().replace(/\.html$/, "")]), p.key)).join("")}</div>
     </a>`;
   }).join("");
 }

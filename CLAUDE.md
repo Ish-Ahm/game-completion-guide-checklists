@@ -37,7 +37,7 @@ Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed so
 1. Copy the file in with a short lowercase name, e.g. `newgame.html`.
 2. Inject the two hub blocks by script, copying them from an existing checklist (e.g. `vanquish.html`).
 3. Find its key with one grep: `grep -o 'const KEY = "[^"]*"' newgame.html`.
-4. Add an entry to `GAMES` in `index.html`. Card art goes in `img/cards/<slug>.webp` (1200x560); see `img/README.md`.
+4. Add an entry to `GAMES` in `index.html`. Card art goes in `img/cards/<slug>.webp` (920x430, 92:43); see `img/README.md`.
 5. Add the file (and any image) to `FILES` in `sw.js`.
 
 ## Every change: bump the service worker cache

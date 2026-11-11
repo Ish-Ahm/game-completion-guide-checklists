@@ -1,5 +1,5 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v7";
+const CACHE = "checklists-v8";
 const FILES = [
   "./",
   "manifest.json",

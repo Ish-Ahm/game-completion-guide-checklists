@@ -11,3 +11,5 @@ One folder per image type. Every file is named after the checklist's slug (its f
 Older checklists may have no logo or banner file here; only the card is needed for the home page.
 
 Tips: keep the subject centred in cards (they crop with `object-fit: cover`; `pos: "center 30%"` in `GAMES` moves the crop). Do not commit anything over 200 KB.
+
+Which guides use banners and logos (as of now): RE4, GTA IV and Persona 4 Golden have a banner (hero image) and a logo in their header; Halo MCC has a banner (header background) and a logo. Vanquish, DMC, Sunset Overdrive and Stick of Truth have neither slot, so their `banners/` and `logos/` files are not used by the site. When swapping a banner into a guide, resize it to about 1600 px wide (WebP, quality about 62, roughly 50 to 100 KB) before embedding.

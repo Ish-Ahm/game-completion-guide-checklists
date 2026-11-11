@@ -1,8 +1,9 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v5";
+const CACHE = "checklists-v6";
 const FILES = [
   "./",
   "manifest.json",
+  "sync.js",
   "icon-192.png",
   "icon-512.png",
   "img/re4-hero.webp",
@@ -29,6 +30,7 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
+  if (url.origin === location.origin && url.pathname.startsWith("/api/")) return; // never cache the sync API
   if (url.origin === location.origin) {
     // Cache-first for our own files; fall back to the network and keep a copy.
     e.respondWith(

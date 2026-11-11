@@ -30,6 +30,9 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 
 Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed some unlocks by default, so the home page relies on `hub-progress-v1` rather than counting `got`.
 
+## Sync
+`sync.js` (loaded by `index.html` and by each checklist through the hub:body block) syncs every localStorage key ending in `-v<number>` to Cloudflare KV via the Pages Function `functions/api/sync.js` (needs KV binding `SYNC_KV` and secret `SYNC_PASSCODE`; see `SYNC-SETUP.md`). New checklists must keep the `<slug>-checklist-v1` key form to be picked up. `sw.js` never caches `/api/`.
+
 ## Adding a new checklist
 1. Copy the file in with a short lowercase name, e.g. `newgame.html`.
 2. Inject the two hub blocks by script, copying them from an existing checklist (e.g. `vanquish.html`).

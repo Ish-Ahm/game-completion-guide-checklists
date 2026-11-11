@@ -71,6 +71,7 @@
     <div class="tools">
       <button class="btn" id="backup">Back up all</button>
       <button class="btn" id="restore">Restore all</button>
+      <button class="btn" id="syncbtn">Set up sync</button>
       <input type="file" id="file" accept=".json,application/json" hidden>
     </div>
   </header>
@@ -79,6 +80,8 @@
   <footer>Progress is saved on this device. Use Back up all now and then to keep a copy.</footer>
 </div>
 
+<script>window.SYNC_HOME = true;</script>
+<script src="sync.js"></script>
 <script>
 // To add a game: add an entry here (file, title, key = its localStorage key), add the file to FILES in sw.js, bump CACHE.
 // art (home-card artwork, see img/_template) is optional; cls picks a styled card when there is no art.
@@ -177,6 +180,31 @@ fileInput.addEventListener("change", async () => {
     say(`Restored ${n} checklist${n === 1 ? "" : "s"} from the backup made ${obj.exported ? new Date(obj.exported).toLocaleDateString("en-GB") : "earlier"}.`, true);
   } catch (e) { say(e.message || "Restore failed.", false); }
 });
+
+// Cross-device sync (see sync.js)
+const syncBtn = document.getElementById("syncbtn");
+function syncLabel() {
+  const st = window.Sync && window.Sync.status || {};
+  if (!window.Sync || !window.Sync.hasPass()) return "Set up sync";
+  if (st.state === "syncing") return "Syncing…";
+  if (st.state === "error") return "Sync failed, retry";
+  if (st.state === "ok" && st.time) return "Synced " + new Date(st.time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  return "Sync now";
+}
+function askPasscode(text) {
+  const p = prompt(text || "Enter your sync passcode (the same one on every device):");
+  if (p && p.trim()) window.Sync.setPasscode(p);
+}
+syncBtn.addEventListener("click", () => {
+  if (!window.Sync) return;
+  if (!window.Sync.hasPass()) askPasscode(); else window.Sync.sync();
+});
+addEventListener("sync-status", () => {
+  syncBtn.textContent = syncLabel();
+  if (window.Sync.status.state === "bad") say("That passcode was wrong. Tap Set up sync and try again.", false);
+});
+addEventListener("sync-updated", render);
+syncBtn.textContent = syncLabel();
 
 addEventListener("pageshow", render);
 addEventListener("storage", render);

@@ -975,7 +975,7 @@ render();
   document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
   if (top) {
     var a = document.createElement("a");
-    a.className = "hub-back"; a.href = "../index.html"; a.textContent = "← All games";
+    a.className = "hub-back"; a.href = "../"; a.textContent = "← All games";
     document.body.appendChild(a);
     var lift = function () {
       var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");

@@ -1,8 +1,7 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v3";
+const CACHE = "checklists-v4";
 const FILES = [
   "./",
-  "index.html",
   "manifest.json",
   "icon-192.png",
   "icon-512.png",
@@ -40,7 +39,7 @@ self.addEventListener("fetch", e => {
       caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req).then(res => {
         if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
         return res;
-      }).catch(() => req.mode === "navigate" ? caches.match("index.html") : Response.error()))
+      }).catch(() => req.mode === "navigate" ? caches.match("./") : Response.error()))
     );
   } else if (url.hostname.endsWith("fonts.googleapis.com") || url.hostname.endsWith("fonts.gstatic.com")) {
     // Web fonts used by some checklists: cached on first use so they work offline too.

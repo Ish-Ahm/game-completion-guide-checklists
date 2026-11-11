@@ -1,17 +1,17 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v6";
+const CACHE = "checklists-v7";
 const FILES = [
   "./",
   "manifest.json",
   "sync.js",
   "icon-192.png",
   "icon-512.png",
-  "img/re4-hero.webp",
-  "img/gta4-hero.webp",
-  "img/p4g-hero.webp",
-  "img/halo-mcc-hero.webp",
-  "img/vanquish-hero.webp",
-  "img/stick-of-truth-hero.webp"
+  "img/cards/re4.webp",
+  "img/cards/gta4.webp",
+  "img/cards/p4g.webp",
+  "img/cards/halo-mcc.webp",
+  "img/cards/vanquish.webp",
+  "img/cards/stick-of-truth.webp"
 ];
 
 self.addEventListener("install", e => {

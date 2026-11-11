@@ -60,6 +60,23 @@
   .card.so::before { background: linear-gradient(180deg, rgba(10,0,20,.05) 0%, rgba(10,0,20,.45) 50%, rgba(10,0,20,.88) 100%); }
   .card.so h2 { font-size: 1.6rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: .02em; }
 
+  .search { display: block; width: 100%; margin: 0 0 1.1rem; min-height: 44px; padding: 0 1rem; font: inherit; color: var(--text);
+    background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23a3abb9' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat 14px center;
+    padding-left: 2.6rem; border: 1px solid var(--line); border-radius: 12px; }
+  .search::placeholder { color: var(--soft); }
+  .search:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .empty { grid-column: 1 / -1; text-align: center; color: var(--soft); padding: 2rem 0; }
+
+  /* Phones: smaller buttons, all in one row */
+  @media (max-width: 600px) {
+    .wrap { padding-top: 1rem; }
+    h1 { font-size: 1.4rem; }
+    header { margin-bottom: 1rem; }
+    .tools { display: flex; flex-wrap: nowrap; gap: .4rem; width: 100%; }
+    .tools .btn { flex: 1 1 0; min-width: 0; min-height: 40px; padding: 0 .4rem; font-size: .8rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+
   footer { margin-top: 2rem; color: var(--soft); font-size: .85rem; text-align: center; }
   @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
 </style>
@@ -76,24 +93,25 @@
     </div>
   </header>
   <p id="msg" role="status" hidden></p>
+  <input class="search" id="q" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off" enterkeyhint="search">
   <main class="grid" id="grid"></main>
-  <footer>Progress is saved on this device. Use Back up all now and then to keep a copy.</footer>
+  <footer>Progress is saved on this device, and synced between devices if you set up sync. Back up all now and then to keep a copy.</footer>
 </div>
 
 <script>window.SYNC_HOME = true;</script>
 <script src="sync.js"></script>
 <script>
 // To add a game: add an entry here (file, title, key = its localStorage key), add the file to FILES in sw.js, bump CACHE.
-// art (home-card artwork, see img/_template) is optional; cls picks a styled card when there is no art.
+// art (home-card artwork, see img/README.md) is optional; cls picks a styled card when there is no art.
 const GAMES = [
-  { file: "checklists/re4.html", title: "Resident Evil 4", key: "re4-remake-checklist-v1", art: "img/re4-hero.webp", pos: "center 30%", bar: "#c8302c" },
-  { file: "checklists/gta4.html", title: "Grand Theft Auto IV: The Complete Edition", key: "gta4-complete-checklist-v1", art: "img/gta4-hero.webp", pos: "center 25%", bar: "#e8b64a" },
-  { file: "checklists/p4g.html", title: "Persona 4 Golden", key: "p4g-checklist-v1", art: "img/p4g-hero.webp", bar: "#ffd400" },
-  { file: "checklists/halo-mcc.html", title: "Halo: The Master Chief Collection", key: "mcc-tracker-v1", art: "img/halo-mcc-hero.webp", bar: "#c9a64a" },
-  { file: "checklists/vanquish.html", title: "Vanquish", key: "vanquish-checklist-v1", art: "img/vanquish-hero.webp", pos: "70% center", bar: "#3fe0d0" },
+  { file: "checklists/re4.html", title: "Resident Evil 4", key: "re4-remake-checklist-v1", art: "img/cards/re4.webp", pos: "center 30%", bar: "#c8302c" },
+  { file: "checklists/gta4.html", title: "Grand Theft Auto IV: The Complete Edition", key: "gta4-complete-checklist-v1", art: "img/cards/gta4.webp", pos: "center 25%", bar: "#e8b64a" },
+  { file: "checklists/p4g.html", title: "Persona 4 Golden", key: "p4g-checklist-v1", art: "img/cards/p4g.webp", bar: "#ffd400" },
+  { file: "checklists/halo-mcc.html", title: "Halo: The Master Chief Collection", key: "mcc-tracker-v1", art: "img/cards/halo-mcc.webp", bar: "#c9a64a" },
+  { file: "checklists/vanquish.html", title: "Vanquish", key: "vanquish-checklist-v1", art: "img/cards/vanquish.webp", pos: "70% center", bar: "#3fe0d0" },
   { file: "checklists/dmc.html", title: "Devil May Cry", key: "dmc1-checklist-v1", cls: "dmc", bar: "#e0333a" },
   { file: "checklists/sunset-overdrive.html", title: "Sunset Overdrive", key: "so-checklist-v1", cls: "so", bar: "#ffe14d" },
-  { file: "checklists/stick-of-truth.html", title: "The Stick of Truth", art: "img/stick-of-truth-hero.webp", pos: "center 45%", bar: "#f2bd4b",
+  { file: "checklists/stick-of-truth.html", title: "The Stick of Truth", art: "img/cards/stick-of-truth.webp", pos: "center 45%", bar: "#f2bd4b",
     parts: [ { file: "checklists/sot-missables.html", label: "Missable trophies", key: "sot-missables-v1" },
              { file: "checklists/sot-collection.html", label: "Collectibles", key: "sot-collection-v1" } ] }
 ];
@@ -114,7 +132,10 @@ function rowHTML(label, p, key) {
 
 function render() {
   const prog = readProgress();
-  document.getElementById("grid").innerHTML = GAMES.map(g => {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const list = GAMES.filter(g => !q || g.title.toLowerCase().includes(q));
+  if (!list.length) { document.getElementById("grid").innerHTML = `<p class="empty">No games match "${esc(q)}".</p>`; return; }
+  document.getElementById("grid").innerHTML = list.map(g => {
     const parts = g.parts || [{ file: g.file, label: "Achievements", key: g.key }];
     const style = [g.pos ? `--pos:${g.pos}` : "", g.bar ? `--bar:${g.bar}` : ""].filter(Boolean).join(";");
     return `<a class="card ${g.art ? "has-art" : ""} ${g.cls || ""}" href="${esc(g.file)}" style="${style}">
@@ -187,7 +208,7 @@ function syncLabel() {
   const st = window.Sync && window.Sync.status || {};
   if (!window.Sync || !window.Sync.hasPass()) return "Set up sync";
   if (st.state === "syncing") return "Syncing…";
-  if (st.state === "error") return "Sync failed, retry";
+  if (st.state === "error") return "Sync failed";
   if (st.state === "ok" && st.time) return "Synced " + new Date(st.time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   return "Sync now";
 }
@@ -206,6 +227,7 @@ addEventListener("sync-status", () => {
 addEventListener("sync-updated", render);
 syncBtn.textContent = syncLabel();
 
+document.getElementById("q").addEventListener("input", render);
 addEventListener("pageshow", render);
 addEventListener("storage", render);
 render();

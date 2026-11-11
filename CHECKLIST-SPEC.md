@@ -17,11 +17,11 @@ The site is static. A checklist is **one self-contained HTML file** (inline CSS 
 - No absolute links to other pages of the site.
 
 ## Images
-See `img/_template/README.md`. Provide `card.webp` (home page), and optionally `logo.webp` and `banner.webp` for the page header (embedded in the HTML).
+See `img/README.md`. Provide `img/cards/<slug>.webp` (home page card), and optionally `img/logos/<slug>.webp` and `img/banners/<slug>.webp` for the page header (embedded in the HTML as base64).
 
 ## Hand-over checklist (Claude should output this at the end)
 - File name: `<slug>.html`
 - KEY: `<slug>-checklist-v1`
 - Total achievements, and how many pre-ticked
-- Card image: `img/<slug>/card.webp`, suggested `pos` value
+- Card image: `img/cards/<slug>.webp`, suggested `pos` value
 - Suggested `bar` colour (hex) for the home-page progress bar

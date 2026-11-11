@@ -7,7 +7,7 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 - `index.html`: home page. A `GAMES` array at the top of its script defines one card per game (file, title, localStorage key, optional `art`/`logo`/`pos`/`bar`/`cls`). Cards show progress, and the page has **Back up all** / **Restore all** (JSON with `{ app: "my-checklists", version: 1, exported, data: { key: string } }`).
 - Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
-- `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`, `img/` (card art as WebP).
+- `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`; see `img/README.md`).
 
 ## Rules for the checklist files
 - **Treat each checklist as an opaque, finished file.** They are large single-file pages (inline CSS/JS, base64 images; `re4.html` is about 5 MB). Do not read them in full, reformat or rewrite them.
@@ -37,7 +37,7 @@ Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed so
 1. Copy the file in with a short lowercase name, e.g. `newgame.html`.
 2. Inject the two hub blocks by script, copying them from an existing checklist (e.g. `vanquish.html`).
 3. Find its key with one grep: `grep -o 'const KEY = "[^"]*"' newgame.html`.
-4. Add an entry to `GAMES` in `index.html`. Optional art goes in `img/` as WebP (about 1200px wide, roughly 3:1).
+4. Add an entry to `GAMES` in `index.html`. Card art goes in `img/cards/<slug>.webp` (1200x560); see `img/README.md`.
 5. Add the file (and any image) to `FILES` in `sw.js`.
 
 ## Every change: bump the service worker cache

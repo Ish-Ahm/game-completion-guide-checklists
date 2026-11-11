@@ -5,7 +5,7 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 
 ## Files
 - `index.html`: home page. A `GAMES` array at the top of its script defines one card per game (file, title, localStorage key, optional `art`/`logo`/`pos`/`bar`/`cls`). Cards show progress, and the page has **Back up all** / **Restore all** (JSON with `{ app: "my-checklists", version: 1, exported, data: { key: string } }`).
-- Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
+- Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc1.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
 - `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`; see `img/README.md`).
 
@@ -22,7 +22,7 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 | p4g.html | `p4g-checklist-v1` |
 | halo-mcc.html | `mcc-tracker-v1` |
 | vanquish.html | `vanquish-checklist-v1` |
-| dmc.html | `dmc1-checklist-v1` |
+| dmc1.html | `dmc1-checklist-v1` |
 | sunset-overdrive.html | `so-checklist-v1` |
 | sot-missables.html | `sot-missables-v1` (flat `{ id: true }`) |
 | sot-collection.html | `sot-collection-v1` (+ `sot-collection-v1-tab`) |

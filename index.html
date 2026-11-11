@@ -40,7 +40,6 @@
   .card .art { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, center); }
   .card::before { content: ""; position: absolute; inset: 0; z-index: -1;
     background: linear-gradient(180deg, rgba(8,9,12,.25) 0%, rgba(8,9,12,.55) 45%, rgba(8,9,12,.92) 100%); }
-  .card .logo { display: block; max-width: min(70%, 260px); max-height: 64px; width: auto; height: auto; margin-bottom: .55rem; object-fit: contain; object-position: left bottom; filter: drop-shadow(0 2px 6px rgba(0,0,0,.7)); }
   .card h2 { margin: 0 0 .5rem; font-size: 1.3rem; line-height: 1.15; text-shadow: 0 2px 6px rgba(0,0,0,.8); }
   .card .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .prog { display: grid; gap: .45rem; }
@@ -49,6 +48,10 @@
   .row .label span:last-child { color: #dfe5ee; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .meter { height: 6px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
   .meter i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--bar, var(--accent)); }
+
+  /* Cards with artwork: the picture is the whole card (title is in the artwork), only a soft shade behind the progress bars */
+  .card.has-art { aspect-ratio: 1200 / 560; }
+  .card.has-art::before { background: linear-gradient(180deg, rgba(8,9,12,0) 50%, rgba(8,9,12,.85) 100%); }
 
   /* Styled cards for games without art */
   .card.dmc { --fallback: radial-gradient(120% 140% at 85% 10%, #7a0d12 0%, #2a0507 45%, #0b0203 100%); }
@@ -78,12 +81,12 @@
 
 <script>
 // To add a game: add an entry here (file, title, key = its localStorage key), add the file to FILES in sw.js, bump CACHE.
-// art/logo are optional; cls picks a styled card when there is no art.
+// art (home-card artwork, see img/_template) is optional; cls picks a styled card when there is no art.
 const GAMES = [
-  { file: "checklists/re4.html", title: "Resident Evil 4", key: "re4-remake-checklist-v1", art: "img/re4-hero.webp", logo: "img/re4-logo.webp", pos: "center 30%", bar: "#c8302c" },
-  { file: "checklists/gta4.html", title: "Grand Theft Auto IV: The Complete Edition", key: "gta4-complete-checklist-v1", art: "img/gta4-hero.webp", logo: "img/gta4-logo.webp", pos: "center 25%", bar: "#e8b64a" },
-  { file: "checklists/p4g.html", title: "Persona 4 Golden", key: "p4g-checklist-v1", art: "img/p4g-hero.webp", logo: "img/p4g-logo.webp", bar: "#ffd400" },
-  { file: "checklists/halo-mcc.html", title: "Halo: The Master Chief Collection", key: "mcc-tracker-v1", art: "img/halo-mcc-hero.webp", logo: "img/halo-mcc-logo.webp", bar: "#c9a64a" },
+  { file: "checklists/re4.html", title: "Resident Evil 4", key: "re4-remake-checklist-v1", art: "img/re4-hero.webp", pos: "center 30%", bar: "#c8302c" },
+  { file: "checklists/gta4.html", title: "Grand Theft Auto IV: The Complete Edition", key: "gta4-complete-checklist-v1", art: "img/gta4-hero.webp", pos: "center 25%", bar: "#e8b64a" },
+  { file: "checklists/p4g.html", title: "Persona 4 Golden", key: "p4g-checklist-v1", art: "img/p4g-hero.webp", bar: "#ffd400" },
+  { file: "checklists/halo-mcc.html", title: "Halo: The Master Chief Collection", key: "mcc-tracker-v1", art: "img/halo-mcc-hero.webp", bar: "#c9a64a" },
   { file: "checklists/vanquish.html", title: "Vanquish", key: "vanquish-checklist-v1", art: "img/vanquish-hero.webp", pos: "70% center", bar: "#3fe0d0" },
   { file: "checklists/dmc.html", title: "Devil May Cry", key: "dmc1-checklist-v1", cls: "dmc", bar: "#e0333a" },
   { file: "checklists/sunset-overdrive.html", title: "Sunset Overdrive", key: "so-checklist-v1", cls: "so", bar: "#ffe14d" },
@@ -111,9 +114,9 @@ function render() {
   document.getElementById("grid").innerHTML = GAMES.map(g => {
     const parts = g.parts || [{ file: g.file, label: "Achievements", key: g.key }];
     const style = [g.pos ? `--pos:${g.pos}` : "", g.bar ? `--bar:${g.bar}` : ""].filter(Boolean).join(";");
-    return `<a class="card ${g.cls || ""}" href="${esc(g.file)}" style="${style}">
+    return `<a class="card ${g.art ? "has-art" : ""} ${g.cls || ""}" href="${esc(g.file)}" style="${style}">
       ${g.art ? `<img class="art" src="${esc(g.art)}" alt="" loading="lazy" decoding="async">` : ""}
-      ${g.logo ? `<img class="logo" src="${esc(g.logo)}" alt="${esc(g.title)}">` : `<h2>${esc(g.title)}</h2>`}
+      <h2${g.art ? ' class="vh"' : ""}>${esc(g.title)}</h2>
       <div class="prog">${parts.map(p => rowHTML(p.label, (prog[p.file.split("/").pop()] || prog[p.file.split("/").pop().replace(/\.html$/, "")]), p.key)).join("")}</div>
     </a>`;
   }).join("");

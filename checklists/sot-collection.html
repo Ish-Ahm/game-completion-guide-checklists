@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stick of Truth Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #8ec5f0; --sky-deep: #5fa6de; --snow: #ffffff; --paper: #fffdf7;
+    --ink: #2b2118; --ink-soft: #5d5047; --red: #c4382f; --gold: #d99a1c;
+    --pine: #2f6b4f; --done-bg: #eaf5ee; --sold: #7a5aa6; --shadow: #2b2118;
+    --wood-a: #8a5a2b; --wood-b: #a8743f; --fb: #3b5b98;
+    padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sky: #16243a; --sky-deep: #0f1a2b; --snow: #dfe8f3; --paper: #22324a;
+      --ink: #eef3fa; --ink-soft: #b3c0d0; --red: #ff6b5e; --gold: #f2bd4b;
+      --pine: #6fcf9d; --done-bg: #1f3d35; --sold: #c3a5f0; --shadow: #07101c; --fb: #8fb0f0; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --sky: #16243a; --sky-deep: #0f1a2b; --snow: #dfe8f3; --paper: #22324a;
+    --ink: #eef3fa; --ink-soft: #b3c0d0; --red: #ff6b5e; --gold: #f2bd4b;
+    --pine: #6fcf9d; --done-bg: #1f3d35; --sold: #c3a5f0; --shadow: #07101c; --fb: #8fb0f0; color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--sky); color: var(--ink);
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: "Chewy", "Comic Sans MS", "Trebuchet MS", cursive; font-weight: 400; margin: 0; text-wrap: balance; }
+
+  header { padding: 2.5rem 1rem 0; text-align: center; overflow: hidden; }
+  header h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); line-height: 1.05; color: var(--snow); text-shadow: 3px 3px 0 var(--shadow); }
+  header p { max-width: 38rem; margin: .75rem auto 0; font-weight: 600; }
+  .mountains { display: block; width: calc(100% + 2rem); margin: 1.5rem -1rem 0; height: 90px; }
+  .mountains .far { fill: var(--sky-deep); } .mountains .near { fill: var(--pine); } .mountains .cap { fill: var(--snow); }
+
+  main { max-width: 54rem; margin: 0 auto; padding: 0 1rem 4rem; }
+
+  .progress-wrap {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 14px;
+    box-shadow: 4px 4px 0 var(--shadow); padding: .9rem 1rem; margin: -1.25rem 0 1.5rem;
+  }
+  .tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .7rem; }
+  .tab {
+    font-family: "Chewy", "Comic Sans MS", cursive; font-size: 1.15rem; cursor: pointer;
+    padding: .25rem .9rem; border-radius: 10px 14px 8px 12px; border: 3px solid var(--ink);
+    background: var(--sky); color: var(--ink);
+  }
+  .tab[aria-selected="true"] { background: var(--red); color: var(--snow); border-color: var(--ink); }
+  .progress-top { display: flex; align-items: baseline; justify-content: space-between; gap: .4rem 1rem; flex-wrap: wrap; }
+  .progress-top h2 { font-size: 1.3rem; }
+  .counts { display: flex; gap: .3rem 1rem; flex-wrap: wrap; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .counts small { font-weight: 600; color: var(--ink-soft); }
+  .stick { margin-top: .6rem; height: 18px; border: 3px solid var(--ink); border-radius: 999px; background: var(--sky); overflow: hidden; }
+  .stick-fill { height: 100%; width: 0%; background: repeating-linear-gradient(115deg, var(--wood-a) 0 10px, var(--wood-b) 10px 20px); transition: width .45s ease; }
+  .controls { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; align-items: center; }
+  .chip {
+    font: inherit; font-weight: 800; font-size: .88rem; cursor: pointer;
+    padding: .3rem .8rem; border-radius: 999px; border: 2px solid var(--ink);
+    background: transparent; color: var(--ink);
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .search {
+    font: inherit; font-size: .95rem; flex: 1 1 12rem; min-width: 0;
+    padding: .35rem .8rem; border-radius: 999px; border: 2px solid var(--ink);
+    background: var(--paper); color: var(--ink);
+  }
+  .save-row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; padding-top: .6rem; border-top: 2px dashed color-mix(in srgb, var(--ink) 25%, transparent); font-size: .9rem; }
+  .save-status { font-weight: 700; color: var(--ink-soft); flex: 1 1 14rem; }
+  .chip.reset { border-color: var(--red); color: var(--red); }
+  .chip.reset.armed { background: var(--red); color: var(--paper); }
+  .chip:focus-visible, .tab:focus-visible, .search:focus-visible, .check:focus-visible, .sold-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .tips { background: var(--paper); border: 3px solid var(--ink); border-radius: 8px 16px 10px 14px; box-shadow: 5px 5px 0 var(--shadow); padding: .9rem 1.1rem; margin-bottom: 1.75rem; }
+  .tips h2 { font-size: 1.45rem; color: var(--red); }
+  .tips ul { margin: .4rem 0 0; padding-left: 1.2rem; }
+  .tips li + li { margin-top: .35rem; }
+
+  section.sheet {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 6px 18px 8px 14px;
+    box-shadow: 5px 5px 0 var(--shadow); padding: 1.25rem 1.25rem .5rem; margin-bottom: 1.75rem;
+  }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.9rem; color: var(--red); }
+  .sheet-head .sub { font-weight: 800; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .35rem 0 .75rem; color: var(--ink-soft); max-width: 42rem; }
+
+  ul.groups { list-style: none; margin: 0; padding: 0; }
+  li.group { border-top: 2px dashed color-mix(in srgb, var(--ink) 25%, transparent); padding: .7rem 0; }
+  li.group.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr auto; gap: .75rem; align-items: start; border-radius: 10px; padding: .35rem .4rem; transition: background .2s; }
+  li.group.complete > .row { background: var(--done-bg); }
+  li.group.sold > .row { background: color-mix(in srgb, var(--sold) 14%, transparent); }
+
+  .check-wrap { position: relative; width: 30px; height: 30px; margin-top: .1rem; }
+  .check-wrap.small { width: 24px; height: 24px; }
+  .check {
+    appearance: none; -webkit-appearance: none; margin: 0; width: 100%; height: 100%; cursor: pointer;
+    border: 3px solid var(--ink); border-radius: 6px 9px 5px 8px; background: var(--paper);
+  }
+  .tick { position: absolute; inset: 0; pointer-events: none; width: 100%; height: 100%; }
+  .tick path { stroke: var(--pine); stroke-width: 4.5; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; transition: stroke-dashoffset .3s ease; }
+  .check:checked + .tick path.t { stroke-dashoffset: 0; }
+  .tick path.dash { stroke: var(--gold); stroke-dasharray: none; opacity: 0; }
+  .check:indeterminate + .tick path.dash { opacity: 1; }
+
+  .title-line { display: flex; align-items: center; gap: .4rem .5rem; flex-wrap: wrap; }
+  .title-line h3 { font-size: 1.28rem; line-height: 1.2; }
+  .title-line h3 label { cursor: pointer; }
+  li.group.complete > .row h3, li.group.sold > .row h3 { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--ink-soft); }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 800; padding: 0 .5rem; border-radius: 999px; border: 2px solid currentColor; letter-spacing: .04em; text-transform: uppercase; }
+  .tag.miss { color: var(--red); } .tag.shop { color: var(--ink-soft); } .tag.set { color: var(--gold); }
+  .tag.story { color: var(--pine); } .tag.summon { color: var(--fb); }
+  .num { font-size: .8rem; font-weight: 800; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .desc { margin: .2rem 0 0; font-size: .95rem; }
+  .note { margin: .3rem 0 0; font-size: .88rem; font-weight: 700; color: var(--ink-soft); border-left: 3px solid var(--gold); padding-left: .5rem; }
+  .pcount { font-size: .88rem; font-weight: 800; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+  ul.pieces { list-style: none; margin: .55rem 0 0; padding: 0; display: grid; gap: .35rem; }
+  ul.pieces.compact { grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+  li.piece { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; padding: .4rem .5rem; border-radius: 8px; border-left: 3px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+  li.piece.got { background: var(--done-bg); border-left-color: var(--pine); }
+  .piece-name { font-weight: 800; }
+  .piece-name label { cursor: pointer; }
+  li.piece.got .piece-name { text-decoration: line-through; color: var(--ink-soft); }
+  .slot { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin-right: .3rem; }
+  li.piece .desc { font-size: .9rem; margin-top: .1rem; }
+
+  .sold-btn {
+    font: inherit; font-size: .8rem; font-weight: 800; cursor: pointer; white-space: nowrap;
+    padding: .2rem .65rem; border-radius: 999px; border: 2px solid var(--sold); background: transparent; color: var(--sold);
+  }
+  .sold-btn[aria-pressed="true"] { background: var(--sold); color: var(--paper); }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 700; padding: .5rem 0 1rem; }
+
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .9rem; }
+  footer a { color: var(--ink); font-weight: 800; }
+
+  @media (min-width: 700px) {
+    section.sheet:nth-of-type(odd) { transform: rotate(-.25deg); }
+    section.sheet:nth-of-type(even) { transform: rotate(.2deg); }
+  }
+  @media (max-width: 520px) {
+    .progress-wrap { position: static; }
+    section.sheet { padding: 1rem .8rem .4rem; }
+    .row { grid-template-columns: auto 1fr; }
+    .row .sold-btn { grid-column: 2; justify-self: start; }
+  }
+  @media (prefers-reduced-motion: reduce) { .stick-fill, .tick path, .row { transition: none; } }
+</style>
+<meta name="theme-color" content="#0f1115">
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<div id="app-root"></div>
+<script>
+(function () {
+const ITEMS = {
+  1: ["Crown of Anal Pleasure", 0, "Obtained automatically after disarming the snuke inside Mr. Slave."],
+  2: ["Barbarian Helmet", 0, "In Vancouver, travel to where the Duke of Vancouver is on the north side of town. To his left is a red bed. Smash the wall north of the bed; it is in the chest on the other side."],
+  3: ["Barbarian Armor", 0, "In Canada the Prime Minister is trapped in a cave. There is a treasure chest in the upper left of that same room with the armour inside."],
+  4: ["Barbarian Gloves", 0, "In Canada, while on the quest \"Big Game Huntin' with Jimbo\". In the north-east part of the map there is a spiderweb. Call out and defeat the Canadian Barking Spider; you get them automatically."],
+  5: ["Minstrel's Cap", 0, "Purchased from the shop in the Elven Kingdom."],
+  6: ["Minstrel Uniform", 0, "Purchased from the shop in the Elven Kingdom."],
+  7: ["Minstrel Gloves", 0, "Purchased from the shop in the Elven Kingdom."],
+  8: ["Wife Beater", 0, "Inside Kenny's garage after defeating the meth tweakers, in the yellow chest next to the propane tank fuelling the burner on the ground."],
+  9: ["Leather Hat", 0, "Purchased from the girls' hideout."],
+  10: ["Leather Armor", 0, "Purchased from the girls' hideout."],
+  11: ["Leather Gloves", 0, "Purchased from the girls' hideout."],
+  12: ["Bling", 0, "In the police station evidence room. There is a yellow chest you can open after climbing a ladder."],
+  13: ["Training Gloves", 0, "Purchased from the bum outside U-Stor-It."],
+  14: ["Cheese Helmet", 0, "Purchased from Mr. Mackey."],
+  15: ["Cheese Costume", 0, "Purchased from Mr. Mackey."],
+  16: ["Cheese Gloves", 0, "Purchased from Mr. Mackey."],
+  17: ["Condom Cap", 1, "In the yellow chest right after turning on the flashlight inside Mr. Slave."],
+  18: ["Crab Helmet", 0, "Needs the Nagasaki spell. Deep in the sewers you will see a crab person banging drums. Break the rock to the right with Nagasaki to get behind him. It is in the chest behind him."],
+  19: ["Crab Carapace", 0, "Needs the Nagasaki spell. Deep in the sewers you will see a crab person banging drums. Break the rock to the right with Nagasaki to get behind him. It is in the chest behind him."],
+  20: ["Crab Pincers", 0, "Needs the Nagasaki spell. Deep in the sewers you will see a crab person banging drums. Break the rock to the right with Nagasaki to get behind him. It is in the chest behind him."],
+  21: ["Surgical Cap", 0, "During the Unplanned Parenthood visit for the girls, you are required to pick these up to get into the Records Room."],
+  22: ["Surgical Scrubs", 0, "During the Unplanned Parenthood visit for the girls, you are required to pick these up to get into the Records Room."],
+  23: ["Surgical Gloves", 0, "During the Unplanned Parenthood visit for the girls, you are required to pick these up to get into the Records Room."],
+  24: ["Druid Crown", 0, "In the yellow chest in the top area of the garage next to Pete Melman, at address 2210."],
+  25: ["Druid Robes", 0, "In the yellow chest in the top area of the garage at Stan's house, address 2001."],
+  26: ["Druid Gloves", 0, "Inside the yellow chest in Butters' garage."],
+  27: ["Du Rag", 0, "Purchased from the bum outside U-Stor-It."],
+  28: ["Wood Elf Cap", 1, "Yellow chest on the second floor of the Giggling Donkey (Jimmy's house) after defeating Jimmy. It is in the same room."],
+  29: ["Wood Elf Armor", 0, "Obtained automatically in the Giggling Donkey after defeating the group of three elves with the anti-magician in the living room."],
+  30: ["Wood Elf Gloves", 1, "Looted from a wood elf in the attic of the Giggling Donkey."],
+  31: ["Friar Cap", 0, "Inside the yellow chest in the upper area of Token's garage."],
+  32: ["Friar Robes", 0, "After recruiting Tweek back to Kupa Keep, it is in the yellow chest on the ledge in the background."],
+  33: ["Friar Gloves", 0, "After recruiting Tweek back to Kupa Keep, it is in the yellow chest on the ledge in the background."],
+  34: ["Gnome Helmet", 1, "After entering the hole in your room, climb the first set of wires; it is in the pouch to your right."],
+  35: ["Gnome Clothes", 1, "After watching your parents getting intimate, go into the next room. Climb the wires and break the wall to your immediate left; they are in the pouch past the four batteries."],
+  36: ["Gnome Gloves", 1, "You are forced awake and into a fight with four gnomes. After defeating them twice you are back in your room; they are on one of the defeated Underpants Gnomes."],
+  37: ["Goth Cap", 0, "Purchased from the bum outside U-Stor-It."],
+  38: ["Goth Clothes", 0, "Purchased from the bum outside U-Stor-It."],
+  39: ["Goth Gloves", 0, "Purchased from the bum outside U-Stor-It."],
+  40: ["Sweaty Headband", 0, "Purchased from the bum outside U-Stor-It."],
+  41: ["Clyde's Helmet", 0, "Purchased from the shop at Kupa Keep after Clyde has been banished."],
+  42: ["Gas Mask", 0, "Purchased from Jimbo."],
+  43: ["Jester's Cap", 0, "Found in a yellow chest in Jimmy's garage, also known as the Giggling Donkey."],
+  44: ["Khan Helm", 0, "Purchased from the shop at Kupa Keep."],
+  45: ["Khan Armor", 0, "Purchased from the shop at Kupa Keep."],
+  46: ["Khan Gauntlets", 0, "Purchased from the shop at Kupa Keep."],
+  47: ["Knight Helmet", 1, "Yellow chest in the right tower of Clyde's fortress, where you see Ike and the pirate girl fighting another Cyclops."],
+  48: ["Knight Armor", 1, "After defeating Craig and his clones, in the yellow chest in the upper left of the room."],
+  49: ["Knight Gauntlets", 1, "On a Cyclops child in the first room of Clyde's fortress, on the upper level. Same room as the Lawn Dart."],
+  50: ["KKK Helmet", 0, "Purchased from the shop at Kupa Keep."],
+  51: ["KKK Armor", 0, "Purchased from the shop at Kupa Keep."],
+  52: ["KKK Gloves", 0, "Purchased from the shop at Kupa Keep."],
+  53: ["Monk Cap", 0, "Purchased from the shop in the Elven Kingdom."],
+  54: ["Monk Robes", 0, "Purchased from the shop in the Elven Kingdom."],
+  55: ["Monk Gloves", 0, "Purchased from the shop in the Elven Kingdom."],
+  56: ["Necromancer Hood", 1, "On one of the students attacking your fellow human or elf when you first go up to the second floor on your second visit to the school."],
+  57: ["Necromancer Robes", 1, "On one of the Nazi Zombie gingers in the room near the entrance to the Boiler Room on your second visit to the school."],
+  58: ["Necromancer Gloves", 1, "On one of the students directly before entering the hallway from the cafeteria on your second visit to the school."],
+  59: ["Bishop Mitre", 0, "Purchased from the shop in Banff."],
+  60: ["Bishop Vestments", 0, "Purchased from the shop in Banff."],
+  61: ["Bishop Gloves", 0, "Purchased from the shop in Banff."],
+  62: ["Woodsman Cap", 0, "Purchased from the shop in the Elven Kingdom."],
+  63: ["Woodsman Armor", 0, "Purchased from the shop in the Elven Kingdom."],
+  64: ["Woodsman Gloves", 0, "Purchased from the shop in the Elven Kingdom."],
+  65: ["Alien Helmet", 1, "In a purple chest after freeing yourself from the probing machine on the spaceship. It is behind Randy."],
+  66: ["Alien Suit", 1, "Take the elevator down to the room with a tube holding two aliens and several platforms and consoles; it is in the purple chest to the left of the elevator."],
+  67: ["Alien Gloves", 1, "Dropped by the space officer in the same room as the third panel you use to free Randy on the alien spaceship."],
+  68: ["Fairy Princess Tiara", 0, "Purchased from the girls' hideout."],
+  69: ["Fairy Princess Robes", 0, "Purchased from the girls' hideout."],
+  70: ["Fairy Princess Mittens", 0, "Purchased from the girls' hideout."],
+  71: ["Squire Helmet", 0, "At U-Stor-It, climb onto the roof through Professor Chaos' Lair, then use the Alien Probe to reach the yellow chest in the background above unit 240."],
+  72: ["Squire Armor", 0, "Once you have the Alien Probe, go to Token's garage, upper level. Probe onto the roof, smash the chimney, and it is in the yellow chest."],
+  73: ["Squire Gloves", 0, "Use the Alien Probe to get on top of the bank, then again to get on top of Tom's Rhinoplasty. It is in the yellow chest on the roof."],
+  74: ["Stupid Spoiled Whore Hat", 0, "Purchased from the girls' hideout."],
+  75: ["Stupid Spoiled Whore Clothes", 0, "Purchased from the girls' hideout."],
+  76: ["Stupid Spoiled Whore Gloves", 0, "Purchased from the girls' hideout."],
+  77: ["SWAT Armored Headgear", 1, "After breaking into the C.I.A. building (where the mall was) for the first time, on one of the guards killed by the Nazi Zombie."],
+  78: ["SWAT Vest", 1, "After breaking into the C.I.A. building (where the mall was) for the first time, on one of the guards killed by the Nazi Zombie."],
+  79: ["SWAT Tactical Gloves", 1, "After breaking into the C.I.A. building (where the mall was) for the first time, on one of the guards killed by the Nazi Zombie."],
+  80: ["Tinfoil Hat", 1, "From the Alien Conspiracy Hobo on the alien spaceship. After lowering the forcefield, take the ladder down in front of the entrance to where Randy is; he is hiding in a pile of rubbish."],
+  81: ["Underpants \"Helmet\"", 1, "While on the dresser watching your parents get intimate, you are attacked by three gnomes. It is on one of their defeated bodies."],
+  82: ["Valkyrie Headband", 0, "Inside the girls' hideout once you can free roam inside. On the left side of the room behind Jessie, in a yellow chest."],
+  83: ["Valkyrie Armor", 0, "Inside the girls' hideout once you can free roam inside. On the left side of the room behind Jessie, in a yellow chest."],
+  84: ["Valkyrie Gloves", 0, "Inside the girls' hideout once you can free roam inside. On the left side of the room behind Jessie, in a yellow chest."],
+  85: ["Witch Hat", 0, "Needs Gnome Dust. Underneath the bench outside Tweek Bros. Coffee."],
+  86: ["Witch Robes", 0, "To the left of the school, just before the forest, there is a log. Shrink with Gnome Dust; it is in the yellow pouch inside the log."],
+  87: ["Witch Gloves", 0, "To the left of the Giggling Donkey (38291) there is a small hole in the fence. They are in the yellow chest."],
+  88: ["Sword of Endings", 0, "Purchased from the shop in the Elven Kingdom."],
+  89: ["Archmage's Wand", 0, "Purchased from the shop in Vancouver."],
+  90: ["Axe of Stopping", 0, "Purchased from the shop at Kupa Keep."],
+  91: ["Axe of the Underworld", 0, "Complete \"Big Game Huntin' with Jimbo\" to get Jimbo's key. Then use the Alien Probe to teleport into the rafters above Jimbo and Ned; it is in the yellow chest."],
+  92: ["Billy Club", 0, "Obtained automatically after defeating the security guard outside Token's house."],
+  93: ["Stone Hammer", 1, "On top of the C.I.A. building where the alien ship crashed."],
+  94: ["Canadian Halberd", 0, "Purchased from the shop in Ottawa."],
+  95: ["Claymore of the Warrior", 0, "Purchased from the shop in Ottawa."],
+  96: ["Crutch of Weakness", 1, "Looted from Jimmy after defeating him on the upper floor of the Giggling Donkey."],
+  97: ["Elf Blade", 0, "Purchased from the shop in the Elven Kingdom."],
+  98: ["Kris Dagger", 0, "Purchased from the shop at Kupa Keep."],
+  99: ["Fatbeard's Blade", 0, "Purchased from the shop at Kupa Keep."],
+  100: ["Fire Sword", 0, "Purchased from the shop at Kupa Keep."],
+  101: ["Flamberge Rapier", 0, "Purchased from the shop in Winnipeg."],
+  102: ["Gnome Pickaxe", 1, "After watching your parents getting intimate, go to the next room. Go up the wires and to your right. After defeating the three rats, it is in the yellow pouch before the next set of wires."],
+  103: ["Staff of Winter", 0, "Purchased from the shop at Kupa Keep."],
+  104: ["Sweet Katana", 0, "Purchased from Jimbo's gun shop."],
+  105: ["Lightning Wand", 0, "Purchased from the shop at Kupa Keep."],
+  106: ["Longsword", 0, "Purchased from Jimbo. Labelled \"Warrior's Longsword\" in the shop."],
+  107: ["Mace of Restoration", 1, "On your first school visit, after defeating the Hall Monitor boss, immediately use the key he drops to unlock the nearby locker."],
+  108: ["ManBearPig Claw", 0, "Complete the quest \"Defeat ManBearPig\" for Al Gore, then loot it from the creature."],
+  109: ["Master Razor", 1, "During the Unplanned Parenthood visit, after being locked in the Records Room, shrink through a small hole with Gnome Dust. Just below the Nazi Zombie gnomes is a yellow pouch with it inside."],
+  110: ["ManBearPig Club", 0, "After completing \"Unfriend Al Gore\", go through the door marked \"Super Secret KEEP OUT!\" in his base at U-Stor-It. Yellow chest on the left of the room."],
+  111: ["Holy Mossad Knife", 0, "Purchased from the shop in Banff."],
+  112: ["Kenny's Bloody Club", 0, "In Kenny's garage after defeating the meth tweakers, knock down the rubble and climb onto the roof. It is in a yellow chest."],
+  113: ["Noob Hammer", 0, "Purchased from the shop at Kupa Keep."],
+  114: ["Alien Probe", 1, "After lowering the forcefields on the spaceship, in a purple chest to the left of the entrance to where Randy is held."],
+  115: ["Raider's Blade", 0, "Purchased from the shop in the Elven Kingdom."],
+  116: ["Rod of Major Boobage", 0, "Purchased from Mr. Mackey."],
+  117: ["Rod of Waste", 0, "In the sewers, in a yellow chest in the background of the screen with the power generator you use the Defibrillator on for Al Gore."],
+  118: ["Knead-ring, the Dough Hammer", 0, "Purchased from the girls' hideout."],
+  119: ["Holy Hammer of Smiting", 0, "Obtained automatically after defeating the Nazi Zombie Ginger Kommandant. Part of the story and cannot be missed."],
+  120: ["Serrated Axe of Rending", 0, "In Vancouver, go to the Duke of Vancouver on the north side of town. Smash the wall north of the red bed to his left; it is in the chest on the other side."],
+  121: ["Dire Scepter", 0, "You choose to spare or kill the Bishop of Banff. Kill him and loot it from his body, or spare him and buy it from the Banff shop right after the battle."],
+  122: ["Warrior's Scimitar", 0, "Purchased from the shop at Kupa Keep."],
+  123: ["Sickle Sword", 0, "Purchased from the shop at Kupa Keep."],
+  124: ["Fairy Princess Blade", 0, "Purchased from the girls' hideout."],
+  125: ["Magic Wand", 0, "Purchased from the shop at Kupa Keep."],
+  126: ["Rogue's Dagger", 0, "Purchased from the shop at Kupa Keep."],
+  127: ["Jewish Staff", 0, "Purchased from the shop at Kupa Keep."],
+  128: ["Warrior's Blade", 0, "Purchased from the shop at Kupa Keep."],
+  129: ["Vibroblade", 1, "From the Nazi Zombie Bacteria inside Mr. Slave, next to the iPhone that Big Gay Al calls on."],
+  130: ["Club of Smiting", 0, "Purchased from the shop at Kupa Keep."],
+  131: ["Alien Ray Gun", 1, "Automatically obtained on the spaceship after defeating the first trio of aliens after escaping the probing machine. They are directly right of the room Randy is held in."],
+  132: ["Bar Darts", 0, "Complete the quest \"Rats in the Cellar\" for Skeeter."],
+  133: ["Basketball", 1, "On one of the already defeated students in the cafeteria on your second school visit, to the right of the IN door."],
+  134: ["Batdadarang", 0, "Purchased from Mr. Mackey."],
+  135: ["Battle Bow", 0, "Purchased from the shop in the Elven Kingdom."],
+  136: ["Super Bouncy Ball!", 1, "After entering the hole in your room, climb the first set of wires; it is in the pouch to your right."],
+  137: ["Broken Bottle", 0, "Found on a hobo in the sewers where Cornwallis is found for Mr. Hankey, near the \"Shit Show 25c\" box."],
+  138: ["Chakram", 0, "Purchased from the girls' hideout."],
+  139: ["Crossbow of Impalement", 0, "Purchased from Jimbo."],
+  140: ["Dodgeball", 1, "First school visit: on one of the hall monitors in the group that carries the brass key (the first key you get)."],
+  141: ["Grenade of Slowing", 0, "Complete \"Big Game Huntin' with Jimbo\" to get Jimbo's key. Use the Alien Probe to teleport into the rafters above Jimbo and Ned; it is in the yellow chest."],
+  142: ["Elvish Longbow", 0, "Purchased from the shop in the Elven Kingdom."],
+  143: ["Elvish Shortbow", 0, "Obtained automatically after defeating the group of three elves in the basement of the Giggling Donkey after the lights are turned on."],
+  144: ["Lawn Dart", 1, "Yellow chest on the first floor of Clyde's fortress."],
+  145: ["Longbow", 0, "Purchased from the shop in the Elven Kingdom."],
+  146: ["Mongorian Bow", 1, "On one of the Mongolian children on the second floor of the Tower of Peace after ringing the gong."],
+  147: ["Poison Grenade", 1, "Inside Unplanned Parenthood during the girls' quest, in a drawer underneath the clock between the Records Room and Operating Room A."],
+  148: ["Recurve Bow", 0, "Purchased from the shop in the Elven Kingdom."],
+  149: ["Discus of Bleeding", 0, "In the Chapel of Banff. Use the switch under the pot on the left to open the door on the right; it is in the chest."],
+  150: ["Missile of Slowing", 0, "Complete the quest \"Vulcan Around\" for Kevin Stoley."],
+  151: ["Fairy Princess Bow", 0, "Purchased from the girls' hideout."],
+  152: ["Bow of Sucking", 0, "Obtained during the tutorial."],
+  153: ["Wooden Crossbow", 0, "Purchased from Jimbo."]
+};
+const NOTES = {
+  43: "Some guides warn this is missable once Jimmy's house is locked after the Bard quest, so grab it while you are there.",
+  104: "The strongest weapon in the game (level 14).",
+  137: "Other guides list this as missable: loot the hobo when you first find him, as he will not be there later.",
+  143: "Other guides list this as missable. If you used the environment, one elf may be cowering in a corner; hit him for the bow before Jimmy's house is locked after Clyde's tower."
+};
+
+const FRIENDS = {
+  1: ["Al Gore", 0, "Find him in the bushes behind the theatre, then finish his side quest."],
+  2: ["Allie Nelson", 0, "Talk to her in the girls' secret hideout (the girls' bathroom at the children's play area) after you recruit the girls in the main storyline."],
+  3: ["Amber", 0, "Rescue her in the sewer."],
+  4: ["Annie", 0, "She is standing in front of City Hall. Attack the bullies picking on her to get her friend request."],
+  5: ["Bartender", 0, "At the side quest at Skeeter's bar, \"Rats in the Cellar\"."],
+  6: ["Bebe", 0, "Main questline."],
+  7: ["Big Gay Al", 1, "Answer the phone when inside Mr. Slave during the final main quest of the game. You only have about 5 seconds to walk up to the phone and answer it, or you will miss this friend request."],
+  8: ["Bill", 1, "During the main questline on the second visit to the school, talk to him after helping him defeat enemies upstairs."],
+  9: ["Billy", 0, "Complete the \"Hide 'N' Seek\" side quest. Start it by talking to the little kids at the park's basketball court."],
+  10: ["Bishop of Banff", 1, "During the \"O Canada\" main quest you attack the Bishop of Banff. After the fight you choose to finish him off or spare him. You MUST spare him or you will not get his friend request."],
+  11: ["Bradley", 0, "Talk to him after you get Shrink."],
+  12: ["Butters", 0, "Main questline."],
+  13: ["Cartman", 0, "Main questline."],
+  14: ["Catatafish", 0, "Main questline."],
+  15: ["Chinpokomon Toy Corp.", 1, "Collect all 30 Chinpokomon. See Chinpokolypse for locations."],
+  28: ["Chris Donnely", 0, "After completing the \"Recruit the Girls\" main quest, talk to him in Kyle's backyard next to DogPoo."],
+  29: ["Clyde", 1, "At the very start of the game you have to befriend Clyde before you talk to Cartman. Clyde unfriends you, so he will not show up in the final list of 120 friends at the end of the game (which is why this list is 121 long). He IS required and counts towards the trophy, so you could have messed up in the first 30 seconds of the game."],
+  30: ["Cornwallis", 0, "Rescue him in the sewer."],
+  31: ["Crab Person", 0, "Talk to him in the sewer after you get the Nagasaki fart from Terrance & Phillip in Canada. Go down the manhole in the centre of town (next to the \"Men Working\" sign). Follow the path and a ladder down until a big rock blocks the way, blow it up with Nagasaki, and befriend the Crab Person."],
+  32: ["Craig", 0, "Main questline."],
+  33: ["Dad", 0, "Talk to him at your house after you get 50 friends."],
+  34: ["Damien", 0, "Talk to him inside the Theatre; he is the kid in the back row. You can walk behind him and talk to him that way."],
+  35: ["DogPoo", 0, "Talk to him in Kyle's backyard when you get access to it during the main story, then finish his side quest, \"Restoring the Balance\"."],
+  36: ["Dougie", 0, "Outside Butters' house."],
+  37: ["Douglas", 0, "Talk to him at Kyle's house. If he is not there, go to the Post Office (next to Unplanned Parenthood) at the 2nd floor window. Break the window, use the Alien Probe teleporter, and go to the left of it behind the window."],
+  38: ["Duke of Vancouver", 0, "Main questline."],
+  39: ["Earl of Winnipeg", 0, "Main questline."],
+  40: ["Esther", 0, "Talk to her inside the News Building."],
+  41: ["Filmore", 0, "Complete the \"Hide 'N' Seek\" side quest. Start it by talking to the little kids at the park's basketball court."],
+  42: ["Firkle", 0, "Main questline."],
+  43: ["Flora", 0, "Complete the \"Hide 'N' Seek\" side quest. Start it by talking to the little kids at the park's basketball court."],
+  44: ["Fossey", 1, "During the main questline on the second visit to the school, talk to him after helping him defeat enemies upstairs."],
+  45: ["Francis", 0, "Break his snowman to the right of Kyle's house and then talk to him."],
+  46: ["Frog King", 0, "Main questline."],
+  47: ["General Disarray", 0, "Talk to him in Butters' secret lair at U-Stor-It."],
+  48: ["Heidi", 0, "Talk to her in the girls' secret hideout (the girls' bathroom at the children's play area) after you recruit the girls in the main storyline."],
+  49: ["Henrietta", 0, "Main questline."],
+  50: ["Ike", 1, "Talk to him during the assault on Craig's Keep near the end of the game. At the part where you hit two switches to open a gate, Ike gets hit and starts crying. Cheer him up by setting off the nearby firework with your farts to kill the mean enemy, and he will friend you."],
+  51: ["Jason", 0, "Talk to him in the backyard of Kyle's house."],
+  52: ["Jenny", 0, "Complete the \"Hide 'N' Seek\" side quest. Start it by talking to the little kids at the park's basketball court."],
+  53: ["Jessie", 0, "Talk to her in the girls' secret hideout (the girls' bathroom at the children's play area) after you recruit the girls in the main storyline."],
+  54: ["Jessie Rodriguez", 0, "Main questline."],
+  55: ["Jesus", 0, "\"Find Jesus\" side quest, started by talking to Priest Maxi on the park bench left of City Hall. Go to the church and find Jesus playing peek-a-boo among the benches, twice. Return to Maxi, who sends you back. Re-arrange the two lights to point at the holy cross, flip the light switch on the right wall to off, then walk up behind the speaker pedestal where the shade comes from to find and befriend him."],
+  56: ["Jimbo", 0, "Finish Jimbo's \"Big Game Huntin' with Jimbo\" side quest at Jimbo's gun shop."],
+  57: ["Jimmy", 0, "Talk to him at Kyle's house, then finish the side quest \"Magical Songs\"."],
+  58: ["Karen", 0, "In Kenny's house."],
+  59: ["Kelly Gardner", 0, "Talk to her on the way west from your house."],
+  60: ["Kelly Rutherford", 1, "Talk to her once you have 20 friends, at the bus stop on the left side of the intersection west of your house. She disappears once you become her friend. Some people report she can be missed, so befriend her as soon as you reach 20 friends."],
+  61: ["Kenny", 0, "Talk to him at Cartman's house / Kupa Keep backyard."],
+  62: ["Kevin Stoley", 0, "Finish his side quest, \"Vulcan Around\", started by talking to him in his room. Find his iPad behind a tree a few steps to the right of the church and return it to him."],
+  63: ["Kyle", 0, "Main questline."],
+  64: ["Lemmiwinks", 1, "During the second visit to the school, at the very end of the quest, enter the Fifth Grade classroom before the Fourth Grade classroom. Lemmiwinks is the rat on the floor in the Fifth Grade classroom."],
+  65: ["Leroy Mullens", 0, "On top of the News Building in the centre of town. Reach him after getting Gnome Dust by shrinking into a pipe inside the News Building."],
+  66: ["Lola", 0, "Talk to her in the Post Office after getting 40 friends."],
+  67: ["Mayor McDaniels", 0, "Finish her side quest, \"The Homeless Problem\". Visit the Mayor in City Hall to start it."],
+  68: ["Micheal", 0, "Main questline."],
+  69: ["Millie", 0, "Behind Unplanned Parenthood. Break the snowman on the right side of the pink building next to her and go behind it."],
+  70: ["Minister of Montreal", 0, "Main questline."],
+  71: ["Mom", 0, "Talk to her inside your house and she will send you a friend request."],
+  72: ["Monica", 0, "Main questline."],
+  73: ["Mr. Adler", 0, "Talk to him after recruiting the Goths, at the Community Center."],
+  74: ["Mr. Broflovski", 0, "Shovelling snow outside Kyle's house; talk to him."],
+  75: ["Mr. Garrison", 0, "Talk to him after recruiting the Goths, at the Community Center."],
+  76: ["Mr. Hankey (Summon)", 0, "Finish his side quest, \"Dropping the Kids Off\". His house is down in the sewer."],
+  77: ["Mr. Hat", 0, "Main questline."],
+  78: ["Mr. Kim (Summon)", 0, "Finish his side quest, \"Mongolian Beef\". Start it by talking to him inside City Wok on the north side of town."],
+  79: ["Mr. Mackey", 0, "Finish his side quest, \"Wasted Cache\". Start it by speaking to him inside the Community Center."],
+  80: ["Mr. McCormick", 0, "Talk to him outside Skeeter's Bar on the north-west side of town."],
+  81: ["Mr. Slave (Summon)", 0, "Finish his side quest, \"Mr. Slave's Package\". Start it by speaking to him at his house or by finding his package behind the desk at the Post Office."],
+  82: ["Mr. Stotch", 0, "Inside Butters' house, same as Mrs. Stotch."],
+  83: ["Mr. Tweak", 0, "Buy a \"Speed Potion Ultra\" for $15.00 from him at Tweek Bros. Coffee House."],
+  84: ["Mrs. Biggle", 0, "Talk to her on the bench outside the Post Office in the centre of town."],
+  85: ["Mrs. Broflovski", 0, "Talk to her after recruiting the Goths, at the Community Center."],
+  86: ["Mrs. Cartman", 0, "Talk to her at Cartman's house."],
+  87: ["Mrs. Hankey", 0, "Finish Mr. Hankey's side quest, \"Dropping the Kids Off\". Start it by visiting their house down in the sewer."],
+  88: ["Mrs. Marsh", 0, "Buy something from her at Tom's Rhinoplasty that is not a nose job."],
+  89: ["Mrs. McCormick", 0, "In Kenny's house after clearing out the Meth Tweakers early in the game."],
+  90: ["Mrs. Stotch", 0, "Talk to her inside Butters' house."],
+  91: ["Mrs. Tweak", 0, "Buy a \"Speed Potion Ultra\" from Mr. Tweak at Tweek Bros. Coffee House."],
+  92: ["Ned", 0, "Finish Jimbo's \"Big Game Huntin' with Jimbo\" side quest at Jimbo's gun shop."],
+  93: ["Nelly", 0, "Talk to her in the girls' secret hideout (the girls' bathroom at the children's play area) after you recruit the girls in the main storyline."],
+  94: ["Officer Barbrady", 0, "Talk to him outside Tom's Rhinoplasty."],
+  95: ["Pete (Melman)", 0, "2nd floor of the garage at house #2210. Shoot down the ladder and climb it in the garage."],
+  96: ["Pete (Thelman)", 0, "Main questline."],
+  97: ["Phillip", 0, "Main questline."],
+  98: ["Polly Prissypants", 0, "In Cartman's room at Cartman's house. Interact with the doll while Cartman is your buddy."],
+  99: ["Priest Maxi", 0, "Finish his side quest, \"Find Jesus\". He is sitting on the bench outside City Hall."],
+  100: ["Prince of Canada", 0, "Main questline."],
+  101: ["Princess of Canada", 0, "Main questline."],
+  102: ["Principal Victoria", 0, "At the South Park Community Center. PTA member, after you get the photo evidence from the Goths' \"PTA Problems\" quest."],
+  103: ["Quaid", 0, "Complete the \"Hide 'N' Seek\" side quest. Start it by talking to the little kids at the park's basketball court."],
+  104: ["Randy", 0, "Main questline."],
+  105: ["Red", 0, "Talk to her in the girls' secret hideout (the girls' bathroom at the children's play area) after you recruit the girls in the main storyline."],
+  106: ["Romper Stomper", 0, "Free him from the cell in the South Park Police Station. For the key, go upstairs, shoot the shelf in the hallway with your bow, break into the vent by attacking it, and search locker 4 in the Locker Room."],
+  107: ["Sally", 0, "Complete the \"Hide 'N' Seek\" side quest. Start it by talking to the little kids at the park's basketball court."],
+  108: ["Santa", 0, "On the roof of the Police Station."],
+  109: ["Scott Malkinson", 0, "Talk to him at Cartman's house / Kupa Keep backyard."],
+  110: ["Sergeant Yates", 1, "Complete this police leader's \"Nazi Bounty Hunt\" side quest once Nazi Zombies are in town."],
+  111: ["Shelly Marsh", 0, "Talk to her after Stan's side quest, \"The She-Orge\"."],
+  112: ["Simon", 0, "Rescue him in the sewer."],
+  113: ["Skeeter", 0, "Finish his side quest at Skeeter's Bar, \"Rats in the Cellar\"."],
+  114: ["Sparrow Prince", 0, "Main questline."],
+  115: ["Stan", 0, "Talk to him at Kyle's house, then finish his side quest \"The She-Orge\"."],
+  116: ["Terrance", 0, "Main questline."],
+  117: ["Timmy", 0, "Unlock all Fast Travel waypoints around town."],
+  118: ["Token", 0, "Main questline."],
+  119: ["Tweek", 0, "Main questline."],
+  120: ["Underpants Gnome", 0, "Finish his side quest by searching for underpants in all rooms. The \"Phase 1\" side quest appears at your house right after the Underpants Gnome section, around the time of the \"Forging Alliances\" quest on Day 2."],
+  121: ["Wendy", 0, "Main questline."]
+};
+const CRITTERS = ["Beary", "Rabbity", "Skunky", "Beavery", "Mousey", "Squirrely", "Deery", "Woodpeckery", "Porcupiney", "Foxy", "Chickadee-y", "Raccoony"];
+const CRITTER_DESC = "Find all 12 in the Lost Forest by following the combination on the \"Blood Orgy\" poster in Kyle's bedroom: right, up, right, down, right. Stan's house also has a pamphlet on the floor with the directions. When you reach them, accept Satan as your true Lord to befriend them.";
+
+/* ---------- build the lists ---------- */
+const COSTUME_LAYOUT = [1, ["Barbarian",2,3,4], ["Minstrel",5,6,7], 8, ["Leather",9,10,11], 12, 13, ["Cheese",14,15,16], 17,
+  ["Crab",18,19,20], ["Surgical",21,22,23], ["Druid",24,25,26], 27, ["Wood Elf",28,29,30], ["Friar",31,32,33], ["Gnome",34,35,36],
+  ["Goth",37,38,39], 40, 41, 42, 43, ["Khan",44,45,46], ["Knight",47,48,49], ["KKK",50,51,52], ["Monk",53,54,55],
+  ["Necromancer",56,57,58], ["Bishop",59,60,61], ["Woodsman",62,63,64], ["Alien",65,66,67], ["Fairy Princess",68,69,70],
+  ["Squire",71,72,73], ["Stupid Spoiled Whore",74,75,76], ["SWAT",77,78,79], 80, 81, ["Valkyrie",82,83,84], ["Witch",85,86,87]];
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const SLOTS = ["Head", "Body", "Hands"];
+const isShop = n => /^Purchase/.test(ITEMS[n][2]);
+
+const wPiece = (n, i, set) => ({ id: "w" + n, num: n, name: ITEMS[n][0], desc: ITEMS[n][2], miss: !!ITEMS[n][1], note: NOTES[n] || "", slot: set ? SLOTS[i] : "" });
+function weaponGroups(layout) {
+  return layout.map(e => {
+    if (Array.isArray(e)) {
+      const pieces = e.slice(1).map((n, i) => wPiece(n, i, true));
+      return { key: "set-" + e[0].toLowerCase().replace(/[^a-z]+/g, "-"), name: e[0] + " Set", set: true, sellable: true, pieces,
+        tags: ["set"].concat(pieces.some(p => p.miss) ? ["miss"] : [], e.slice(1).every(isShop) ? ["shop"] : []) };
+    }
+    const p = wPiece(e, 0, false);
+    return { key: p.id, name: p.name, num: e, set: false, sellable: true, pieces: [p], desc: p.desc, note: p.note,
+      tags: (p.miss ? ["miss"] : []).concat(isShop(e) ? ["shop"] : []) };
+  });
+}
+function friendGroups() {
+  const out = [];
+  for (let n = 1; n <= 121; n++) {
+    if (n >= 16 && n <= 27) {
+      if (n === 16) out.push({ key: "f-critters", name: "Christmas Critters", numLabel: "#16–27", set: true, compact: true, desc: CRITTER_DESC,
+        pieces: CRITTERS.map((c, i) => ({ id: "f" + (16 + i), num: 16 + i, name: c, desc: "", miss: false })), tags: ["set12"] });
+      continue;
+    }
+    const [name, miss, desc] = FRIENDS[n];
+    const tags = [];
+    if (miss) tags.push("miss");
+    if (desc === "Main questline.") tags.push("story");
+    if (/Summon/.test(name)) tags.push("summon");
+    out.push({ key: "f" + n, name, num: n, set: false, pieces: [{ id: "f" + n, num: n, name, desc, miss: !!miss }], desc, tags });
+  }
+  return out;
+}
+
+const TABS = {
+  arsenal: {
+    label: "Full Arsenal", heading: "Full Arsenal",
+    sections: [
+      { id: "costumes", title: "Costumes", intro: "A three-piece outfit only counts as one collectible once you have the head, body and hands. Tick each piece as you find it; the set ticks itself when complete.", groups: weaponGroups(COSTUME_LAYOUT) },
+      { id: "melee", title: "Melee Weapons", intro: "Swords, clubs, hammers, wands and staffs. Each counts as a single collectible.", groups: weaponGroups(range(88, 130)) },
+      { id: "ranged", title: "Ranged Weapons", intro: "Bows, crossbows, throwables and the Alien Ray Gun.", groups: weaponGroups(range(131, 153)) }
+    ],
+    filters: [["all", "All"], ["missing", "Missing"], ["partial", "Half-finished sets"], ["sell", "Ready to sell"], ["missable", "Missable"]],
+    placeholder: "Search, e.g. Kupa Keep",
+    tips: [
+      "The in-game counter is under <b>Collectibles &rsaquo; Equipment</b> and goes up to <b>103</b>. A costume set only adds one once you have all three pieces (Head, Body, Hands); the silhouettes show what you are missing.",
+      "You only need to have <b>owned</b> each item at some point. <b>Do not sell any piece until you have the whole set</b>. For example, with the Barbarian Helmet and Armor, wait for the Barbarian Gloves before selling.",
+      "Short on money after selling? Attack parking meters and newspaper dispensers around town, which drop cash. Equip armour patches that boost money, and run the route from the Post Office fast travel point to the one near the Photo Dojo store, then fast travel back to the Post Office to reset everything.",
+      "Going for <b>For the Hoarder</b> too? Do not sell anything until the credits roll."
+    ]
+  },
+  friends: {
+    label: "Friends", heading: "More Popular Than John Lennon",
+    sections: [
+      { id: "friends", title: "Friends", intro: "All 121 friend requests. The 12 Christmas Critters are grouped together with a tick for each one.", groups: friendGroups() }
+    ],
+    filters: [["all", "All"], ["missing", "Missing"], ["missable", "Missable"], ["story", "Main questline"], ["side", "Side content"]],
+    placeholder: "Search, e.g. sewer",
+    tips: [
+      "Some friends only appear once you hit a friend count: <b>Kelly Rutherford at 20</b>, <b>Lola at 40</b> and your <b>Dad at 50</b>. More Popular Than Jesus unlocks at 59.",
+      "<b>Clyde</b> unfriends you early, so the in-game list ends at 120. He still counts, so tick him here if you befriended him before talking to Cartman.",
+      "Missable friends are tied to one-off story moments. Check the Missable filter before each major quest.",
+      "Befriending the Underpants Gnome and the Crab Person also unlocks <b>Friends in Strange Places</b>."
+    ]
+  }
+};
+const TAB_IDS = Object.keys(TABS);
+TAB_IDS.forEach(t => { TABS[t].groups = TABS[t].sections.flatMap(s => s.groups); TABS[t].pieceCount = TABS[t].groups.reduce((a, g) => a + g.pieces.length, 0); });
+
+/* ---------- state ---------- */
+const KEY = "sot-collection-v1";
+function clean(s) {
+  const out = { got: {}, sold: {} };
+  if (!s || typeof s !== "object") return out;
+  if (s.got && typeof s.got === "object") for (const k in s.got) if (s.got[k] === true && /^[wf]\d+$/.test(k)) out.got[k] = true;
+  if (s.sold && typeof s.sold === "object") for (const k in s.sold) if (s.sold[k] === true) out.sold[k] = true;
+  return out;
+}
+let state = clean(null), tab = "arsenal", filter = "all", query = "";
+try { state = clean(JSON.parse(localStorage.getItem(KEY) || "null")); } catch (e) {}
+try { const t = localStorage.getItem(KEY + "-tab"); if (TABS[t]) tab = t; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+const got = g => g.pieces.filter(p => state.got[p.id]).length;
+const done = g => got(g) === g.pieces.length;
+
+/* ---------- render ---------- */
+const TICK = '<svg class="tick" viewBox="0 0 30 30" aria-hidden="true"><path class="t" d="M6 15 L12 22 L24 7"/><path class="dash" d="M8 15 L22 15"/></svg>';
+const TAG_HTML = { miss: '<span class="tag miss">Missable</span>', shop: '<span class="tag shop">Shop</span>', set: '<span class="tag set">Set of 3</span>',
+  set12: '<span class="tag set">12 critters</span>', story: '<span class="tag story">Story</span>', summon: '<span class="tag summon">Summon</span>' };
+
+function renderGroup(g) {
+  const numLabel = g.numLabel || (g.set ? "" : "#" + g.num);
+  const pieces = g.set ? `<ul class="pieces${g.compact ? " compact" : ""}">${g.pieces.map(p => `
+      <li class="piece" data-piece="${p.id}">
+        <div class="check-wrap small"><input type="checkbox" class="check" id="p-${p.id}" data-piece="${p.id}" aria-label="Mark ${esc(p.name)} as done">${TICK}</div>
+        <div>
+          <div class="piece-name">${p.slot ? `<span class="slot">${p.slot}</span>` : ""}<label for="p-${p.id}">${esc(p.name)}</label>${g.compact ? "" : ` <span class="num">#${p.num}</span>`}${p.miss ? ' <span class="tag miss">Missable</span>' : ""}</div>
+          ${p.desc ? `<p class="desc">${esc(p.desc)}</p>` : ""}
+          ${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}
+        </div>
+      </li>`).join("")}</ul>` : "";
+  return `<li class="group" data-key="${g.key}">
+    <div class="row">
+      <div class="check-wrap"><input type="checkbox" class="check" id="g-${g.key}" data-group="${g.key}" aria-label="Mark ${esc(g.name)} as done">${TICK}</div>
+      <div>
+        <div class="title-line">
+          <h3><label for="g-${g.key}">${esc(g.name)}</label></h3>
+          ${numLabel ? `<span class="num">${numLabel}</span>` : ""}
+          ${g.tags.map(t => TAG_HTML[t]).join("")}
+          ${g.set ? `<span class="pcount" data-pcount="${g.key}"></span>` : ""}
+        </div>
+        ${g.desc ? `<p class="desc">${esc(g.desc)}</p>` : ""}
+        ${!g.set && g.note ? `<p class="note">${esc(g.note)}</p>` : ""}
+        ${pieces}
+      </div>
+      ${g.sellable ? `<button class="sold-btn" data-sold="${g.key}" aria-pressed="false" hidden>Mark sold</button>` : ""}
+    </div>
+  </li>`;
+}
+
+function render() {
+  const T = TABS[tab];
+  document.getElementById("app-root").innerHTML = `
+  <header>
+    <h1>The Stick of Truth<br>Collection Checklist</h1>
+    <p>Every weapon, costume piece and friend request for Full Arsenal and More Popular Than John Lennon. Ticks save in this browser as you go.</p>
+    <svg class="mountains" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+      <path class="far" d="M0 90 L140 30 L260 70 L420 10 L560 60 L700 20 L860 65 L1010 15 L1200 70 L1200 90 Z"/>
+      <path class="cap" d="M420 10 L455 26 L440 30 L420 24 L398 31 L390 24 Z M1010 15 L1045 30 L1025 33 L1008 27 L990 34 L982 27 Z M700 20 L728 33 L712 36 L698 30 L684 35 L678 29 Z"/>
+      <path class="near" d="M0 90 L90 60 L230 85 L380 50 L520 88 L680 55 L840 86 L990 52 L1120 84 L1200 62 L1200 90 Z"/>
+    </svg>
+  </header>
+  <main>
+    <div class="progress-wrap" role="region" aria-label="Progress">
+      <div class="tabs" role="tablist">
+        ${TAB_IDS.map(t => `<button class="tab" role="tab" data-tab="${t}" aria-selected="${t === tab}">${TABS[t].label}</button>`).join("")}
+      </div>
+      <div class="progress-top">
+        <h2>${T.heading}</h2>
+        <div class="counts" id="counts"></div>
+      </div>
+      <div class="stick" role="progressbar" aria-label="${T.heading} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><div class="stick-fill" id="fill"></div></div>
+      <div class="controls">
+        ${T.filters.map(([f, l]) => `<button class="chip" data-filter="${f}" aria-pressed="${f === filter}">${l}</button>`).join("")}
+        <input type="search" class="search" id="search" placeholder="${T.placeholder}" aria-label="Search" value="${esc(query)}">
+      </div>
+      <div class="save-row">
+        <span class="save-status" id="save-status">Saved in this browser automatically.</span>
+        <button class="chip" id="export">Back up progress</button>
+        <button class="chip" id="import">Restore backup</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip reset" id="reset">Reset ${T.label}</button>
+      </div>
+    </div>
+
+    <div class="tips">
+      <h2>Before you start</h2>
+      <ul>${T.tips.map(t => `<li>${t}</li>`).join("")}</ul>
+    </div>
+
+    ${T.sections.map(sec => `
+    <section class="sheet" aria-labelledby="h-${sec.id}">
+      <div class="sheet-head">
+        <h2 id="h-${sec.id}">${sec.title}</h2>
+        <span class="sub" data-sub="${sec.id}"></span>
+      </div>
+      <p class="intro">${sec.intro}</p>
+      <ul class="groups">${sec.groups.map(renderGroup).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden></p>
+    </section>`).join("")}
+  </main>
+  <footer>
+    Lists and locations from the <a href="https://psnprofiles.com/guide/86-south-park-the-stick-of-truth-trophy-guide" target="_blank" rel="noopener">PSNProfiles trophy guide</a>.
+    Notes marked with a yellow line come from other community guides.
+  </footer>`;
+  wire();
+  update();
+}
+
+function wire() {
+  const root = document.getElementById("app-root");
+  const T = TABS[tab];
+  root.querySelectorAll("input[data-piece]").forEach(cb => cb.addEventListener("change", () => {
+    if (cb.checked) state.got[cb.dataset.piece] = true; else delete state.got[cb.dataset.piece];
+    const g = T.groups.find(x => x.pieces.some(p => p.id === cb.dataset.piece));
+    if (g && !done(g)) delete state.sold[g.key];
+    changed();
+  }));
+  root.querySelectorAll("input[data-group]").forEach(cb => cb.addEventListener("change", () => {
+    const g = T.groups.find(x => x.key === cb.dataset.group);
+    const fill = !done(g);
+    g.pieces.forEach(p => { if (fill) state.got[p.id] = true; else delete state.got[p.id]; });
+    if (!fill) delete state.sold[g.key];
+    changed();
+  }));
+  root.querySelectorAll(".sold-btn").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.sold;
+    if (state.sold[k]) delete state.sold[k]; else state.sold[k] = true;
+    changed();
+  }));
+  root.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => {
+    if (b.dataset.tab === tab) return;
+    tab = b.dataset.tab; filter = "all"; query = "";
+    try { localStorage.setItem(KEY + "-tab", tab); } catch (e) {}
+    render();
+  }));
+  root.querySelectorAll(".chip[data-filter]").forEach(chip => chip.addEventListener("click", () => {
+    filter = chip.dataset.filter;
+    root.querySelectorAll(".chip[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c === chip)));
+    update();
+  }));
+  document.getElementById("search").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); update(); });
+
+  let armTimer = null;
+  const reset = document.getElementById("reset");
+  reset.addEventListener("click", () => {
+    if (!reset.classList.contains("armed")) {
+      reset.classList.add("armed"); reset.textContent = "Tap again to clear this tab";
+      armTimer = setTimeout(() => { reset.classList.remove("armed"); reset.textContent = "Reset " + T.label; }, 3500);
+      return;
+    }
+    clearTimeout(armTimer);
+    T.groups.forEach(g => { g.pieces.forEach(p => delete state.got[p.id]); delete state.sold[g.key]; });
+    changed();
+    reset.classList.remove("armed"); reset.textContent = "Reset " + T.label;
+  });
+
+  document.getElementById("export").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "stick-of-truth-collection.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    status("Backup saved as stick-of-truth-collection.json.");
+  });
+  const fileInput = document.getElementById("import-file");
+  document.getElementById("import").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files[0];
+    if (!f) return;
+    f.text().then(txt => {
+      const data = JSON.parse(txt);
+      if (!data || typeof data !== "object" || !data.got) throw new Error();
+      state = clean(data); save(); render(); status("Backup restored.");
+    }).catch(() => status("That file isn't a checklist backup. Choose a stick-of-truth-collection.json file."));
+    fileInput.value = "";
+  });
+}
+
+let statusTimer = null;
+function status(msg) {
+  const el = document.getElementById("save-status");
+  el.textContent = msg;
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { el.textContent = "Saved in this browser automatically."; }, 4000);
+}
+
+function matches(g) {
+  const d = done(g), n = got(g);
+  if (filter === "missing" && d) return false;
+  if (filter === "partial" && !(g.set && n > 0 && !d)) return false;
+  if (filter === "sell" && !(d && !state.sold[g.key])) return false;
+  if (filter === "missable" && !g.pieces.some(p => p.miss) && !g.tags.includes("miss")) return false;
+  if (filter === "story" && !g.tags.includes("story")) return false;
+  if (filter === "side" && g.tags.includes("story")) return false;
+  if (query) {
+    const hay = (g.name + " " + (g.desc || "") + " " + g.pieces.map(p => p.name + " " + p.desc + " " + (p.note || "")).join(" ")).toLowerCase();
+    if (!hay.includes(query)) return false;
+  }
+  return true;
+}
+
+function update() {
+  const T = TABS[tab];
+  let col = 0, pieces = 0, sold = 0;
+  T.sections.forEach(sec => {
+    let sDone = 0, visible = 0;
+    sec.groups.forEach(g => {
+      const n = got(g), d = n === g.pieces.length;
+      pieces += n;
+      if (d) { col++; sDone++; }
+      const isSold = d && !!state.sold[g.key];
+      if (isSold) sold++;
+      const li = document.querySelector(`li.group[data-key="${g.key}"]`);
+      li.classList.toggle("complete", d && !isSold);
+      li.classList.toggle("sold", isSold);
+      const gcb = document.getElementById("g-" + g.key);
+      gcb.checked = d; gcb.indeterminate = n > 0 && !d;
+      if (g.set) {
+        li.querySelector(`[data-pcount="${g.key}"]`).textContent = `${n} / ${g.pieces.length}${g.compact ? "" : " pieces"}`;
+        g.pieces.forEach(p => {
+          document.getElementById("p-" + p.id).checked = !!state.got[p.id];
+          li.querySelector(`li.piece[data-piece="${p.id}"]`).classList.toggle("got", !!state.got[p.id]);
+        });
+      }
+      const sb = li.querySelector(".sold-btn");
+      if (sb) {
+        sb.hidden = !d;
+        sb.setAttribute("aria-pressed", String(isSold));
+        sb.textContent = isSold ? "Sold ✓" : "Mark sold";
+      }
+      const show = matches(g);
+      li.classList.toggle("hidden", !show);
+      if (show) visible++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = tab === "friends" ? "" : `${sDone} / ${sec.groups.length}`;
+    const empty = document.querySelector(`[data-empty="${sec.id}"]`);
+    empty.hidden = visible > 0;
+    empty.textContent = query ? "No matches in this section." : filter === "missing" ? "Everything here is done." : "Nothing here for this filter.";
+  });
+  let pct, html;
+  if (tab === "arsenal") {
+    pct = Math.round(col / T.groups.length * 100);
+    html = `<span>${col} / ${T.groups.length} <small>collectibles</small></span><span>${pieces} / ${T.pieceCount} <small>pieces</small></span><span>${sold} <small>sold</small></span>`;
+  } else {
+    pct = Math.round(pieces / T.pieceCount * 100);
+    html = `<span>${pieces} / ${T.pieceCount} <small>friends</small></span>`;
+  }
+  document.getElementById("counts").innerHTML = html;
+  document.getElementById("fill").style.width = pct + "%";
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+function changed() { save(); update(); }
+
+render();
+})();
+</script>
+<!-- hub:body -->
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../index.html"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

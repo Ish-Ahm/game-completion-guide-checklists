@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1220">
+<title>The Stick of Truth</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #1a1220; }
+  body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
+  .bar { position: relative; flex: none; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    padding: calc(env(safe-area-inset-top, 0px) + .5rem) max(.75rem, env(safe-area-inset-right, 0px)) .5rem max(.75rem, env(safe-area-inset-left, 0px));
+    background: linear-gradient(90deg, rgba(20,10,24,.9), rgba(20,10,24,.55)), url("img/stick-of-truth-hero.webp") center 40% / cover; }
+  .bar h1 { margin: 0; font-size: 1.05rem; font-weight: 800; letter-spacing: .01em; text-shadow: 0 1px 3px #000;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .tabs { display: flex; flex: none; padding: 3px; border-radius: 999px; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.2); }
+  .tabs button { font: inherit; font-weight: 700; font-size: .9rem; color: #fff; background: none; border: 0; cursor: pointer;
+    min-height: 40px; padding: 0 1rem; border-radius: 999px; -webkit-tap-highlight-color: transparent; }
+  .tabs button[aria-selected="true"] { background: #f2bd4b; color: #2b2118; }
+  .tabs button:focus-visible { outline: 3px solid #7cc4ff; outline-offset: 1px; }
+  .panes { position: relative; flex: 1; min-height: 0; }
+  .panes iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #8ec5f0; }
+  .panes iframe[hidden] { display: none; }
+  .hub-spacer { display: none; }
+  @media (max-width: 380px) { .bar h1 { display: none; } .bar { justify-content: center; } }
+</style>
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<div class="bar">
+  <h1>The Stick of Truth</h1>
+  <div class="tabs" role="tablist" aria-label="Checklist">
+    <button role="tab" id="t-missables" aria-controls="p-missables" data-src="sot-missables.html">Missables</button>
+    <button role="tab" id="t-collection" aria-controls="p-collection" data-src="sot-collection.html">Collection</button>
+  </div>
+</div>
+<div class="panes">
+  <iframe id="p-missables" role="tabpanel" aria-labelledby="t-missables" title="Missable trophies" hidden></iframe>
+  <iframe id="p-collection" role="tabpanel" aria-labelledby="t-collection" title="Collection" hidden></iframe>
+</div>
+<script>
+(function () {
+  var KEY = "sot-hub-tab";
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(name, focus) {
+    tabs.forEach(function (b) {
+      var on = b.id === "t-" + name, pane = document.getElementById(b.getAttribute("aria-controls"));
+      b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1;
+      if (on && !pane.getAttribute("src")) pane.src = b.dataset.src;
+      pane.hidden = !on;
+      if (on && focus) b.focus();
+    });
+    try { localStorage.setItem(KEY, name); } catch (e) {}
+  }
+  tabs.forEach(function (b, i) {
+    b.addEventListener("click", function () { show(b.id.slice(2)); });
+    b.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      var n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      show(n.id.slice(2), true); e.preventDefault();
+    });
+  });
+  var start = location.hash === "#collection" ? "collection" : location.hash === "#missables" ? "missables" : null;
+  if (!start) { try { start = localStorage.getItem(KEY); } catch (e) {} }
+  show(start === "collection" ? "collection" : "missables");
+})();
+</script>
+<!-- hub:body -->
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../index.html"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

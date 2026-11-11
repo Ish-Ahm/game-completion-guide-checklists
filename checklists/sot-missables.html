@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stick of Truth: Missable Trophy Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #8ec5f0;
+    --sky-deep: #5fa6de;
+    --snow: #ffffff;
+    --paper: #fffdf7;
+    --ink: #2b2118;
+    --ink-soft: #5d5047;
+    --red: #c4382f;
+    --gold: #d99a1c;
+    --silver: #8e9aa6;
+    --bronze: #b0673a;
+    --pine: #2f6b4f;
+    --done-bg: #eaf5ee;
+    --shadow: #2b2118;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sky: #16243a; --sky-deep: #0f1a2b; --snow: #dfe8f3; --paper: #22324a;
+      --ink: #eef3fa; --ink-soft: #b3c0d0; --red: #ff6b5e; --gold: #f2bd4b;
+      --silver: #b9c4cf; --bronze: #d88a5c; --pine: #6fcf9d; --done-bg: #1f3d35;
+      --shadow: #07101c; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --sky: #16243a; --sky-deep: #0f1a2b; --snow: #dfe8f3; --paper: #22324a;
+    --ink: #eef3fa; --ink-soft: #b3c0d0; --red: #ff6b5e; --gold: #f2bd4b;
+    --silver: #b9c4cf; --bronze: #d88a5c; --pine: #6fcf9d; --done-bg: #1f3d35;
+    --shadow: #07101c; color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--sky); color: var(--ink);
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: "Chewy", "Comic Sans MS", "Trebuchet MS", cursive; font-weight: 400; margin: 0; }
+
+  /* Hero */
+  header { position: relative; padding: 2.5rem 1.25rem 0; text-align: center; overflow: hidden; }
+  header h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); line-height: 1.05; color: var(--snow); text-shadow: 3px 3px 0 var(--shadow); letter-spacing: .01em; }
+  header p { max-width: 36rem; margin: .75rem auto 0; color: var(--ink); font-weight: 600; }
+  .mountains { display: block; width: 100%; height: 90px; margin-top: 1.5rem; }
+  .mountains .far { fill: var(--sky-deep); }
+  .mountains .near { fill: var(--pine); }
+  .mountains .cap { fill: var(--snow); }
+
+  main { max-width: 52rem; margin: 0 auto; padding: 0 1rem 4rem; }
+
+  /* Progress: the stick */
+  .progress-wrap {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 14px;
+    box-shadow: 4px 4px 0 var(--shadow); padding: .9rem 1rem; margin: -1.25rem 0 1.5rem;
+  }
+  .progress-top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+  .progress-top h2 { font-size: 1.35rem; }
+  .count { font-weight: 800; }
+  .stick { margin-top: .6rem; height: 18px; border: 3px solid var(--ink); border-radius: 999px; background: var(--sky); overflow: hidden; }
+  .stick-fill {
+    height: 100%; width: 0%; background:
+      repeating-linear-gradient(115deg, #8a5a2b 0 10px, #a8743f 10px 20px);
+    transition: width .45s ease;
+  }
+  .controls { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
+  .chip {
+    font: inherit; font-weight: 800; font-size: .9rem; cursor: pointer;
+    padding: .35rem .85rem; border-radius: 999px; border: 2px solid var(--ink);
+    background: transparent; color: var(--ink);
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .chip.reset { margin-left: auto; border-color: var(--red); color: var(--red); }
+  .chip:focus-visible, .guide-btn:focus-visible, .check:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  /* Sections as construction-paper sheets */
+  section.sheet {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 6px 18px 8px 14px;
+    box-shadow: 5px 5px 0 var(--shadow); padding: 1.25rem 1.25rem .5rem; margin-bottom: 1.75rem;
+  }
+  section.sheet:nth-of-type(1) { transform: rotate(-.35deg); }
+  section.sheet:nth-of-type(2) { transform: rotate(.3deg); }
+  section.sheet:nth-of-type(3) { transform: rotate(-.2deg); }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.9rem; color: var(--red); }
+  .sheet-head .sub { font-weight: 800; color: var(--ink-soft); }
+  .sheet > p.intro { margin: .35rem 0 .75rem; color: var(--ink-soft); max-width: 42rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 2px dashed color-mix(in srgb, var(--ink) 25%, transparent); padding: .85rem 0; }
+  li.item.done .row { background: var(--done-bg); }
+  li.item.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .8rem; align-items: start; border-radius: 10px; padding: .35rem .4rem; transition: background .2s; }
+
+  .check {
+    appearance: none; -webkit-appearance: none; margin: .15rem 0 0; width: 30px; height: 30px; cursor: pointer;
+    border: 3px solid var(--ink); border-radius: 6px 9px 5px 8px; background: var(--paper); position: relative; flex: none;
+  }
+  .tick { position: absolute; inset: 0; pointer-events: none; }
+  .check-wrap { position: relative; width: 30px; height: 30px; margin-top: .15rem; }
+  .check-wrap .check { margin: 0; }
+  .tick path { stroke: var(--pine); stroke-width: 4.5; fill: none; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 40; stroke-dashoffset: 40; transition: stroke-dashoffset .3s ease; }
+  .check:checked + .tick path { stroke-dashoffset: 0; }
+
+  .title-line { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .title-line h3 { font-size: 1.3rem; line-height: 1.2; }
+  li.item.done h3 { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--ink-soft); }
+  .tier { display: inline-flex; align-items: center; gap: .25rem; font-size: .8rem; font-weight: 800; padding: .05rem .5rem .05rem .3rem; border-radius: 999px; border: 2px solid currentColor; }
+  .tier svg { width: 14px; height: 14px; fill: currentColor; }
+  .tier.bronze { color: var(--bronze); } .tier.silver { color: var(--silver); } .tier.gold { color: var(--gold); }
+  .when { font-size: .85rem; font-weight: 700; color: var(--ink-soft); }
+  .desc { margin: .2rem 0 0; }
+  .guide-btn {
+    font: inherit; font-weight: 800; font-size: .9rem; margin-top: .4rem; cursor: pointer;
+    background: none; border: none; padding: .1rem 0; color: var(--red); text-decoration: underline; text-underline-offset: 3px;
+  }
+  .guide { margin: .5rem 0 0; padding: .75rem .9rem; border-left: 4px solid var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); border-radius: 0 8px 8px 0; }
+  .guide[hidden] { display: none; }
+  .guide ol, .guide ul { margin: 0; padding-left: 1.2rem; }
+  .guide li + li { margin-top: .3rem; }
+  .guide .tip { margin: .6rem 0 0; font-weight: 700; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 700; padding: .5rem 0 1rem; display: none; }
+  .empty.show { display: block; }
+
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .9rem; }
+  footer a { color: var(--ink); font-weight: 800; }
+
+  @media (max-width: 520px) {
+    section.sheet { transform: none !important; padding: 1rem .85rem .4rem; }
+    .chip.reset { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stick-fill, .tick path, .row { transition: none; }
+  }
+</style>
+<meta name="theme-color" content="#0f1115">
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <h1>The Stick of Truth<br>Missable Trophies</h1>
+  <p>Tick them off as you go. Your progress is saved in this browser, so you can close the page and come back.</p>
+  <svg class="mountains" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+    <path class="far" d="M0 90 L140 30 L260 70 L420 10 L560 60 L700 20 L860 65 L1010 15 L1200 70 L1200 90 Z"/>
+    <path class="cap" d="M420 10 L455 26 L440 30 L420 24 L398 31 L390 24 Z M1010 15 L1045 30 L1025 33 L1008 27 L990 34 L982 27 Z M700 20 L728 33 L712 36 L698 30 L684 35 L678 29 Z"/>
+    <path class="near" d="M0 90 L90 60 L230 85 L380 50 L520 88 L680 55 L840 86 L990 52 L1120 84 L1200 62 L1200 90 Z"/>
+  </svg>
+</header>
+
+<main>
+  <div class="progress-wrap" role="region" aria-label="Progress">
+    <div class="progress-top">
+      <h2>Your progress</h2>
+      <span class="count" id="count">0 of 0 done</span>
+    </div>
+    <div class="stick" role="progressbar" aria-labelledby="count" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><div class="stick-fill" id="fill"></div></div>
+    <div class="controls">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="todo" aria-pressed="false">Still to do</button>
+      <button class="chip" data-filter="done" aria-pressed="false">Done</button>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+      <button class="chip local-only" id="export" hidden>Back up progress</button>
+      <button class="chip local-only" id="import" hidden>Restore backup</button>
+      <input type="file" id="import-file" accept=".json,application/json" hidden>
+      <button class="chip reset" id="reset">Reset checklist</button>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+</main>
+
+<footer>
+  Trophy list based on the missables section of the
+  <a href="https://psnprofiles.com/guide/86-south-park-the-stick-of-truth-trophy-guide" target="_blank" rel="noopener">PSNProfiles trophy guide</a>.
+  Guides summarised from several community trophy guides.
+</footer>
+
+<script>
+const TROPHY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h12v2h3v3a5 5 0 0 1-5 5h-.4A6 6 0 0 1 13 14.9V18h3v2H8v-2h3v-3.1A6 6 0 0 1 8.4 12H8a5 5 0 0 1-5-5V4h3V2zm0 4H5v1a3 3 0 0 0 1.4 2.5A6 6 0 0 1 6 8V6zm12 0v2c0 .5 0 1-.1 1.5A3 3 0 0 0 19 7V6h-1z"/></svg>';
+
+const DATA = [
+  {
+    id: "story", title: "The Story",
+    intro: "One-time chances tied to specific story moments. Keep a separate save file before each of these.",
+    items: [
+      { id: "acceptance", name: "Acceptance", tier: "bronze", when: "Very start, Cartman's backyard",
+        desc: "Accept the name Cartman gives you.",
+        guide: ["When you are asked for your name at the Kupa Keep, Cartman overrides it with his own choice.", "Answer yes both times he asks you to confirm it.", "This is the first thing you do in the game, so if you missed it you will need a new save."] },
+      { id: "heisenberg", name: "Heisenberg", tier: "bronze", when: "Call the Banners: Hot Coffee (Tweek)",
+        desc: "Defeat the Meth Tweekers while wearing the Evil Cartman goatee and bald cap.",
+        guide: ["Grab the Evil Cartman Goatee from the first cabinet you open in Cartman's house.", "Grab the Bald Cap from Kevin Stoley's house.", "Equip both before the fight against the Meth Tweekers in Kenny's garage during the Hot Coffee part of Call the Banners.", "This fight only happens once."] },
+      { id: "gingivitis", name: "Gingivitis", tier: "bronze", when: "Call the Banners: Detention Sentence",
+        desc: "Get bitten by gingers three times without blocking.",
+        guide: ["During your first visit to the school, fight the ginger Hall Monitors.", "When they use their bite attack, deliberately skip the block prompt.", "Three unblocked bites unlock it. Keep potions handy so you do not lose the fight."] },
+      { id: "daywalker", name: "Day Walker", tier: "bronze", when: "Call the Banners: Detention Sentence",
+        desc: "Defeat the Boss Hall Monitor while wearing freckles.",
+        guide: ["Before the Boss Hall Monitor fight at the end of your first school visit, open your wardrobe and equip Freckles in the make-up slot.", "Win the fight with them still equipped.", "Afterwards, loot the boss for a locker key: the locker just to the left holds the Mace of Restoration (needed for Full Arsenal)."] },
+      { id: "dragonwrath", name: "Dragon Wrath", tier: "bronze", when: "Second school visit is easiest",
+        desc: "Knock out three or more enemies with a single fart outside of battle.",
+        guide: ["Use the Dragonshout fart on a group of enemies standing close together in the overworld.", "The first wooden barricade on your second visit to the school is a reliable spot with a tight group.", "Note it has to knock them out, not just hit them. You have a few chances, but it cannot be done after the story ends."] },
+      { id: "kkkhero", name: "KKK Hero", tier: "silver", when: "Second school visit (choice)",
+        desc: "Side with Cartman and the humans, and defeat Kyle.",
+        guide: ["Make a manual save right before you choose a side at the school.", "Pick the humans and defeat Kyle to unlock this one.", "Then reload that save for Elven Hero."] },
+      { id: "elvenhero", name: "Elven Hero", tier: "silver", when: "Second school visit (choice)",
+        desc: "Side with Kyle and the elves, and defeat Cartman.",
+        guide: ["Reload the save you made before the choice.", "Pick the elves this time and defeat Cartman.", "You can then carry on with whichever save you prefer."] },
+      { id: "perverted", name: "Perverted", tier: "bronze", when: "Underpants Gnomes quest (night)",
+        desc: "Watch your parents in the act for 60 seconds.",
+        guide: ["While shrunk by the Underpants Gnomes' dust, you chase them through the walls into your parents' bedroom.", "You will end up on the dresser facing the bed.", "Stand still and let it play out for a full minute before moving on."] },
+      { id: "toofar", name: "Too Far", tier: "bronze", when: "Unplanned Parenthood clinic",
+        desc: "Fart on the corpse of an aborted Nazi Zombie fetus.",
+        guide: ["During the quest at the Unplanned Parenthood clinic, you fight Nazi Zombie fetuses.", "After a fight, fart on one of the fetus corpses on the floor.", "While here, also look for Fetuswami: shoot the grenade a soldier is holding to open a hole you can shrink into (for Chinpokolypse)."] },
+      { id: "truthtopower", name: "Truth to Power", tier: "bronze", when: "Finishes in Canada",
+        desc: "Fart on four major authority figures.",
+        guide: ["Father Maxi: sitting on a bench outside City Hall.", "Mayor McDaniels: at her desk inside City Hall. Use Cup-A-Spell aimed at her face, as the desk blocks regular farts.", "Principal Victoria: inside the Community Center, which opens up through the Goth kids' quests.", "Minister of Montreal: in the caves in Canada (you need the Nagasaki fart to reach him). He is the missable one and vanishes after you talk to him, so fart on him first."],
+        tip: "Do the three South Park figures first so the Minister is the last one. Fart on each a couple of times, as the trophy is known to register unreliably." }
+    ]
+  },
+  {
+    id: "throughout", title: "Throughout the Game",
+    intro: "Trophies you work towards across the whole playthrough. Most lock for good once the main story ends.",
+    items: [
+      { id: "lennon", name: "More Popular Than John Lennon", tier: "gold", when: "From the very beginning",
+        desc: "Make every possible friend.",
+        guide: ["Talk to everyone you meet and accept every friend request, including side quests that end with a friendship.", "Some friends are only available during certain story sections, so be thorough before advancing.", "This trophy is known to glitch, so keep separate saves along the way."] },
+      { id: "chinpokolypse", name: "Chinpokolypse", tier: "gold", when: "From early on",
+        desc: "Collect all 30 Chinpokomon.",
+        guide: ["Several are in areas you only visit once. A few examples:", "Roidrat: in Jimmy's attic during the Giggling Donkey quest, just after you break the barrier.", "Fetuswami: at the Unplanned Parenthood clinic, through the hole made by shooting a soldier's grenade (needs Gnome Dust).", "Mouse-Tik: in the girls' clubhouse after their final quest, on the floor to the left, before you ask to be blindfolded.", "Gunrilla: in the meeting room of the mall construction site, left of the tape recorder."],
+        tip: "Use a missable collectibles walkthrough as you play, as this one is also reported to glitch." },
+      { id: "arsenal", name: "Full Arsenal", tier: "bronze", when: "From early on",
+        desc: "Collect every weapon in the game.",
+        guide: ["Loot everything and check every locked container before leaving an area.", "Dodgeball: dropped by the ginger kid in the school halls who also carries the brass key.", "Mace of Restoration: in the locker opened by the key from the Boss Hall Monitor.", "Elvish Shortbow: from one of the three elves blocking your escape from Jimmy's basement."] },
+      { id: "hoarder", name: "For the Hoarder", tier: "bronze", when: "Until the credits",
+        desc: "Complete the game without selling any items.",
+        guide: ["Never sell anything, including junk, until the story is finished.", "Selling junk for Junk Peddler and spending money can all be done after the credits."] },
+      { id: "nochild", name: "No Child Left Behind", tier: "bronze", when: "Until the credits",
+        desc: "Complete the game without ever ending a battle with your buddy knocked out.",
+        guide: ["If your buddy goes down, revive them before the final enemy falls.", "Stock up on revival items, as the game hands out plenty.", "If a fight ends badly, reload rather than carrying on."] },
+      { id: "mastery", name: "Mastery", tier: "bronze", when: "Before you hit the level cap",
+        desc: "Fully upgrade one of your abilities.",
+        guide: ["Pour your ability points into one ability until it reaches its maximum rank.", "If you spread points evenly across everything you can run out before any single ability is maxed."] },
+      { id: "rebuttal", name: "Re-Buttal", tier: "bronze", when: "Any time before the credits",
+        desc: "Interrupt five channelled attacks with a fart.",
+        guide: ["When an enemy starts channelling (charging up a special attack), hit them with a fart ability to interrupt it.", "The first Underpants Gnomes fight is a great spot: you are nearly invincible early on, so you can wait for gnomes to channel and interrupt them repeatedly.", "The count builds across the whole game."] },
+      { id: "bowels", name: "Irritable Bowels", tier: "bronze", when: "Any boss fight",
+        desc: "Soil yourself during a boss battle.",
+        guide: ["During a boss fight, use a fart ability and deliberately push the fart meter too far so you mess yourself up instead.", "The Boss Hall Monitor or the Giggling Donkey fight are both early chances.", "It must be during a boss battle, and there are no boss fights once the story is done."] }
+    ]
+  },
+  {
+    id: "final", title: "Before the Final Quest",
+    intro: "All four of these can be earned together in the fight with Princess Kenny. Make a separate save before the Siege on Clyde's Fortress.",
+    items: [
+      { id: "outpatient", name: "Outpatient", tier: "bronze", when: "Canada, then the final boss",
+        desc: "Defeat Princess Kenny while living with Dire AIDS.",
+        guide: ["In Canada, fight Dire animals (wolves, snakes or bears) and let them bite you without blocking until you catch Dire AIDS.", "Do not get it cured at the hospital in Ottawa.", "It drains a little health each turn in battle, so bring plenty of healing potions to the final fight."] },
+      { id: "insidejoke", name: "Inside Joke", tier: "bronze", when: "Final quest",
+        desc: "Summon Mr. Slave while inside Mr. Slave.",
+        guide: ["Make sure you have Mr. Slave unlocked as a summon.", "During the final quest there is a section where you end up inside Mr. Slave. Use his summon there."] },
+      { id: "facehoff", name: "Face Hoff", tier: "bronze", when: "Before the final boss",
+        desc: "Defeat Princess Kenny after getting the Hasselhoff nose job.",
+        guide: ["Visit Tom's Rhinoplasty and buy The Hasselhoff nose job (around $175).", "Keep it for the fight against Princess Kenny."] },
+      { id: "twogirls", name: "Two Girls, One Stick", tier: "bronze", when: "Final boss",
+        desc: "Defeat Princess Kenny in your girl makeover disguise.",
+        guide: ["Keep every piece of the makeover you get from the girls' quest: dress, gloves, wig and make-up.", "The game changes your outfit during the siege, so re-equip the full disguise right before the Princess Kenny fight.", "Turn off any glasses or moustache you might have on, just to be safe."] }
+    ]
+  }
+];
+
+const KEY = "sot-missables-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let filter = "all";
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+function render() {
+  const root = document.getElementById("sections");
+  root.innerHTML = DATA.map(sec => `
+    <section class="sheet" aria-labelledby="h-${sec.id}">
+      <div class="sheet-head">
+        <h2 id="h-${sec.id}">${sec.title}</h2>
+        <span class="sub" data-sub="${sec.id}"></span>
+      </div>
+      <p class="intro">${sec.intro}</p>
+      <ul class="items">
+        ${sec.items.map(it => `
+          <li class="item" data-id="${it.id}">
+            <div class="row">
+              <div class="check-wrap">
+                <input type="checkbox" class="check" id="c-${it.id}" aria-label="Mark ${esc(it.name)} as done">
+                <svg class="tick" viewBox="0 0 30 30" aria-hidden="true"><path d="M6 15 L12 22 L24 7"/></svg>
+              </div>
+              <div>
+                <div class="title-line">
+                  <h3><label for="c-${it.id}">${esc(it.name)}</label></h3>
+                  <span class="tier ${it.tier}">${TROPHY}${it.tier[0].toUpperCase() + it.tier.slice(1)}</span>
+                </div>
+                <div class="when">${esc(it.when)}</div>
+                <p class="desc">${esc(it.desc)}</p>
+                <button class="guide-btn" aria-expanded="false" aria-controls="g-${it.id}">Show guide</button>
+                <div class="guide" id="g-${it.id}" hidden>
+                  <ol>${it.guide.map(g => `<li>${esc(g)}</li>`).join("")}</ol>
+                  ${it.tip ? `<p class="tip">${esc(it.tip)}</p>` : ""}
+                </div>
+              </div>
+            </div>
+          </li>`).join("")}
+      </ul>
+      <p class="empty" data-empty="${sec.id}"></p>
+    </section>`).join("");
+
+  root.querySelectorAll(".check").forEach(cb => {
+    const id = cb.id.slice(2);
+    cb.checked = !!state[id];
+    cb.addEventListener("change", () => { state[id] = cb.checked; if (!cb.checked) delete state[id]; save(); update(); });
+  });
+  root.querySelectorAll(".guide-btn").forEach(btn => {
+    btn.addEventListener("click", () => toggleGuide(btn));
+  });
+  update();
+}
+
+function toggleGuide(btn, force) {
+  const panel = document.getElementById(btn.getAttribute("aria-controls"));
+  const open = force !== undefined ? force : panel.hidden;
+  panel.hidden = !open;
+  btn.setAttribute("aria-expanded", String(open));
+  btn.textContent = open ? "Hide guide" : "Show guide";
+}
+
+function update() {
+  let total = 0, done = 0;
+  DATA.forEach(sec => {
+    let sDone = 0, visible = 0;
+    sec.items.forEach(it => {
+      total++;
+      const isDone = !!state[it.id];
+      if (isDone) { done++; sDone++; }
+      const li = document.querySelector(`li.item[data-id="${it.id}"]`);
+      li.classList.toggle("done", isDone);
+      const hide = (filter === "todo" && isDone) || (filter === "done" && !isDone);
+      li.classList.toggle("hidden", hide);
+      if (!hide) visible++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sDone} / ${sec.items.length}`;
+    const empty = document.querySelector(`[data-empty="${sec.id}"]`);
+    empty.classList.toggle("show", visible === 0);
+    empty.textContent = filter === "todo" ? "Everything in this section is done." : "Nothing ticked off here yet.";
+  });
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById("count").textContent = `${done} of ${total} done`;
+  document.getElementById("fill").style.width = pct + "%";
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+document.querySelectorAll(".chip[data-filter]").forEach(chip => {
+  chip.addEventListener("click", () => {
+    filter = chip.dataset.filter;
+    document.querySelectorAll(".chip[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c === chip)));
+    update();
+  });
+});
+
+document.getElementById("expand").addEventListener("click", e => {
+  const btn = e.currentTarget;
+  const open = btn.getAttribute("aria-pressed") !== "true";
+  btn.setAttribute("aria-pressed", String(open));
+  btn.textContent = open ? "Hide all guides" : "Show all guides";
+  document.querySelectorAll(".guide-btn").forEach(b => toggleGuide(b, open));
+});
+
+document.getElementById("reset").addEventListener("click", () => {
+  if (confirm("Untick every trophy on this checklist?")) { state = {}; save(); render(); }
+});
+
+// Backup and restore, shown only when the page is opened as a local file
+if (location.protocol === "file:") {
+  document.querySelectorAll(".local-only").forEach(b => b.hidden = false);
+
+  document.getElementById("export").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "stick-of-truth-progress.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  const fileInput = document.getElementById("import-file");
+  document.getElementById("import").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files[0];
+    if (!f) return;
+    f.text().then(txt => {
+      const data = JSON.parse(txt);
+      if (typeof data !== "object" || data === null || Array.isArray(data)) throw new Error();
+      state = {};
+      Object.keys(data).forEach(k => { if (data[k] === true) state[k] = true; });
+      save(); render();
+    }).catch(() => alert("That file isn't a valid checklist backup. Choose a stick-of-truth-progress.json file."));
+    fileInput.value = "";
+  });
+}
+
+render();
+</script>
+<!-- hub:body -->
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../index.html"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vanquish 100%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* Single dark HUD look, set explicitly. */
+  :root {
+    --bg: #070b0f; --bg-2: #0d141a; --card: #101920; --card-2: #16222b; --ink: #e4eff3; --ink-soft: #8ea3ae;
+    --cyan: #3fd2e8; --cyan-dim: rgba(63, 210, 232, .16); --ars: #8ae35c; --red: #ff5252; --amber: #ffb22e; --violet: #b78cff;
+    --line: rgba(142, 163, 174, .2); --done-bg: rgba(138, 227, 92, .09);
+    padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.55; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+  h1, h2, .hud { font-family: "Chakra Petch", "Rajdhani", "Segoe UI", sans-serif; }
+  h3 { font-weight: 600; font-size: 1.08rem; line-height: 1.3; }
+  a { color: var(--cyan); }
+
+  header { position: relative; overflow: hidden; padding: 2.6rem 1rem 3rem; text-align: center; border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(80% 120% at 50% 0%, rgba(63, 210, 232, .18), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(63, 210, 232, .05) 0 1px, transparent 1px 4px), var(--bg); }
+  .eyebrow { font-family: "Chakra Petch", sans-serif; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--cyan); font-size: .8rem; }
+  header h1 { font-size: clamp(2.8rem, 11vw, 5.6rem); font-weight: 700; letter-spacing: .12em; line-height: 1; margin-top: .35rem; color: #f2fbff;
+    text-shadow: 0 0 22px rgba(63, 210, 232, .45); }
+  header p { max-width: 38rem; margin: .9rem auto 0; color: #c3d3da; }
+
+  main { max-width: 58rem; margin: 0 auto; padding: 0 1rem 4rem; }
+
+  .panel { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; margin: -1.4rem 0 1.4rem; padding: .85rem 1rem;
+    background: var(--card); border: 1px solid rgba(63, 210, 232, .35); clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); }
+  .tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .7rem; }
+  .tab { font-family: "Chakra Petch", sans-serif; font-weight: 600; font-size: .95rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+    padding: .25rem .9rem; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); }
+  .tab[aria-selected="true"] { background: var(--cyan); border-color: var(--cyan); color: #04161a; }
+  .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
+  .panel-top h2 { font-size: 1.05rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .count { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+  .count small { font-family: "IBM Plex Sans", sans-serif; font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  /* ARS reactor meter */
+  .meter { margin-top: .5rem; height: 14px; border: 1px solid rgba(138, 227, 92, .5); background: #0a120c; position: relative; overflow: hidden; }
+  .meter-fill { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .45s ease;
+    background: repeating-linear-gradient(90deg, var(--ars) 0 9px, rgba(0,0,0,.35) 9px 11px); box-shadow: 0 0 10px rgba(138, 227, 92, .5); }
+  .controls { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .75rem; }
+  .chip { font: inherit; font-weight: 600; font-size: .85rem; cursor: pointer; padding: .2rem .7rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .search { font: inherit; font-size: .95rem; flex: 1 1 11rem; min-width: 0; padding: .24rem .7rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .save-row { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .65rem; padding-top: .6rem; border-top: 1px solid var(--line); font-size: .9rem; }
+  .save-status { color: var(--ink-soft); flex: 1 1 12rem; }
+  .seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; }
+  .seg button { font: inherit; font-size: .82rem; font-weight: 600; padding: .2rem .6rem; border: 0; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--cyan); color: #04161a; }
+  .chip.reset { color: var(--red); border-color: rgba(255, 82, 82, .5); }
+  .chip.reset.armed { background: var(--red); color: #fff; }
+  button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+  .banner { border-left: 3px solid var(--cyan); background: var(--bg-2); padding: .7rem 1rem; margin-bottom: 1.3rem; display: grid; gap: .25rem; }
+  .banner b { color: var(--cyan); }
+  .jumps { display: flex; gap: .35rem; flex-wrap: wrap; margin: 0 0 1.4rem; }
+  .jump { font-size: .85rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .18rem .6rem; background: var(--card); border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .jump span { color: var(--ink-soft); }
+  .jump:hover { border-color: var(--cyan); }
+
+  section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 2px solid var(--cyan); padding: 1.1rem 1.2rem .5rem; margin-bottom: 1.6rem; scroll-margin-top: 1rem; }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .4rem 1rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.55rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #f2fbff; }
+  .sheet-head .sub { font-family: "Chakra Petch", sans-serif; font-weight: 600; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .25rem 0 .6rem; color: var(--ink-soft); max-width: 46rem; }
+
+  .act-head { margin: 1.1rem 0 .2rem; padding: .55rem .7rem; background: var(--bg-2); border-left: 3px solid var(--amber); scroll-margin-top: 1rem; }
+  .act-head h3 { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: .08em; text-transform: uppercase; color: var(--amber); }
+  .act-head h3 span { color: var(--ink-soft); font-size: .85rem; letter-spacing: .04em; font-weight: 600; }
+  .also { margin-top: .3rem; font-size: .88rem; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: .3rem .35rem; align-items: center; }
+  .also a { font-size: .8rem; font-weight: 600; text-decoration: none; padding: .02rem .45rem; border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+  .also a.done { color: var(--ars); border-color: rgba(138, 227, 92, .45); }
+  .also a small { color: var(--amber); font-weight: 700; margin-left: .25rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 1px solid var(--line); padding: .7rem 0; scroll-margin-top: 1rem; }
+  li.item.hidden, .act-head.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .75rem; align-items: start; padding: .4rem .45rem; transition: background .2s; }
+  .row > div { min-width: 0; }
+  li.item.done > .row { background: var(--done-bg); }
+  .flash > .row, .stage.flash, .act-head.flash { outline: 2px solid var(--amber); }
+
+  /* hexagonal check */
+  .check-wrap { position: relative; width: 28px; height: 28px; margin-top: .1rem; }
+  .check-wrap.small { width: 20px; height: 20px; }
+  .check { appearance: none; -webkit-appearance: none; margin: 0; width: 100%; height: 100%; cursor: pointer; background: #24333d;
+    clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%); transition: background .2s; }
+  .check::after { content: ""; position: absolute; inset: 3px; background: var(--bg-2); clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%); }
+  .check-wrap .check { position: relative; }
+  .check:checked { background: var(--ars); }
+  .check:checked::after { background: radial-gradient(circle, #c9ff9d 0 22%, var(--ars) 23% 100%); }
+  .check:indeterminate { background: var(--amber); }
+  .check:indeterminate::after { background: linear-gradient(transparent 42%, var(--amber) 42% 58%, transparent 58%), var(--bg-2); }
+
+  .title-line { display: flex; align-items: center; gap: .3rem .5rem; flex-wrap: wrap; }
+  .title-line h3 label { cursor: pointer; }
+  li.item.done .title-line h3 { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--ars); }
+  .tag { display: inline-block; font-family: "Chakra Petch", sans-serif; font-size: .7rem; font-weight: 700; padding: 0 .4rem; letter-spacing: .08em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.55; }
+  .tag.story { color: var(--cyan); } .tag.stackable { color: var(--ars); } .tag.difficulty { color: var(--amber); } .tag.hard { color: var(--red); }
+  .mission { font-family: "Chakra Petch", sans-serif; font-size: .82rem; font-weight: 700; color: var(--amber); white-space: nowrap; }
+  .rarity { font-size: .78rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rarity.rare { color: var(--red); }
+  .desc { margin: .1rem 0 0; color: #cbd9de; }
+  .diff { margin: .3rem 0 0; font-size: .86rem; color: var(--amber); }
+
+  .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr)); }
+  .steps.wide { grid-template-columns: 1fr; }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: start; padding: .32rem .5rem; background: var(--bg-2); border-left: 2px solid #24333d; font-size: .93rem; }
+  .steps li.got { border-left-color: var(--ars); background: var(--done-bg); }
+  .steps li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .steps label { cursor: pointer; }
+  .st-name { font-weight: 600; }
+  .st-desc { display: block; color: var(--ink-soft); font-size: .86rem; margin-top: .05rem; }
+
+  .counters { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; margin-top: .5rem; }
+  .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; font-weight: 600; font-variant-numeric: tabular-nums; font-size: .92rem; }
+  .step-btn { font: inherit; font-weight: 700; width: 28px; height: 28px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; line-height: 1; }
+  .count-input { font: inherit; font-weight: 700; width: 3.8rem; text-align: center; padding: .1rem .2rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .counter .of { color: var(--ink-soft); }
+  .summary-line { margin-top: .4rem; font-size: .9rem; font-weight: 600; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .summary-line b { color: var(--ink); }
+
+  /* statue tracker */
+  .statues { display: grid; gap: .55rem; margin-top: .6rem; }
+  .statue-act { display: grid; gap: .3rem; }
+  .statue-act > b { font-family: "Chakra Petch", sans-serif; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); }
+  .statue-row { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .mis { display: flex; align-items: center; gap: .35rem; padding: .22rem .45rem; background: var(--bg-2); border: 1px solid var(--line); font-size: .84rem; }
+  .mis.full { border-color: rgba(138, 227, 92, .5); }
+  .mis span { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 4.4em; }
+  .pip { width: 13px; height: 13px; margin: 0 4px; padding: 0; border: 2px solid #6b8594; background: transparent; cursor: pointer; transform: rotate(45deg); }
+  .pip:hover { border-color: var(--amber); }
+  .pip[aria-pressed="true"] { background: var(--amber); border-color: var(--amber); }
+
+  .guide-btn { font: inherit; font-weight: 600; font-size: .88rem; margin-top: .35rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--cyan); text-decoration: underline; text-underline-offset: 3px; }
+  .guide { margin: .45rem 0 0; padding: .75rem .95rem; border-left: 2px solid var(--cyan); background: var(--bg-2); font-size: .95rem; }
+  .guide > * + * { margin-top: .5rem; }
+  .guide p { margin: 0; }
+  .guide h4 { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: .9rem; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); margin-top: .85rem; }
+  .guide ul, .guide ol { margin: 0; padding-left: 1.15rem; }
+  .guide li + li { margin-top: .3rem; }
+  .guide .warn, .prose .warn { color: #ff8a8a; font-weight: 600; }
+  .guide .note, .prose .note { color: var(--ink-soft); font-style: italic; }
+  .guide a, .prose a { color: var(--cyan); font-weight: 600; }
+  details.spoiler { border: 1px dashed rgba(255, 178, 46, .5); padding: .45rem .7rem; }
+  details.spoiler summary { cursor: pointer; color: var(--amber); font-weight: 600; }
+  details.spoiler[open] summary { margin-bottom: .45rem; }
+  details.spoiler > * + * { margin-top: .5rem; }
+
+  kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.35em; height: 1.35em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px;
+    font: 700 .78em/1 "IBM Plex Sans", sans-serif; vertical-align: .08em; background: #1d2a33; color: var(--ink); border: 1px solid #36505e; }
+  kbd.b.sh { border-radius: 3px; }
+  kbd.ps-X { color: #7fb2ff; } kbd.ps-SQ { color: #f28fc0; } kbd.ps-O { color: #ff6f6f; } kbd.ps-TR { color: #4fd1a5; }
+  kbd.xb-X { color: #6fd36f; } kbd.xb-SQ { color: #5aa0ff; } kbd.xb-O { color: #ff6f6f; } kbd.xb-TR { color: #f6c945; }
+
+  .prose p { margin: 0; } .prose p + p, .prose ul + p, .prose p + ul { margin-top: .55rem; }
+  .prose ul { margin: .4rem 0 0; padding-left: 1.15rem; }
+  .prose li + li { margin-top: .3rem; }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(12rem, 100%), 1fr)); gap: .35rem .9rem; margin: .4rem 0 .9rem; font-size: .93rem; }
+  .stage { border-top: 1px solid var(--line); padding: .75rem 0; scroll-margin-top: 1rem; }
+  .stage.done > .row { background: var(--done-bg); }
+  .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .55rem; }
+  .tlink { font-size: .8rem; font-weight: 600; text-decoration: none; padding: .03rem .45rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
+  .tlink.done { color: var(--ars); border-color: rgba(138, 227, 92, .45); }
+  .tip { border-top: 1px solid var(--line); padding: .75rem 0; }
+  .tip h3 { color: var(--cyan); margin-bottom: .25rem; }
+  .romanovs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: .6rem; padding-bottom: .8rem; }
+  .romanov { background: var(--bg-2); border: 1px solid var(--line); border-top: 2px solid var(--red); padding: .65rem .75rem; font-size: .93rem; }
+  .romanov h3 { font-family: "Chakra Petch", sans-serif; color: var(--red); letter-spacing: .06em; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .88rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
+
+  @media (max-width: 560px) {
+    .panel { position: static; }
+    section.sheet { padding: 1rem .8rem .4rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter-fill, .row, .check { transition: none; } }
+</style>
+<meta name="theme-color" content="#0f1115">
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <div class="eyebrow">Augmented Reaction Suit · 100% checklist</div>
+  <h1>VANQUISH</h1>
+  <p>All 50 Steam achievements with the PSNProfiles trophy guide's strategy under each one. Act-specific achievements are grouped by Act in mission order, and all 112 Pangloss statues can be tracked mission by mission. Progress saves in this browser.</p>
+</header>
+
+<main>
+  <div class="panel" role="region" aria-label="Progress">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-trophies" data-tab="trophies" aria-selected="true" aria-controls="view-trophies">Achievements</button>
+      <button class="tab" role="tab" id="tab-guide" data-tab="guide" aria-selected="false" aria-controls="view-guide">Game Guide</button>
+    </div>
+    <div class="panel-top">
+      <h2>ARS reactor</h2>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><div class="meter-fill" id="fill"></div></div>
+    <div class="controls" id="trophy-controls">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="todo" aria-pressed="false">To do</button>
+      <button class="chip" data-filter="done" aria-pressed="false">Unlocked</button>
+      <button class="chip" data-filter="act" aria-pressed="false">Act-specific</button>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+      <input type="search" class="search" id="search" placeholder="Search, e.g. Romanov or 3-4" aria-label="Search achievements">
+    </div>
+    <div class="save-row">
+      <span class="save-status" id="save-status">Saved in this browser automatically.</span>
+      <span class="seg" role="group" aria-label="Button prompts">
+        <button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button>
+      </span>
+      <button class="chip" id="export">Back up</button>
+      <button class="chip" id="import">Restore</button>
+      <input type="file" id="import-file" accept=".json,application/json" hidden>
+      <button class="chip reset" id="reset">Reset</button>
+    </div>
+  </div>
+
+  <div id="view-trophies" role="tabpanel" aria-labelledby="tab-trophies"></div>
+  <div id="view-guide" role="tabpanel" aria-labelledby="tab-guide" hidden></div>
+</main>
+
+<footer>
+  Achievement names and descriptions from the Steam achievements page. Strategies, roadmap and tips from the PSNProfiles Vanquish Trophy Guide by PavlovsHouse; percentages shown are the PSN unlock rates listed in that guide.
+  Where the Steam description differs from the PSN trophy in a way that matters, the achievement has a yellow note.
+</footer>
+
+<script>
+(function () {
+/* [X] evade, [SQ] action / cover / counter, [O] melee, [TR] throw grenade, [L1] boost, [L2] aim, [R1] pick up, [R2] shoot,
+   [L3] [R3] stick clicks, [LS] left stick, [DP] D-pad. {{id|label}} links. **bold** */
+const PADS = {
+  ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], LS: ["L", ""], DP: ["D-pad", "sh"] },
+  xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], LS: ["LS", ""], DP: ["D-pad", "sh"] }
+};
+
+const STACK_NOTE = n => `There are ${n} levels in this Act. There is also an achievement for completing it on Hard, and you will stack this with it.`;
+
+/* ---------------- ACHIEVEMENTS ---------------- */
+const SECTIONS = [
+  { id: "campaign", title: "Campaign by Act", intro: "Every achievement tied to a specific Act or mission, in the order you reach them, followed by that Act's completion achievements. Bosses for each Act are covered under its Hard achievement. Act-specific achievements can all be cleaned up later through Mission Select (easiest on Casual).",
+    items: [
+      { act: "Prologue", label: "Tutorial", id: "act0" },
+      { id: "darpa", name: "One Day at DARPA", desc: "Complete all DARPA training exercises.", pct: 77.39, mission: "Tutorial",
+        guide: ["This will be your first achievement. At the start of a new playthrough you complete a set of tutorials teaching the basics. The game makes two mandatory and lets you skip the rest. Do not skip any: complete them all and it unlocks once you take control of Sam.",
+          "If you skipped it by accident, open Tutorial from the main menu. There are 6 tutorial types to complete, taking 5-10 minutes in total."] },
+
+      { act: "Act 1", label: "8 missions", id: "act1", also: [["fortyyard", "1-1"], ["adrenaline", "1-3"], ["knight", "1-3"], ["piece", "1-3"], ["homerungod", "1-3"], ["holeinone", "1-5"], ["twobirds", "1-6"], ["flash", "1-6"], ["gunrunner", "by 1-6"], ["handofgod", "1-7"]] },
+      { id: "spacenormandy", name: "Space Normandy", desc: "Complete Act 1.", pct: 56.48, tags: ["story", "stackable"], newGame: true,
+        guide: [STACK_NOTE(8) + " See {{overlord|Operation Overlord II}}."] },
+      { id: "overlord", name: "Operation Overlord II", desc: "Complete Act 1 on Hard difficulty or above.", pct: 20.54, tags: ["difficulty", "stackable"], newGame: true, alsoTicks: ["spacenormandy"],
+        guide: ["There are two bosses in Act 1 and 8 missions, some of them short.",
+          { h: "Act 1-3: Giant (Argus Core)" },
+          "After the gate opens and you destroy all the robots that spawn and are dropped off from the ships, head to the door and a cutscene plays. You then fight an Argus Core: a giant robotic spider that fires a big projectile from its head and small missiles from its sides. You can use the turret for quick damage, but it tends to destroy the turret within a few seconds of you getting on.",
+          "Damage its core in the middle of its forehead. Go into AR mode often and stay behind cover, staying up top at all times. Shoot the weak points on its legs, around the knee. Once destroyed it tilts over, letting you do good damage. Mind the small turrets on its sides.",
+          "When fully destroyed it switches to bipedal mode (standing on two legs) and becomes a KNRB-0. Fight it the same way: attack its arms and legs, then its core when it falls over.",
+          { h: "Act 1-8: Hostile (BOGEY)" },
+          "Ride an elevator up, destroy some robots, activate the elevator again, and you reach a big room full of enemies. Destroy some and a cutscene plays. Destroy the enemies on another elevator, then after another cutscene you fight BOGEY.",
+          "Go into AR mode as much as possible. Use the Heavy Machine Gun when he is close and the Assault Rifle when he is further away, and take cover to recharge your suit after slide kicking him. Boost kick him as much as possible. If you are struggling, use the {{tip-emp|EMP glitch}}. At a little more than half health there is a QTE where you spam [SQ], which ends the fight."] },
+
+      { act: "Act 2", label: "6 missions", id: "act2", also: [["brutality", "2-3"]] },
+      { id: "workedout", name: "That Ended Up Working Out Nicely", desc: "After taking control of the enemy transport in Act 2-2, do not let a single enemy escape.", pct: 50.65, mission: "Act 2-2",
+        guide: ["At the very start of Act 2-2 you are on the enemy's transport. Destroy EVERY enemy you see. It starts with View Hounds and enemy transports; use the turrets. Then enemies come at you on a train.",
+          "They start mostly on your right. Destroy them all; more spawn in the same spot two or three more times. The last enemy is a Romanov on your left. Once it is destroyed, the achievement unlocks."] },
+      { id: "failure", name: "Failure Breeds Success", desc: "Destroy two Argus robots in Act 2-3 while they are in bipedal mode.", pct: 11.76, mission: "Act 2-3",
+        guide: ["Towards the end of the level you face two big robots: an Argus Core (the robotic spider) and a KNRB-0 (what the Argus Core turns into). To get the Argus Core into bipedal mode, empty its health bar.",
+          "When you nearly destroy the Argus Core, a QTE starts. Completing it destroys the Argus Core outright so it never transforms. **When it makes you drill into the Argus Core, deliberately fail the QTE** and it switches to bipedal mode. Then destroy both KNRB-0 robots as normal; the achievement pops on the second."] },
+      { id: "storming", name: "Storming Grand Hill", desc: "Complete Act 2.", pct: 45.80, tags: ["story", "stackable"], newGame: true,
+        guide: [STACK_NOTE(6) + " See {{lifegrand|Ain't Life Grand?}}."] },
+      { id: "lifegrand", name: "Ain't Life Grand?", desc: "Complete Act 2 on Hard difficulty or above.", pct: 17.56, tags: ["difficulty", "stackable"], newGame: true, alsoTicks: ["storming"],
+        guide: ["Two (technically three) bosses and 6 missions.",
+          { h: "Act 2-3: Nightmare (Argus Core and KNRB-0)" },
+          "At the end of the mission you fight an Argus Core and a KNRB-0. The Argus Core goes bipedal when its health runs out. You can do {{failure|Failure Breeds Success}} on your Hard run, but it is not necessary.",
+          "To speed the fight up, finish the QTE when the Argus Core's health runs out so it is destroyed without going bipedal. Then fight the KNRB-0 as normal: attack its arm and leg weak points, then the core in its chest. Repeat until it is destroyed.",
+          { h: "Act 2-6: Stronghold (BIA)" },
+          "The BIA is a tough scorpion-like mini-boss that can go bipedal and has a staff that fires projectiles. It spawns after you take out the robots and Romanovs.",
+          "Go into AR mode often and stay in cover, popping out to shoot. If he gets close, slide boost to other cover. Slide kicks only do so much on Hard and leave you open while your suit recharges. **EMPs are very effective**, so use all three for quick damage, and use the {{tip-emp|EMP glitch}} if you get stuck."] },
+
+      { act: "Act 3", label: "7 missions", id: "act3", also: [["smokeem", "3-5"], ["auldlang", "3-5"]] },
+      { id: "leibniz", name: "Leibniz Defense Agency", desc: "Defend the Pangloss statue in Act 3-2.", pct: 12.91, mission: "Act 3-2",
+        guide: ["The Pangloss statue is at the start of the level. Destroy all the enemies near it while waiting for the bridge on the left to lower; once they are all dead and you go over, it lowers. You may need to walk back with your teammates for it to register.",
+          "After crossing, enemies spawn on your left and right. Once those are destroyed, a tank spawns with more robots, and **the tank will destroy the statue if you are not quick**.",
+          "Throw an EMP at the tank and get behind it (use a couple of EMPs if needed), then shotgun the weak spot on its back. Melee it if needed. Destroy the remaining robots and the achievement unlocks."] },
+      { id: "tightrope", name: "Tightrope Walker", desc: "Destroy two cannons in Act 3-3 and complete the mission.", pct: 11.76, mission: "Act 3-3",
+        guide: ["Destroy two of the six cannons at the end of the level, on the far side of the bridge, then finish the mission.",
+          "Destroy all the enemies on the bridge and back up; the roadblock gets destroyed. Slide boost up to the cannons, let your suit recharge, then use AR mode to damage one. Destroy it after leaving AR, then quickly move to the next, where there are Romanovs. Throw grenades at them, which also damages the cannon. Destroy it and run to the end.",
+          "<span class=\"warn\">Be quick: the bridge starts collapsing about every 15-20 seconds once you start.</span>"] },
+      { id: "fisher", name: "Fisher is the Other Sam", desc: "Proceed on the monorail in Act 3-4 without being spotted by the enemy troops or searchlights.", pct: 21.36, mission: "Act 3-4",
+        guide: ["In Act 3-4: Dragon you ride a slow monorail past searchlights, each with missile launchers. If you are spotted, the monorail is bombarded. Take cover behind the barrier in front for better accuracy and press [R3] to zoom while aiming.",
+          "Easy on Casual through Mission Select. There are 4 sniper rifles with you, and the searchlights are tagged automatically. Destroy all 15 searchlights (only the ones with red rings count). When a rifle is down to about 3 shots, pick up another.",
+          "After 8 searchlights, an aircraft appears about 20 seconds later. Stand in the middle of the monorail; when you see it, press [X], quickly aim with [L2] and take out the pilot. The rest is easy.",
+          "<span class=\"warn\">Do not shoot the two enemies that appear when you hear \"ENEMY\"; they are for {{flyswatter|Flyswatter}}.</span> Once you have this, restart the checkpoint for that one. Elena announces when all 15 are done and the monorail speeds up."] },
+      { id: "flyswatter", name: "Flyswatter", desc: "Destroy all the floating turrets in Act 3-4.", pct: 10.86, mission: "Act 3-4",
+        guide: ["Same section as {{fisher|Fisher is the Other Sam}}. Do everything the same until you hear \"ENEMY\". Have a sniper rifle with all 10 shots (grab a new one if you are low before this point), zooming with [R3] if needed.",
+          "Two enemies spawn straight ahead in the distance. When you hear \"ENEMY\", stand in the middle of the monorail; when they come from the right, quickly enter AR mode with [X] + [LS], aim the sniper and take out each pilot, the front one first."] },
+      { id: "guardian", name: "Guardian", desc: "Do not allow any friendly armor to be destroyed during Act 3-5.", pct: 19.03, mission: "Act 3-5",
+        guide: ["All 3 laser tanks must survive after the first section. After destroying the tank and robots at the start, go up top and man a turret. After a cutscene, destroy the robots on the ground with it.",
+          "About 5 enemy tanks come one at a time: one left, one right, then another left and right, then one breaks through the big rock in the middle. Destroy it and any remaining robots and the achievement unlocks."] },
+      { id: "hurry", name: "Hurry the #@$% Up!", desc: "Destroy five or more enemy transports from atop the Kreon in Act 3-7.", pct: 20.15, mission: "Act 3-7",
+        guide: ["Climb to the very top of the Kreon, where there is a big power cord you have to disable. Instead, turn around away from the cord and you will see enemy transports flying overhead.",
+          "Use the turret up there for distant ones; shoot closer ones with the turret or by sniping the pilot in AR mode. Five transports unlock it."] },
+      { id: "kreon", name: "I Don't Speak Kreon!", desc: "Complete Act 3.", pct: 40.37, tags: ["story", "stackable"], newGame: true,
+        guide: [STACK_NOTE(7) + " See {{crykreon|Cry on, Kreon!}}."] },
+      { id: "crykreon", name: "Cry on, Kreon!", desc: "Complete Act 3 on Hard difficulty or above.", pct: 16.13, tags: ["difficulty", "stackable"], newGame: true, alsoTicks: ["kreon"],
+        guide: ["One boss, the Unknown, fought twice. 7 missions.",
+          { h: "Act 3-6: Infiltrate (Unknown, first fight)" },
+          "You start on a monorail destroying robots while the Unknown runs along the pipes above. Do not engage; it does nothing. Just take cover: on the left the first time you see him, on the right the second.",
+          "Avoid both laser attacks. When he stands tall and fires light yellow beams, he shows a weak point; use AR mode for quick damage. **The key is the shotgun**: shoot him from a little close, but **do not get too close, as his grab attack is an instant death, even on Casual.**",
+          "Shoot enough and the scrap metal falls off and he drops briefly. Slide kick him while he is down, then EMP him as he gets up. Shoot with the Assault Rifle or Heavy Machine Gun, EMP again, shoot, EMP again, slide kick. Take cover and repeat.",
+          { h: "Act 3-7: Phantoms (Unknown, second fight)" },
+          "You traverse the Kreon (where you can get {{hurry|Hurry the #@$% Up!}}). After clearing a room of robots, the Unknown drops from the ceiling, taking parts from the destroyed robots. The room is smaller, but fight him exactly the same way."] },
+
+      { act: "Act 4", label: "5 missions", id: "act4", also: [["homerungod", "4-2"]] },
+      { id: "civil", name: "Civil Disobedience", desc: "Ignore the elevator start order in Act 4-1. Instead, hold position and destroy all reinforcements.", pct: 16.38, mission: "Act 4-1",
+        guide: ["Near the end of the level you are told to get on an elevator. Don't. Destroy every robot that spawns. It seems infinite but is not, and there are weapons to pick up as you will likely run out of ammo.",
+          "Keep going until no more red dots appear on the minimap after a kill. It takes about 4-6 minutes of non-stop fighting; the last kill unlocks it."] },
+      { id: "myway", name: "My Way", desc: "Complete Act 4.", pct: 38.15, tags: ["story", "stackable"], newGame: true,
+        guide: [STACK_NOTE(5) + " See {{highway|The High Way}}."] },
+      { id: "highway", name: "The High Way", desc: "Complete Act 4 on Hard difficulty or above.", pct: 15.55, tags: ["difficulty", "stackable"], newGame: true, alsoTicks: ["myway"],
+        guide: ["Two bosses and 5 missions.",
+          { h: "Act 4-4: Slave (Crystal Viper)" },
+          "You start on catwalks with robots shooting from another catwalk. Destroy them all before dropping down; walk to the ledge and press [SQ] to drop.",
+          "When you drop, more robots and a Crystal Viper spawn. **If you have no EMPs, reload the checkpoint before destroying all the robots up top** to refill your grenades. If he is far away and walking slowly, shoot him in AR mode without overheating. When he is far or invisible, stand where the regular robots cannot hit you and spam [SQ]: when invisible he pops up and swings his sword, and you have a small window to counter. A counter leaves him stunned on the ground.",
+          "Shotgun him or slide kick him (riskier, as he recovers fast and your suit must recharge). EMP him and shoot while your suit recharges. When he drops to his knees from damage, get behind him and shotgun him until he stands, then slide kick again. Keep an eye on the regular robots.",
+          { h: "Act 4-5: Emancipation (Unknown, third fight)" },
+          "A door opens; stand on the left as your team is attacked. You move through zero-gravity areas with two groups of robots and a Romanov, getting a checkpoint after each. The Unknown spawns in the third area. Fight him exactly as before; if you have no EMPs, reload the checkpoint to refill your grenades."] },
+
+      { act: "Act 5", label: "3 missions", id: "act5", also: [] },
+      { id: "buzzard", name: "Buzzard Beater", desc: "Destroy the Buzzard without allowing it to reach ground level in Act 5-1.", pct: 12.80, mission: "Act 5-1",
+        guide: ["At the start of Act 5-1 the Buzzard hovers ahead of you. Destroy it before it drops down.",
+          "There is a room to your left with a control panel; press [SQ] on it to unlock the door. Quickly destroy the 4 enemies inside. Use the turret on the left, shoot the stack of barrels in front out of the way, and shoot the Buzzard before it lands, aiming at the red weak spot in its middle. The turret rips through its health."] },
+      { id: "endcombat", name: "End to Major Combat Operations", desc: "Complete Act 5.", pct: 37.29, tags: ["story", "stackable"], newGame: true,
+        guide: [STACK_NOTE(3) + " See {{missionacc|Mission Accomplished}}."] },
+      { id: "missionacc", name: "Mission Accomplished", desc: "Complete Act 5 on Hard difficulty or above.", pct: 15.14, tags: ["difficulty", "stackable"], newGame: true, alsoTicks: ["endcombat"],
+        spoiler: true,
+        guide: ["Two boss encounters and 3 missions. The first boss is a story twist, so the strategy is hidden below.",
+          { spoiler: "Show Act 5 boss strategies (story spoilers)", body: [
+            { h: "Act 5-2: Soldier (Robert Burns)" },
+            "Press [SQ] on a control panel; after a cutscene you fight Robert Burns in a room with jetpack soldiers. After some damage he runs to a bigger room, and after more damage a cutscene plays and you continue on a monorail. **Grab the Anti-Armor Pistol in the first room**; it does good damage.",
+            "You want full grenades. If you don't have them, the guide suggests dying on purpose to refill, but that voids {{livinglegend|Living Legend}}. If you want to stack that on Hard, quit to the title screen instead.",
+            "Save EMPs for after the monorail. On it, use AR mode often with the Anti-Armor Pistol and Heavy Machine Gun, leave AR just before overheating and get into cover. Near the end his vehicle crashes into you; spin [LS] quickly to climb up.",
+            "Off the monorail you may get an upgrade drop. Take cover, throw an EMP at him down the stairs, then pop out in AR mode for maximum damage (find an angle where cover does not block you). Kill the soldiers outside, go halfway down the hallway and run back out: four soldiers spawn, so kill them quickly.",
+            "In the final room he fires a giant metal fist that covers your head; let him, spin [LS] quickly, then take cover. Use your grenades; if you have none, use AR mode as much as possible without overheating. Watch the soldiers, but focus him unless they get close.",
+            { h: "Act 5-3: Deception (BOGEY ALPHA and BOGEY BRAVO)" },
+            "The final bosses. Focus BOGEY ALPHA first; he seems to have less health. Grab the Rocket Launcher on the floor, lock on in AR mode and fire, three times, while manoeuvring since they are fast. Then throw an EMP or two and slide kick him. When his health is gone, a QTE has them both attack you: spam [SQ].",
+            "Then attack BOGEY BRAVO. After enough damage your suit becomes supercharged and the meter doubles, so AR mode lasts twice as long. Slide kick him often, take cover, throw any grenades, and keep your distance behind cover until his health is gone.",
+            "In the final QTE he attacks you on the ground: push [LS] left, right, left, left. You then take his weapon; press [R2] to shoot him. It takes three shots, or one headshot." ] }] },
+
+      { act: "Full campaign", label: "all 5 Acts", id: "actall", also: [] },
+      { id: "survivor", name: "Survivor", desc: "Complete all Acts.", pct: 36.05, tags: ["story", "stackable"], newGame: true, autoAll: ["spacenormandy", "storming", "kreon", "myway", "endcombat"],
+        guide: ["Complete all 5 Acts without using Mission Select. You get the Hard version with it; see {{arsop|ARS Operator}}. Ticks itself when all five Act achievements above are ticked."] },
+      { id: "arsop", name: "ARS Operator", desc: "Complete all Acts on Hard difficulty or above.", pct: 14.97, tags: ["difficulty", "stackable"], newGame: true, alsoTicks: ["survivor"], autoAll: ["overlord", "lifegrand", "crykreon", "highway", "missionacc"],
+        guide: ["5 Acts with varying numbers of missions. Hard is not too bad, but some parts and bosses test your patience. Play patiently and fairly passively while keeping a slightly fast pace: slow, but not too slow.",
+          "Use AR mode often, use cover, and boost slide a lot. The {{tip-emp|EMP glitch}} can make Hard almost a cakewalk. See the Game Guide tab for the tips.",
+          "<span class=\"warn\">You have to play out the credits for the achievements to pop.</span> They are a shooting section with asteroids carrying the developers' faces and names, about 8-10 minutes long.",
+          "Ticks itself when all five Hard Act achievements above are ticked."] }
+    ] },
+
+  { id: "ar", title: "AR Mode and Evasion", intro: "Augmented Reaction mode, boosting and shooting things out of the air.",
+    items: [
+      { id: "fightflight", name: "Fight or Flight", desc: "Manually trigger AR Mode and destroy an enemy robot.", pct: 75.90,
+        guide: ["One of the first achievements you will get. Enter AR mode by boost sliding with [L1] and pressing [L2] while sliding, or by pressing [X] to evade and immediately pressing [L2], then [R2] to shoot. You can also aim with [L2] and press [X]. Activate it any way and destroy a robot."] },
+      { id: "adrenaline", name: "Adrenaline Rush", desc: "Manually trigger AR Mode and destroy three enemy robots in a row.", pct: 42.92, spot: "Act 1-3",
+        guide: ["Anywhere with lots of robots. An early spot is Act 1-3: Giant: after clearing the enemies and the gate opens, a group of normal enemies with a Romanov-N spawns at the top of the steps.",
+          "You will probably get it naturally. If not, load Tactical Challenge 1: at the very start, on the right across a couple of barriers, regular red robots spawn on the broken part of the bridge. Run over, press [L2] and [X], and headshot 3 of them in AR mode."] },
+      { id: "deathwish", name: "Death Wish", desc: "Destroy three enemy robots while in damage-triggered AR Mode.", pct: 55.16,
+        guide: ["Take enough damage that AR mode activates automatically (it happens when you are about to die and your suit is not overheated), then destroy three robots during it.",
+          "If you don't have it after Act 1, use Tactical Challenge 1. Go to the front right where enemies spawn and let them nearly kill you, **by shooting, not melee**: melee from a group that size almost insta-kills you. When AR triggers, headshot three robots."] },
+      { id: "fortyyard", name: "40 Yard Dash", desc: "Maintain a Boost dash to the limit of the ARS reactor without overheating.", pct: 34.50, spot: "Act 1-1",
+        guide: ["Best spot: the very start of Act 1-1: Landing, in the long hallway. Run down it first so the lasers destroy the windows. Then boost with [L1] from one big door towards the other, watching the meter at the bottom right, and **let go at the last possible second, with only a tiny pinch of green left.**"] },
+      { id: "homerun", name: "Home Run", desc: "Destroy an incoming missile or grenade.", pct: 76.40, count: { key: "homerun", target: 1, label: "missiles/grenades" },
+        guide: ["Shoot missiles or grenades out of the air. Some missiles are slow and easy; grenades are harder and can only be hit in AR mode. See {{homerungod|Home Run God}}."] },
+      { id: "homerungod", name: "Home Run God", desc: "Destroy ten incoming missiles or grenades.", pct: 67.98, spot: "Act 4-2", count: { key: "homerun", target: 10, label: "missiles/grenades" },
+        guide: ["Good spot: Act 4-2: Brink. After the big door opens at the start (destroy the View Hounds) and the cutscene plays, skip it. A Buzzard spawns; destroy the few robots and it lands. Move out of its way and get some distance. It fires two projectiles that break into clusters of small missiles: go into AR mode and destroy as many as you can. Wait for it to do it again and repeat.",
+          "Alternative: Act 1-3: Giant. The Argus Core fires missiles from each side that you can shoot in AR mode, though it can be inconsistent about when it fires them."] }
+    ] },
+
+  { id: "melee", title: "Melee and Romanovs", intro: "Melee kills share one counter. Remember melee overheats your suit.",
+    items: [
+      { id: "goingkill", name: "Going in for the Kill", desc: "Destroy ten enemy robots with melee attacks.", pct: 42.98, count: { key: "melee", target: 10, label: "melee kills" },
+        guide: ["Melee with [O]. Small robots take one or two hits, even on Hard. See {{heartbreaker|A Heartbreaker and Lifetaker}}."] },
+      { id: "heartbreaker", name: "A Heartbreaker and Lifetaker", desc: "Destroy 100 enemy robots with melee attacks.", pct: 10.80, count: { key: "melee", target: 100, label: "melee kills" },
+        guide: ["You may not have this even after beating the game. Best farm: Tactical Challenge 1 (unlocked by beating Act 1).",
+          "Spawn in, turn left and grab the Disk Launcher. Keep it out and go straight to where enemies spawn, front right of the start. Throw an EMP (maybe two) and press [O] on an enemy with the Disk Launcher out. Use all your EMPs this way, then grab the EMPs on the ground to your left.",
+          "Repeat, and once they are used up, use the {{tip-emp|EMP glitch}}: switch to normal grenades and, **while moving**, throw one and switch to EMPs on the [DP] during the throw animation. It throws an EMP even with 0 left.",
+          "After about 20 melee kills with the Disk Launcher, restart the challenge and repeat until it pops. A successful Disk Launcher melee costs a disk; you start with 20, so watch the ammo."] },
+      { id: "romanovthis", name: "Romanov This!", desc: "Destroy a Romanov with a melee attack.", pct: 36.51,
+        guide: ["Romanovs are the bigger robots. You first meet one in Act 1-3: Giant. See {{handofgod|The Hand of God}} for doing two in a row. The Game Guide tab lists the four Romanov types."] },
+      { id: "handofgod", name: "The Hand of God", desc: "Destroy two Romanovs in a row using only melee attacks.", pct: 13.04, spot: "Act 1-7", alsoTicks: ["romanovthis"],
+        guide: ["Easy spot: Act 1-7: Seismic. Go left straight after the cutscene to three Romanovs standing together.",
+          "Shoot the left one to about half health or a little less, then boost kick it; that should destroy it instantly. Your teammates will take out the middle one. Do the same to the right one. You can use the shotgun to bring their health down faster first."] },
+      { id: "brutality", name: "Brutality Bonus", desc: "Destroy a Romanov's arms and legs, then finish it with a melee attack.", pct: 21.53, spot: "Act 2-3",
+        diff: "Steam asks for its arms AND legs and a melee finish; the PSN trophy only needs an arm and a leg. To be safe on Steam, shoot off both arms and both legs, then finish it with melee.",
+        guide: ["Quick spot: Act 2-3: Nightmare. Clear the first room, then in the second room the door ahead is locked. Approach it and a Romanov-N charges through.",
+          "The guide says to shoot off its left arm and any leg, then destroy it. Go into AR mode for the limbs: aim down and press [X]. Switch the difficulty to Casual if doing this through Mission Select."] }
+    ] },
+
+  { id: "weapons", title: "Weapons and Grenades", intro: "Weapon pickups, upgrades and specific-weapon kills.",
+    items: [
+      { id: "gunrunner", name: "Gun Runner", desc: "Scan and acquire all weapons.", pct: 53.72, spot: "by Act 1-6", stepsCols: true,
+        steps: [["Assault Rifle", "Starting weapon"], ["Heavy Machine Gun", "Starting weapon"], ["Shotgun", "Starting weapon"], ["Hand Grenade", "Starting weapon"], ["EMP Emitter", "Starting weapon"], ["LFE Gun", ""], ["Lock-on Laser", ""], ["Sniper Rifle", ""], ["Rocket Launcher", ""], ["Disk Launcher", ""]],
+        guide: ["Scan and pick up every weapon once. Weapons are scanned when you get near them; pick up by holding [R1]. You can have it by Act 1, Chapter 6.",
+          "10 weapons count (8 guns and 2 grenade types). You start with 5, so only 5 need picking up. The Boost Machine Gun, Laser Cannon and Anti-Armor Pistol are not needed."] },
+      { id: "kinghill", name: "King of the Hill", desc: "Level a weapon up to maximum operational capability.", pct: 39.61, count: { key: "upgrades", target: 3, label: "upgrades on one weapon" },
+        guide: ["Upgrades are big green cubes dropped by certain enemies, especially Romanovs. The weapon you are holding gets the upgrade when you pick it up with [R1].",
+          "Three upgrades fully maximise a weapon for this. Picking up the same weapon you are holding also levels it, but slower: three pickups per level, so 9 in total, and the weapon must have full ammo before each pickup.",
+          "<span class=\"warn\">Dying loses an upgrade.</span> If you die, do not press Continue; quit to the title screen and load from there to keep upgrades, which carry over to the next level as long as you keep the weapon."] },
+      { id: "robotsblow", name: "Robots Tend to Blow Up", desc: "Destroy three enemy robots at once with one hand grenade.", pct: 64.26,
+        guide: ["Usually comes naturally in early Act 2. To get it quickly, load Tactical Challenge 1 and use a grenade on the group that spawns to your right. See {{shortcircuit|Short Circuit}}."] },
+      { id: "holeinone", name: "Hole-in-One", desc: "Destroy a Chicane with a hand grenade.", pct: 22.72, spot: "Act 1-5",
+        guide: ["Chicanes are four-legged robots that become barriers for enemies, with a head poking out to shoot. Your first one is in Act 1-5: Trust: early on, at a barrier, one is in front of you with two enemies behind it.",
+          "Kill the two enemies, EMP the Chicane, shoot it to about a quarter health, EMP it again and throw the grenade. Throw it so it doesn't bounce much; landing a foot or two in front of it still works."] },
+      { id: "shortcircuit", name: "Short Circuit", desc: "Destroy ten enemy robots that have been disabled with an EMP emitter.", pct: 46.87, count: { key: "emp", target: 10, label: "EMP'd kills" },
+        guide: ["Comes naturally, especially on Hard where you use EMPs a lot. If not done by the end of Act 1, load Tactical Challenge 1 and head slightly right to where enemies spawn.",
+          "Throw an EMP, then immediately a regular grenade so they stay stunned until it explodes; you might get all 10 at once. If they recover too early, throw the grenade first and then the EMP, quickly. Also a good spot for {{robotsblow|Robots Tend to Blow Up}}. Throw another pair or restart the challenge if needed."] },
+      { id: "twobirds", name: "Two Birds with One Stone", desc: "Destroy two or more enemy robots at once with the LFE gun.", pct: 36.52, spot: "Act 1-6",
+        guide: ["Act 1-6: Darkness. Blow up the barricade by pressing [SQ] to place the bomb and [L3] + [R3] to detonate it from a safe distance. After a cutscene you walk down a tunnel; after Sam scans with his helmet, the LFE Gun is on the right.",
+          "Pick it up and shoot a Jellyfish-L (big jellyfish robots) so it splits into smaller Jellyfish-M, then hit a group of those with the LFE Gun. Shooting the Jellyfish-M group before the Jellyfish-L appear sometimes does not count, or your teammates pop them first."] },
+      { id: "flash", name: "Flash! King of the Impossible", desc: "Destroy four enemies simultaneously with the Lock-on Laser.", pct: 15.32, spot: "Act 1-6",
+        guide: ["Same spot as {{twobirds|Two Birds with One Stone}}. If you lack a Lock-on Laser (likely via Mission Select), there is a box on the right down the tunnel; reload the checkpoint until it gives you one. Shoot the Jellyfish-L until they split into Jellyfish-M.",
+          "Hold [R2] to lock on to the Jellyfish-M and release to fire. Locking with [R2] rather than aiming first nearly guarantees 4 locks. Make sure all four small circles at the bottom middle turn red before releasing. Be fast, as your team destroys them quickly."] },
+      { id: "trickshot", name: "Trick Shot", desc: "Destroy three enemy robots at once with rocket launcher splash damage.", pct: 41.67,
+        guide: ["Anywhere with a rocket launcher. A quick spot is Tactical Challenge 5 (unlocked after completing the game): grab the rocket launcher on your left at the start, EMP the robots in front (a few may leap at you), then shoot the ground near them to blow up 3 or more. Takes about 10 seconds."] },
+      { id: "piece", name: "Piece by Piece", desc: "Destroy the arms, head, and back of an KNRB-0 Argus robot.", pct: 27.74, spot: "Act 1-3",
+        guide: ["Act 1-3: Giant. After the gate opens and you clear the robots and Romanov at the top of the steps, go to the big door for a cutscene; an Argus Core spawns in the middle.",
+          "Drain its health until it goes bipedal. Destroy its head, both arms, legs and its back (the pack) before finishing it. You can also try {{homerungod|Home Run God}} here on the Argus Core's missiles before it transforms."] }
+    ] },
+
+  { id: "squad", title: "Squad and Cigarettes", intro: "Reviving teammates and Sam's cigarette distraction.",
+    items: [
+      { id: "nurse", name: "Helloooo, Nurse", desc: "Revive a friendly troop.", pct: 83.77, count: { key: "revives", target: 1, label: "revives" },
+        guide: ["Walk up to a downed AI teammate and press [SQ]. They drop you a weapon as thanks. See {{knight|Knight in Shining White Armor}}."] },
+      { id: "knight", name: "Knight in Shining White Armor", desc: "Revive 20 friendly troops.", pct: 44.03, spot: "Act 1-3", count: { key: "revives", target: 20, label: "revives" },
+        guide: ["Good spot if you still need it after the game: Act 1-3: Giant. Go up the stairs into the middle area with two MOAs, two turrets and lots of red robots. Take cover in the middle and your teammates start going down; you can get 5-6 revives here.",
+          "Stay in cover without shooting, pop out only to revive, then back into cover. Reload the checkpoint and repeat."] },
+      { id: "auldlang", name: "Auld Lang Syne", desc: "Destroy two enemy robots who have been distracted by a cigarette.", pct: 19.99, tags: ["stackable"], spot: "Act 3-5",
+        guide: ["From cover, press and hold [L1]: Sam lights a cigarette, puffs it and throws it, and enemies shoot at it for a second or two. You get 3 per level. Stack it with {{smokeem|Smoke 'em if ya got 'em!}}."] },
+      { id: "smokeem", name: "Smoke 'em if ya got 'em!", desc: "Destroy 10 enemies distracted by cigarettes during one mission.", pct: 11.11, tags: ["stackable"], spot: "Act 3-5", alsoTicks: ["auldlang"],
+        guide: ["Best spot: Act 3-5: Despair. Near the end, the Kreon opens up to a crowd of Gorgies and Romanovs. Use the rocket launcher and you can do it with one cigarette.",
+          "Search the crates for the rocket launcher, take cover in front of the enemies and hold [L1]. Once he throws the cigarette, get out of cover, enter AR mode with [X] and [L2], and fire the rocket launcher into the middle of the group."] }
+    ] },
+
+  { id: "endgame", title: "Collectibles and Endgame", intro: "The statues, the no-death run and the Tactical Challenges.",
+    items: [
+      { id: "pangloss", name: "The Best of All Possible Worlds", desc: "Find and fire upon all of the Pangloss statues hidden on the colony.", pct: 9.39, statues: true,
+        guide: ["Pangloss statues are small gold trophy-like statues: 4 in every mission except Act 1-1, 112 in total. You can collect missed ones through Mission Select.",
+          "**Save trick:** collectibles do not save until a checkpoint, but if you pause, change the audio volume and back out, the game saves. Great when the only statue you need is early in a level.",
+          "The guide links a full collectibles video. Tap the diamonds below as you shoot each statue; the achievement ticks itself at 112."] },
+      { id: "livinglegend", name: "Living Legend", desc: "Complete the game without dying, regardless of difficulty level.", pct: 12.29, newGame: true,
+        guide: ["After your Hard run and the cleanup, start a New Game on Auto Casual and play as you would on Hard. Casual is forgiving and you can soak a lot of bullets, but some bosses can still kill you, so don't get cocky.",
+          "Use AR mode a lot, manoeuvre with [L1] and use cover with [SQ]. If you die, **do not press Continue**: exit to the title screen and continue from there. This also keeps weapon upgrades, unlike quitting the game entirely.",
+          "<span class=\"warn\">You cannot unlock this through Mission Select.</span>"] },
+      { id: "tactical", name: "Tactical Challenger", desc: "Complete all of the Tactical Challenges in VANQUISH.", pct: 5.81, wideSteps: true,
+        steps: [["Tactical Challenge 1", "Unlocked by finishing Act 1. Boss: ALPHA BOGEY (round 5)"], ["Tactical Challenge 2", "Unlocked by finishing Act 2. Boss: BIA (round 5)"], ["Tactical Challenge 3", "Unlocked by finishing Act 3. Bosses: Unknown, Buzzard"], ["Tactical Challenge 4", "Unlocked by finishing Act 4. Second hardest. Bosses: Unknown, Crystal Viper"], ["Tactical Challenge 5", "Unlocked by finishing Act 5. Bosses: Buzzard, KNRB-0"], ["Tactical Challenge 6", "Unlocked by finishing challenges 1-5. The hardest. Crystal Viper, BOGEY, two BIAs, ALPHA and BRAVO BOGEY"]],
+        guide: ["The hardest achievement by far, and the one that decides 100%. The {{tip-emp|EMP glitch}} makes it much more manageable; with it, every challenge except maybe 6 becomes fairly easy once you have it down. You unlock one challenge per Act; 6 unlocks after completing 1-5.",
+          "**EMP glitch:** have 0 EMP grenades and 3 regular grenades (1 works, but 3 covers mistakes). Keep moving the whole time. Switch to frags, and while moving with [LS], throw a grenade with [TR]; during the throw animation, switch back to EMPs even though it says 0.",
+          { h: "Tactical Challenge 1" },
+          { ul: [
+            "**Round 1 (1.5/5):** slide right and grab the Rocket Launcher, then go to the enemies spawning on the bridge to your right and throw EMPs and grenades. Then wait by the container near the gate on the opposite side. Grab the EMPs and grenades by the small bridge.",
+            "**Round 2 (2/5):** by the container, wait for the Romanov, EMP it, boost kick it and shoot it with the Heavy Machine Gun in the air. Two more Romanovs follow; watch the far-left one, which likes its insta-kill attack. Grab the EMPs and grenades by the container.",
+            "**Round 3 (2/5):** at the bridge where the first group spawned, throw an EMP and a grenade at the Romanov and robots. Get close and shoot its fuel tank in AR with the Heavy Machine Gun. Spare EMPs and grenades are behind a container directly behind the start; you can leave one robot alive to fetch them.",
+            "**Round 4 (2.5/5):** ideally camp behind the container with the row of weapons and the second Rocket Launcher. Rocket the Romanovs and MOAs, **keeping at least one MOA for the last round**. Shoot Romanovs from behind with the Assault Rifle, EMP if needed, and watch for distant insta-kills. Restock the Rocket Launcher before killing the last enemy.",
+            "**Round 5 (3.5/5, boss):** from behind that container (Disk Launcher in front), rocket the Romanovs and use EMPs, which also stun ALPHA BOGEY if he is close. Once the Romanovs are down, get into the MOA for major damage on the boss. If the MOA is gone, EMP him out of the air, shoot him, slide kick him when low, and keep your distance." ] },
+          { h: "Tactical Challenge 2" },
+          { ul: [
+            "**Round 1 (1.5/5):** stay where you spawn and take out the ground robots, then the snipers above. Then move behind the container on the right with the Rocket Launcher and grab ammo.",
+            "**Round 2 (2/5):** stay there and take out the robots, Romanovs and two MOAs, coming out only for stragglers, ammo and upgrades. Use EMPs often. You can hijack one of the red robots' mechs. Yellow robots have more health. Get back behind the container as round 3 starts and grab ammo.",
+            "**Round 3 (2/5):** pick up the Rocket Launcher from the weapon holders by the container but don't use it yet. Take out the View Hounds and A-2 Spheres with other guns and grenades. **Save EMPs and upgrades for rounds 4 and 5.**",
+            "**Round 4 (2/5):** throw all three grenades at the spawn, then lock on to the enemy transport in AR mode with the Rocket Launcher (fully lock on before firing). Handle the Romanovs and robots. Grab an upgrade if several are on the ground.",
+            "**Round 5 (3/5):** grab any grenade pickup and throw at the spawn and the BIA. Use the Rocket Launcher and remaining EMPs; a rocket stuns him briefly, so follow up in AR mode, grab an upgrade and repeat. You can slide kick him too. Then clear the robots." ] },
+          { h: "Tactical Challenge 3" },
+          { ul: [
+            "**Round 1 (2.5/5):** slide boost straight ahead to the Rocket Launcher, ignoring passing enemies. Rocket the A-2 Spheres, turn and rocket the enemies behind you, then the rest of the Spheres. Shoot down the transport, finish the robots and the turret gunner, and use an upgrade on the Rocket Launcher.",
+            "**Round 2 (1.5/5):** rocket the MOA and the robots near it. If it survives you can use it (watch its ammo) and destroy the other with it.",
+            "**Round 3 (2/5):** pre-aim the spawn with the Rocket Launcher and fire as they appear. Rocket the two Romanovs; restock rifle and machine gun ammo from the weapon containers if needed.",
+            "**Round 4 (2.5/5, boss):** go towards the spawn without getting too close and pre-aim. Rocket the Unknown as it spawns; about three shots. Watch for its grab. Then clear the A-2 Spheres in AR mode.",
+            "**Round 5 (1/5, boss):** EMP the spawn to wipe out the View Hounds, then rocket the Buzzard, using the remaining upgrades. Slide kicking its arm doesn't overheat your suit. The easiest round." ] },
+          { h: "Tactical Challenge 4" },
+          { ul: [
+            "**Round 1 (2.5/5):** slide boost across to the orange barricades and get behind the rock. Shotgun the small robots, then take out the two Romanovs: Heavy Machine Gun at mid range, Assault Rifle at long range, HMG or shotgun up close. **Their insta-kill goes through walls and rocks.** If pushed, hop over cover back to the start side and repeat.",
+            "**Round 2 (2.5/5):** ALWAYS go to the far side from the start, tucked in the right-hand corner by the barrier to the next area. Robots spawn on your left, Jellyfish-M on your right. Throw EMPs right and grenades left, about 4 seconds after you see the spawn flashes. Stay in AR mode if needed. Then focus the Romanov far left between two trees (you can shoot its back missile to destroy it instantly), the one to your right behind the rock, then the one further down. Clear the remaining robots and the gate opens. Restock ammo.",
+            "**Round 3 (2.5/5, boss):** get into cover, then come out in AR mode and destroy the transport. Clear the robots without going too far up; the Unknown spawns. Use EMPs and grenades, shred the scrap with the shotgun and slide kick. Mind the grab. Grab the EMPs up the small hill right of the shotgun.",
+            "**Round 4 (3/5):** you need at least one EMP. Throw it right as they spawn to kill the View Hounds, then clear robots in AR mode. For the tank, go left behind the tree by the wall. Kill the two robots beside it, its small turrets and the red part of its cannon when it pokes out. EMP it, slide boost behind it with the shotgun, shoot the weak point, slide kick, repeat. Grab the grenades by the small bridge on the left and the Rocket Launcher.",
+            "**Round 5 (4.5/5, boss):** throw grenades at the far spawn (may also hit the Crystal Viper). Rocket the left Romanov twice, then shoot the second Romanov's fuel tank in AR mode, then rocket the right one. **Spam [SQ] immediately after to counter the Crystal Viper.** After a counter, grab the Rocket Launcher upgrade and finish the Romanov, then turn to the Viper. Keep your distance, slide boosting and spamming [SQ]; take cover when he uses lightning. When countered he is grounded briefly. DPS him until he drops to his knees, then get behind him, shotgun once or twice and slide kick." ] },
+          { h: "Tactical Challenge 5" },
+          { ul: [
+            "**Round 1 (1/5):** EMP, grab the Rocket Launcher, fire into the middle of the robots, then switch to the Assault Rifle and shoot the pilots in AR mode.",
+            "**Round 2 (1.5/5):** go down the stairs and rocket the Chicanes. Go back up and down the transport, then clear the robots, grab the upgrade and go onto the bridge.",
+            "**Round 3 (2/5, boss):** grenades and EMPs on the robots plus at least one rocket. Then the Buzzard: Rocket Launcher, slide kicks to its arm (no overheat) and the Heavy Machine Gun. Grab the EMPs on the right by the ramps.",
+            "**Round 4 (2.5/5):** three drilling Romanovs. There are grenades on the floor towards the right of the room. Grab the Rocket Launcher from the container by the control panel. Afterwards, open the door from the control panel.",
+            "**Round 5 (3/5, boss):** go into the turret room and take out the snipers up top (one is on the roof to your right as you leave). The KNRB-0 is in the middle: shoot its limbs to expose the core. Leave the room when it fires its missile barrage, which you can dodge or shoot. Restock rockets from the containers. Kill the snipers quickly, as they can nearly one-shot you." ] },
+          { h: "Tactical Challenge 6" },
+          "<span class=\"warn\">Without the EMP glitch, the guide rates this an 8 or 9 out of 10 for the average player.</span>",
+          { ul: [
+            "**Round 1 (3/5, boss):** slide boost right towards the spawn, dodge rolling left and right while waiting. Thin the robots in AR mode. When the Crystal Viper appears near you, spam [SQ] to counter. Roll to the Pangloss statue in the middle while he is down and clear more robots. From the second or third counter onwards, shotgun him two or three times, rolling constantly. About four or five counters should finish him; then clear the stragglers.",
+            "**Round 2 (3/5, boss):** stay near the steps with the shotgun and shoot robots in AR as they spawn, dipping in and out per robot. Go to the broken ground behind you and EMP it, then EMP the ground at the Pangloss statue to kill the View Hounds, fast, because a BOGEY spawns. Shoot him in AR until nearly overheated, watch for his suit-overheating grenades, dodge until the suit refills and repeat. EMP him out of the air to slide kick. **Don't grab the upgrade yet; grab the EMPs and ammo before killing the last robot.**",
+            "**Round 3 (3.5/5):** **go into the corner in front of the Assault Rifle containers, facing the wall with your back to the spawn**, so enemies spawn passive. From behind the debris and overturned vehicle, shoot the Romanov by the statue until its head comes off; it will blow up on its own. Aim at a tyre behind the vehicle on the corner until your crosshair turns red to hit the next one, or bait a Romanov into firing its big missile and shoot it for a chain reaction. Leave a robot or two alive to restock and swap your shotgun for the LFE Gun at the top of the stairs.",
+            "**Round 4 (4/5):** at the bottom of the stairs, LFE the A-2 Spheres and duck behind the corner. Two BIAs spawn on your left plus two transports ahead and robots. Destroy the transports in AR mode quickly. If the BIAs come at you, slide boost to the statue, let your suit charge, then boost to the top of the stairs and circle them while picking off robots until only two enemies are left. Stay patient and don't get sandwiched. Grab ammo and the Rocket Launcher in the middle before the last kill.",
+            "**Round 5 (5/5, boss, the hardest part):** EMP as they spawn, LFE the A-2 Spheres, then dodge roll non-stop up the stairs, finishing any remaining Spheres in AR. ALPHA and BRAVO BOGEY spawn: EMP them out of the air and lock on to ALPHA (less health) with the Rocket Launcher. Grab the Rocket Launcher upgrade. When out of rockets, grab the Lock-on Laser up the stairs, take cover behind the railing to bunch them up, hold [R2] to lock on and release to fire, without aiming in. Watch their grenades and lasers on the steps, slide boost and roll often, and restock as needed. Once one is down it gets calmer. A spare EMP plus a slide kick deals good damage on the last BOGEY." ] }] }
+    ] }
+];
+
+const STATUE_MISSIONS = [
+  ["Act 1", ["1-2", "1-3 Giant", "1-4", "1-5 Trust", "1-6 Darkness", "1-7 Seismic", "1-8 Hostile"]],
+  ["Act 2", ["2-1", "2-2", "2-3 Nightmare", "2-4", "2-5", "2-6 Stronghold"]],
+  ["Act 3", ["3-1", "3-2", "3-3", "3-4 Dragon", "3-5 Despair", "3-6 Infiltrate", "3-7 Phantoms"]],
+  ["Act 4", ["4-1", "4-2 Brink", "4-3", "4-4 Slave", "4-5 Emancipation"]],
+  ["Act 5", ["5-1", "5-2 Soldier", "5-3 Deception"]]
+];
+
+/* ---------------- GAME GUIDE ---------------- */
+const ROADMAP = [
+  { id: "stage1", title: "Stage 1: Hard playthrough and collectibles",
+    trophies: ["darpa", "spacenormandy", "storming", "kreon", "myway", "endcombat", "survivor", "overlord", "lifegrand", "crykreon", "highway", "missionacc", "arsop", "gunrunner", "nurse", "knight", "pangloss"],
+    body: ["<span class=\"note\">The guide rates Vanquish 7/10 assuming you use the EMP glitch. Without it, it says the average player could find it an 8 or 9.</span>",
+      "Play the campaign on Hard via **New Game, not Mission Select**, and collect all 112 Pangloss statues. You can combine this with the no-death run, but that makes it slower and more monotonous, so the guide recommends doing {{livinglegend|Living Legend}} separately on Casual.",
+      "If you do try no-death here: play safe and passive, boost often with [L1] and use cover often with [SQ]. If you die, quit to the title screen without pressing Continue, then Continue from the title screen; this voids the death. Back up your save at checkpoints or after each chapter in case you press Continue by accident.",
+      "Random miscellaneous achievements may pop along the way, but the act-specific and miscellaneous ones are planned for stage 2."] },
+  { id: "stage2", title: "Stage 2: Miscellaneous and act-specific cleanup",
+    trophies: ["kinghill", "fightflight", "adrenaline", "goingkill", "heartbreaker", "deathwish", "fortyyard", "homerun", "homerungod", "brutality", "romanovthis", "handofgod", "robotsblow", "holeinone", "shortcircuit", "twobirds", "trickshot", "flash", "piece", "workedout", "failure", "leibniz", "tightrope", "fisher", "flyswatter", "guardian", "hurry", "civil", "buzzard", "smokeem", "auldlang"],
+    body: ["Everything left can be done through Mission Select, and it is all easier on Casual. Do this before the no-death run, since that one must be a New Game.",
+      "Use the \"Campaign by Act\" section to see which missions to replay; each Act lists the miscellaneous achievements that have a good spot there."] },
+  { id: "stage3", title: "Stage 3: No-death playthrough", trophies: ["livinglegend"],
+    body: ["Must be a New Game. Start on Casual; by now you know the game well. Play much like your Hard run but you can be a bit more open and less passive. Don't get too aggressive.",
+      "If you die, quit out without pressing Continue and load back in from the checkpoint. Back up your save to be safe."] },
+  { id: "stage4", title: "Stage 4: Tactical Challenges", trophies: ["tactical"],
+    body: ["The 100% breaker. Each Act you complete unlocks one challenge; the 6th unlocks after completing the first 5. Challenges 4 and 6 are the hardest, 6 being the real roadblock. The {{tip-emp|EMP glitch}} helps a lot but does not make it a cakewalk."] }
+];
+
+const CONTROLS = [["X", "Evade (then [L2] for AR mode)"], ["SQ", "Cover, action, counter, QTEs"], ["O", "Melee"], ["TR", "Throw grenade"], ["L1", "Boost (hold in cover: cigarette)"], ["L2", "Aim / enter AR mode"], ["R1", "Pick up weapons and upgrades"], ["R2", "Shoot / Lock-on Laser"], ["R3", "Zoom while aiming"], ["DP", "Switch weapons and grenades"]];
+
+const TIPS = [
+  { id: "tip-ar", title: "Abuse AR mode", body: ["Press [X] to evade and quickly press [L2] to aim: you go into slow motion while your suit heats up, so watch the green bar at the bottom right. Dip into AR mode, take quick shots at hard-to-hit enemies, drop out, let it charge a second and repeat. Use this to clear small enemies, then focus the big ones."] },
+  { id: "tip-kick", title: "Boost slide drop kicks for bosses", body: ["Your saving grace against bosses is the huge damage of a melee from a boost slide. Boost slide with [L1] towards a boss, press [L2] to enter AR mode mid-slide to manoeuvre and line up, then press [O] for a drop kick. It does a lot, especially to the head, a weak spot, or when it causes a delimb.",
+    "Very good against BOGEY ALPHA and BOGEY BRAVO in the campaign and in the final round of Tactical Challenge 6, especially kicks to ALPHA's head. He has less health in round 2 than round 5."] },
+  { id: "tip-emp", title: "The EMP glitch", body: ["EMP grenades are overpowered, and this glitch gives you unlimited ones.",
+    { ul: ["Have 0 EMP grenades and 3 regular grenades (1 works, but 3 covers accidental throws).", "**Keep your character moving the whole time.**", "Switch to frag grenades and, while moving with [LS], throw one with [TR].", "During the throw animation, switch back to EMPs with the [DP] even though it shows 0. An EMP comes out instead."] }] },
+  { id: "tip-melee", title: "Melee overheats your suit", body: ["Every melee hit overheats the suit. In automatic AR mode (near death), meleeing a Romanov lands a flurry of punches, but outside AR you get two hits and then overheat.",
+    "Exception: slide kicking the Buzzard's left arm (your right) doesn't overheat your suit. Handy in Tactical Challenge 5."] },
+  { id: "tip-shotgun", title: "Shotguns and Romanovs", body: ["Shotguns do decent damage to Romanovs even from a distance, and up close they also stun them, giving you a moment to get away, enter AR mode or switch weapons.",
+    "<span class=\"warn\">Some Romanovs have an insta-kill on every difficulty: the middle of their body opens and fires a big ball of energy.</span>"] },
+  { id: "tip-height", title: "Getting elevation", body: ["If you need height to see an enemy, slide boost and kick a wall or cover. It doesn't overheat the suit and you can enter AR mode in the air. Just don't drain your suit by staying in AR too long."] },
+  { id: "tip-death", title: "Dying without losing progress", body: ["Whenever you die and want to keep a no-death run or your weapon upgrades, **do not press Continue**. Quit to the title screen and continue from there. The death is voided and upgrades are kept."] }
+];
+
+const ROMANOVS = [
+  ["Romanov-N", "Rocket launcher in the right hand, claw in the left."],
+  ["Romanov-F", "Flamethrower in the right hand and a big, sharp melee weapon, with a fuel tank on its back that looks like two big batteries. Shoot the tank, ideally in AR mode with the Heavy Machine Gun."],
+  ["Romanov-G", "Two Gatling guns and a giant cylindrical pack that fires a big missile. Time it right and you can shoot the missile to destroy it easily."],
+  ["Romanov-D", "A giant drill in each hand."]
+];
+
+/* ---------------- state ---------------- */
+const ALL = SECTIONS.flatMap(s => s.items.filter(i => !i.act));
+const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
+const KEY = "vanquish-checklist-v1";
+function clean(s) {
+  const out = { got: {}, steps: {}, counts: {}, open: {}, stages: {}, statues: {}, pad: "ps", tab: "trophies" };
+  if (!s || typeof s !== "object") return out;
+  for (const k of ["got", "steps", "open", "stages"]) if (s[k] && typeof s[k] === "object") for (const x in s[k]) if (s[k][x] === true) out[k][x] = true;
+  if (s.counts && typeof s.counts === "object") for (const x in s.counts) { const v = Math.floor(Number(s.counts[x])); if (v > 0 && v < 10000) out.counts[x] = v; }
+  if (s.statues && typeof s.statues === "object") for (const x in s.statues) { const v = Math.floor(Number(s.statues[x])); if (v > 0 && v <= 15) out.statues[x] = v; }
+  if (s.pad === "xb") out.pad = "xb";
+  if (s.tab === "guide") out.tab = "guide";
+  return out;
+}
+let state = clean(null);
+try { state = clean(JSON.parse(localStorage.getItem(KEY) || "null")); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let filter = "all", query = "";
+
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function fmt(s) {
+  let t = /<span/.test(s) ? s : esc(s);
+  t = t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\{\{([\w-]+)\|([^}]+)\}\}/g, (_, id, label) => `<a href="#${targetId(id)}" data-jump="${id}">${label}</a>`);
+  t = t.replace(/\[(X|SQ|O|TR|L1|L2|R1|R2|L3|R3|LS|DP)\]/g, (_, k) => { const [g, c] = PADS[state.pad][k]; return `<kbd class="b ${state.pad}-${k} ${c}">${g}</kbd>`; });
+  return t;
+}
+function targetId(id) { return id.startsWith("tip-") ? id : id.startsWith("stage") ? "st-" + id : id.startsWith("act") ? "h-" + id : "a-" + id; }
+function blocks(list) {
+  return list.map(b => typeof b === "string" ? `<p>${fmt(b)}</p>`
+    : b.h ? `<h4>${esc(b.h)}</h4>`
+    : b.ul ? `<ul>${b.ul.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>`
+    : b.spoiler ? `<details class="spoiler"><summary>${esc(b.spoiler)}</summary>${blocks(b.body)}</details>` : "").join("");
+}
+const flatText = list => list.map(b => typeof b === "string" ? b : b.h || (b.ul || []).join(" ") || (b.body ? flatText(b.body) : "")).join(" ");
+
+const stepKey = (a, i) => a.id + ":" + i;
+const stepsGot = a => (a.steps || []).filter((_, i) => state.steps[stepKey(a, i)]).length;
+const statueTotal = () => Object.values(state.statues).reduce((t, v) => t + v, 0);
+
+/* automatic ticks: run after any change, comparing with a snapshot taken before it */
+function snapshot() {
+  return { counts: { ...state.counts }, statues: statueTotal(), steps: Object.fromEntries(ALL.filter(a => a.steps).map(a => [a.id, stepsGot(a)])), got: { ...state.got } };
+}
+function applyAuto(before) {
+  ALL.forEach(a => {
+    if (a.count) { const k = a.count.key, was = before.counts[k] || 0, now = state.counts[k] || 0; if (now >= a.count.target && was < a.count.target) state.got[a.id] = true; }
+    if (a.steps) { const n = a.steps.length, g = stepsGot(a); if (g === n && before.steps[a.id] < n) state.got[a.id] = true; else if (g < n && before.steps[a.id] === n) delete state.got[a.id]; }
+    if (a.statues) { const v = statueTotal(); if (v >= 112 && before.statues < 112) state.got[a.id] = true; }
+  });
+  // alsoTicks (Hard implies Normal etc.) and autoAll, repeated so chains settle
+  for (let pass = 0; pass < 3; pass++) ALL.forEach(a => {
+    if (state.got[a.id] && !before.got[a.id] && a.alsoTicks) a.alsoTicks.forEach(x => state.got[x] = true);
+    if (a.autoAll && a.autoAll.every(x => state.got[x]) && !a.autoAll.every(x => before.got[x])) state.got[a.id] = true;
+  });
+}
+
+/* ---------------- render: achievements ---------------- */
+function renderItem(a) {
+  const rare = a.pct < 15;
+  const tagName = t => t === "difficulty" ? "Difficulty specific" : t;
+  return `<li class="item" id="a-${a.id}" data-id="${a.id}">
+    <div class="row">
+      <div class="check-wrap"><input type="checkbox" class="check" id="c-${a.id}" data-ach="${a.id}" aria-label="Mark ${esc(a.name)} as unlocked"></div>
+      <div>
+        <div class="title-line">
+          <h3><label for="c-${a.id}">${esc(a.name)}</label></h3>
+          ${(a.tags || []).map(t => `<span class="tag ${t}">${tagName(t)}</span>`).join("")}
+          ${a.newGame ? `<span class="tag hard">New Game only</span>` : ""}
+          ${a.mission ? `<span class="mission">${esc(a.mission)}</span>` : a.spot ? `<span class="mission">Best spot: ${esc(a.spot)}</span>` : ""}
+          <span class="rarity${rare ? " rare" : ""}">PSN ${a.pct.toFixed(1)}%</span>
+        </div>
+        <p class="desc">${esc(a.desc)}</p>
+        ${a.diff ? `<p class="diff">${esc(a.diff)}</p>` : ""}
+        ${a.count ? `<div class="counters"><div class="counter">
+            <button class="step-btn" data-dec="${a.count.key}" aria-label="One fewer ${esc(a.count.label)}">−</button>
+            <input type="number" class="count-input" data-count="${a.count.key}" data-for="${a.id}" min="0" max="999" inputmode="numeric" aria-label="${esc(a.count.label)}">
+            <button class="step-btn" data-inc="${a.count.key}" aria-label="One more ${esc(a.count.label)}">+</button>
+            <span class="of">/ ${a.count.target} ${esc(a.count.label)}</span>
+          </div></div>` : ""}
+        ${a.steps ? `<ul class="steps${a.wideSteps ? " wide" : ""}">${a.steps.map((s, i) => `
+          <li data-step="${stepKey(a, i)}">
+            <div class="check-wrap small"><input type="checkbox" class="check" id="s-${a.id}-${i}" data-step="${stepKey(a, i)}" data-parent="${a.id}"></div>
+            <label for="s-${a.id}-${i}"><span class="st-name">${esc(s[0])}</span>${s[1] ? `<span class="st-desc">${fmt(s[1])}</span>` : ""}</label>
+          </li>`).join("")}</ul>` : ""}
+        ${a.statues ? `<div class="statues">${STATUE_MISSIONS.map(([act, ms]) => `
+          <div class="statue-act"><b>${act}</b><div class="statue-row">${ms.map(m => { const k = m.split(" ")[0]; return `
+            <div class="mis" data-mis="${k}"><span title="Act ${esc(m)}">${esc(m)}</span>${[1, 2, 3, 4].map(n => `<button class="pip" data-statue="${k}" data-n="${n}" aria-label="Act ${k} statue ${n}" aria-pressed="false"></button>`).join("")}</div>`; }).join("")}</div></div>`).join("")}
+          <div class="summary-line" id="statue-line"></div></div>` : ""}
+        <button class="guide-btn" aria-expanded="false" aria-controls="g-${a.id}">Show guide</button>
+        <div class="guide" id="g-${a.id}" hidden>${blocks(a.guide || [])}</div>
+      </div>
+    </div>
+  </li>`;
+}
+function renderAct(h) {
+  return `<li class="act-head" id="h-${h.id}" data-act="${h.id}"><h3>${esc(h.act)} <span>· ${esc(h.label)}</span></h3>
+    ${h.also && h.also.length ? `<div class="also">Also good here: ${h.also.map(([id, m]) => `<a href="#a-${id}" data-jump="${id}" data-tl="${id}">${esc(BY_ID[id].name)}<small>${esc(m)}</small></a>`).join("")}</div>` : ""}</li>`;
+}
+
+function renderTrophies() {
+  document.getElementById("view-trophies").innerHTML = `
+    <div class="banner">
+      <span><b>About 25 hours over 2 playthroughs</b> (guide difficulty 7/10 with the EMP glitch): Hard with collectibles, Mission Select cleanup, a no-death run on Casual, then the Tactical Challenges.</span>
+      <span>Act completion achievements and Living Legend need a New Game, not Mission Select. Ticking a Hard Act also ticks its Normal version.</span>
+    </div>
+    <nav class="jumps" aria-label="Sections">${SECTIONS.map(s => `<a class="jump" href="#sec-${s.id}" data-sec="${s.id}">${s.title} <span data-jcount="${s.id}"></span></a>`).join("")}</nav>
+    ${SECTIONS.map(sec => `
+    <section class="sheet" id="sec-${sec.id}" aria-labelledby="hs-${sec.id}">
+      <div class="sheet-head"><h2 id="hs-${sec.id}">${sec.title}</h2><span class="sub" data-sub="${sec.id}"></span></div>
+      <p class="intro">${sec.intro}</p>
+      <ul class="items">${sec.items.map(i => i.act ? renderAct(i) : renderItem(i)).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden></p>
+    </section>`).join("")}`;
+}
+
+function renderGuide() {
+  document.getElementById("view-guide").innerHTML = `
+    <nav class="jumps" aria-label="Guide sections">
+      <a class="jump" href="#g-roadmap">Roadmap</a><a class="jump" href="#g-controls">Controls</a><a class="jump" href="#g-tips">Tips and strategies</a><a class="jump" href="#g-romanovs">Romanov types</a>
+    </nav>
+    <section class="sheet" id="g-roadmap" aria-labelledby="h-roadmap">
+      <div class="sheet-head"><h2 id="h-roadmap">Roadmap</h2><span class="sub" id="stage-count"></span></div>
+      <p class="intro">The guide's four stages. Tick a stage when it is done; achievement chips turn green as you unlock them.</p>
+      ${ROADMAP.map(s => `
+      <div class="stage" id="st-${s.id}">
+        <div class="row">
+          <div class="check-wrap"><input type="checkbox" class="check" id="sc-${s.id}" data-stagecheck="${s.id}" aria-label="Mark ${esc(s.title)} as done"></div>
+          <div class="prose"><h3><label for="sc-${s.id}">${esc(s.title)}</label></h3>${blocks(s.body)}
+            <div class="tlinks">${s.trophies.map(t => `<a class="tlink" href="#a-${t}" data-jump="${t}" data-tl="${t}">${esc(BY_ID[t].name)}</a>`).join("")}</div></div>
+        </div>
+      </div>`).join("")}
+    </section>
+    <section class="sheet" id="g-controls" aria-labelledby="h-controls">
+      <div class="sheet-head"><h2 id="h-controls">Controls</h2></div>
+      <p class="intro">The guide uses PlayStation buttons. Switch to Xbox in the panel to see the same buttons by position; on keyboard, use the matching actions in your bindings.</p>
+      <div class="legend-grid">${CONTROLS.map(([k, l]) => `<div>${fmt("[" + k + "]")} ${fmt(l)}</div>`).join("")}</div>
+    </section>
+    <section class="sheet" id="g-tips" aria-labelledby="h-tips">
+      <div class="sheet-head"><h2 id="h-tips">Tips and strategies</h2></div>
+      <p class="intro">The general techniques the achievement strategies rely on.</p>
+      ${TIPS.map(t => `<div class="tip prose" id="${t.id}"><h3>${esc(t.title)}</h3>${blocks(t.body)}</div>`).join("")}
+    </section>
+    <section class="sheet" id="g-romanovs" aria-labelledby="h-romanovs">
+      <div class="sheet-head"><h2 id="h-romanovs">Romanov types</h2><span class="sub">4 variants</span></div>
+      <p class="intro">The big robots behind {{x}} several melee achievements. Upgrades drop mostly from them.</p>
+      <div class="romanovs">${ROMANOVS.map(([n, d]) => `<div class="romanov"><h3>${n}</h3><p style="margin:.25rem 0 0">${esc(d)}</p></div>`).join("")}</div>
+    </section>`.replace("{{x}} ", "");
+}
+
+function render() {
+  renderTrophies();
+  renderGuide();
+  document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
+  setTab(state.tab, true);
+  update();
+}
+
+/* ---------------- behaviour ---------------- */
+function toggleGuide(btn, force) {
+  const id = btn.getAttribute("aria-controls").slice(2);
+  const panel = document.getElementById("g-" + id);
+  const open = force !== undefined ? force : panel.hidden;
+  panel.hidden = !open;
+  btn.setAttribute("aria-expanded", String(open));
+  btn.textContent = open ? "Hide guide" : "Show guide";
+  if (open) state.open[id] = true; else delete state.open[id];
+}
+function setTab(t, quiet) {
+  state.tab = t;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  document.getElementById("view-trophies").hidden = t !== "trophies";
+  document.getElementById("view-guide").hidden = t !== "guide";
+  document.getElementById("trophy-controls").hidden = t !== "trophies";
+  if (!quiet) save();
+}
+function change(fn) { const before = snapshot(); fn(); applyAuto(before); save(); update(); }
+function setCount(key, v) { change(() => { v = Math.max(0, Math.min(999, Math.floor(Number(v) || 0))); if (v) state.counts[key] = v; else delete state.counts[key]; }); }
+function jumpTo(id) {
+  const el = document.getElementById(targetId(id));
+  if (!el) return;
+  const inGuide = !!el.closest("#view-guide");
+  if (inGuide !== (state.tab === "guide")) setTab(inGuide ? "guide" : "trophies");
+  if (el.classList.contains("hidden")) { filter = "all"; query = ""; document.getElementById("search").value = ""; syncChips(); update(); }
+  const btn = el.querySelector(":scope > .row .guide-btn");
+  if (btn && btn.getAttribute("aria-expanded") !== "true") { toggleGuide(btn, true); save(); }
+  const panel = document.querySelector(".panel");
+  const offset = getComputedStyle(panel).position === "sticky" ? panel.offsetHeight + 16 : 16;
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+}
+
+const mainEl = document.querySelector("main");
+mainEl.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.ach) {
+    const a = BY_ID[t.dataset.ach];
+    change(() => {
+      if (t.checked) state.got[a.id] = true; else delete state.got[a.id];
+      if (a.steps) a.steps.forEach((_, i) => { if (t.checked) state.steps[stepKey(a, i)] = true; else delete state.steps[stepKey(a, i)]; });
+    });
+  } else if (t.dataset.step) {
+    change(() => { if (t.checked) state.steps[t.dataset.step] = true; else delete state.steps[t.dataset.step]; });
+  } else if (t.dataset.count) {
+    setCount(t.dataset.count, t.value);
+  } else if (t.dataset.stagecheck) {
+    if (t.checked) state.stages[t.dataset.stagecheck] = true; else delete state.stages[t.dataset.stagecheck];
+    save(); update();
+  }
+});
+mainEl.addEventListener("click", e => {
+  const t = e.target.closest("button, a[data-jump]");
+  if (!t || t.closest(".panel")) return;
+  if (t.dataset.inc) setCount(t.dataset.inc, (state.counts[t.dataset.inc] || 0) + 1);
+  else if (t.dataset.dec) setCount(t.dataset.dec, (state.counts[t.dataset.dec] || 0) - 1);
+  else if (t.dataset.statue) {
+    const k = t.dataset.statue, n = Number(t.dataset.n), cur = state.statues[k] || 0;
+    change(() => { const v = cur === n ? n - 1 : n; if (v) state.statues[k] = v; else delete state.statues[k]; });
+  }
+  else if (t.classList.contains("guide-btn")) { toggleGuide(t); save(); }
+  else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
+});
+
+function syncChips() { document.querySelectorAll(".chip[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter))); }
+function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
+
+function matches(a, secId) {
+  const d = !!state.got[a.id];
+  if (filter === "todo" && d) return false;
+  if (filter === "done" && !d) return false;
+  if (filter === "act" && !a.mission) return false;
+  if (query) {
+    const hay = [a.name, a.desc, a.mission || "", a.spot || "", a.diff || "", flatText(a.guide || []), (a.steps || []).map(s => s.join(" ")).join(" ")].join(" ").replace(/<[^>]+>/g, "").toLowerCase();
+    if (!hay.includes(query)) return false;
+  }
+  return true;
+}
+
+function update() {
+  let total = 0, done = 0;
+  SECTIONS.forEach(sec => {
+    let sDone = 0, visible = 0, n = 0, actVisible = null, actEl = null;
+    const flushAct = () => { if (actEl) actEl.classList.toggle("hidden", !actVisible); };
+    sec.items.forEach(a => {
+      if (a.act) { flushAct(); actEl = document.getElementById("h-" + a.id); actVisible = false; return; }
+      total++; n++;
+      const d = !!state.got[a.id];
+      if (d) { done++; sDone++; }
+      const li = document.getElementById("a-" + a.id);
+      li.classList.toggle("done", d);
+      const cb = document.getElementById("c-" + a.id);
+      cb.checked = d;
+      const partial = (a.steps && stepsGot(a) > 0) || (a.count && (state.counts[a.count.key] || 0) > 0) || (a.statues && statueTotal() > 0);
+      cb.indeterminate = !d && !!partial;
+      (a.steps || []).forEach((_, i) => {
+        const on = !!state.steps[stepKey(a, i)];
+        document.getElementById(`s-${a.id}-${i}`).checked = on;
+        li.querySelector(`li[data-step="${stepKey(a, i)}"]`).classList.toggle("got", on);
+      });
+      if (a.count) { const inp = li.querySelector(".count-input"); if (document.activeElement !== inp) inp.value = state.counts[a.count.key] || 0; }
+      const show = matches(a, sec.id);
+      li.classList.toggle("hidden", !show);
+      if (show) { visible++; actVisible = true; }
+    });
+    flushAct();
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sDone} / ${n}`;
+    document.querySelector(`[data-jcount="${sec.id}"]`).textContent = `${sDone}/${n}`;
+    const empty = document.querySelector(`[data-empty="${sec.id}"]`);
+    empty.hidden = visible > 0;
+    empty.textContent = query ? "No matches in this section." : filter === "todo" ? "Everything here is unlocked." : "Nothing here for this filter.";
+  });
+  // statues
+  document.querySelectorAll(".mis").forEach(m => {
+    const v = state.statues[m.dataset.mis] || 0;
+    m.classList.toggle("full", v >= 4);
+    m.querySelectorAll(".pip").forEach(p => p.setAttribute("aria-pressed", String(Number(p.dataset.n) <= v)));
+  });
+  const sl = document.getElementById("statue-line");
+  if (sl) sl.innerHTML = `Pangloss statues: <b>${statueTotal()} / 112</b> · ${document.querySelectorAll(".mis.full").length} of 28 missions complete`;
+  // roadmap + chips
+  let sd = 0;
+  ROADMAP.forEach(s => { const on = !!state.stages[s.id]; if (on) sd++; document.getElementById("sc-" + s.id).checked = on; document.getElementById("st-" + s.id).classList.toggle("done", on); });
+  document.getElementById("stage-count").textContent = `${sd} / ${ROADMAP.length} stages`;
+  document.querySelectorAll("[data-tl]").forEach(l => l.classList.toggle("done", !!state.got[l.dataset.tl]));
+  const pct = Math.round(done / total * 100);
+  document.getElementById("count").innerHTML = `${done} / ${total} <small>unlocked · ${pct}%</small>`;
+  document.getElementById("fill").style.width = pct + "%";
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+/* ---------------- panel ---------------- */
+document.querySelector(".panel").addEventListener("click", e => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.classList.contains("tab")) setTab(t.dataset.tab);
+  else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); syncPad(); render(); }
+  else if (t.dataset.filter) { filter = t.dataset.filter; syncChips(); update(); }
+});
+document.getElementById("search").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); update(); });
+document.getElementById("expand").addEventListener("click", e => {
+  const btn = e.currentTarget, open = btn.getAttribute("aria-pressed") !== "true";
+  btn.setAttribute("aria-pressed", String(open));
+  btn.textContent = open ? "Hide all guides" : "Show all guides";
+  document.querySelectorAll("#view-trophies .guide-btn").forEach(b => toggleGuide(b, open));
+  save();
+});
+let armTimer = null;
+const reset = document.getElementById("reset");
+reset.addEventListener("click", () => {
+  if (!reset.classList.contains("armed")) {
+    reset.classList.add("armed"); reset.textContent = "Tap again to clear all";
+    armTimer = setTimeout(() => { reset.classList.remove("armed"); reset.textContent = "Reset"; }, 3500);
+    return;
+  }
+  clearTimeout(armTimer); reset.classList.remove("armed"); reset.textContent = "Reset";
+  state = clean({ pad: state.pad, tab: state.tab }); save(); render();
+});
+let statusTimer = null;
+function status(msg) {
+  const el = document.getElementById("save-status");
+  el.textContent = msg; clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { el.textContent = "Saved in this browser automatically."; }, 4000);
+}
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "vanquish-progress.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Backup saved as vanquish-progress.json.");
+});
+const fileInput = document.getElementById("import-file");
+document.getElementById("import").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const f = fileInput.files[0]; if (!f) return;
+  f.text().then(txt => {
+    const data = JSON.parse(txt);
+    if (!data || typeof data !== "object" || !data.got) throw new Error();
+    state = clean(data); save(); syncPad(); render(); status("Backup restored.");
+  }).catch(() => status("That file isn't a checklist backup. Choose a vanquish-progress.json file."));
+  fileInput.value = "";
+});
+
+syncPad();
+render();
+})();
+</script>
+<!-- hub:body -->
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../index.html"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

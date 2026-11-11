@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>My Checklists</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root { --bg: #0f1115; --panel: #181b22; --line: #2a2f3a; --text: #eef1f6; --soft: #a3abb9; --accent: #7cc4ff; --ok: #6fdc9b; --bad: #ff7a70; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+  .wrap { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+  header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1.25rem; }
+  h1 { margin: 0; font-size: 1.6rem; letter-spacing: -.01em; display: flex; align-items: center; gap: .6rem; }
+  h1 img { width: 34px; height: 34px; border-radius: 9px; }
+  .tools { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .btn { font: inherit; font-weight: 650; font-size: .95rem; min-height: 44px; padding: 0 1rem; border-radius: 12px; cursor: pointer;
+    color: var(--text); background: var(--panel); border: 1px solid var(--line); }
+  .btn:hover { border-color: #3b4252; }
+  .btn:focus-visible, .card:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #msg { margin: -.25rem 0 1rem; padding: .7rem .9rem; border-radius: 10px; font-weight: 600; font-size: .95rem; border: 1px solid; }
+  #msg.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); background: color-mix(in srgb, var(--ok) 10%, transparent); }
+  #msg.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); background: color-mix(in srgb, var(--bad) 10%, transparent); }
+  #msg[hidden] { display: none; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 680px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1080px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .card { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 168px; padding: 1rem;
+    border-radius: 16px; overflow: hidden; color: #fff; text-decoration: none; isolation: isolate;
+    background: var(--fallback, #222); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 6px 20px rgba(0,0,0,.35);
+    transition: transform .15s ease, box-shadow .15s ease; -webkit-tap-highlight-color: transparent; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,.45); }
+  .card .art { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, center); }
+  .card::before { content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(8,9,12,.25) 0%, rgba(8,9,12,.55) 45%, rgba(8,9,12,.92) 100%); }
+  .card .logo { display: block; max-width: min(70%, 260px); max-height: 64px; width: auto; height: auto; margin-bottom: .55rem; object-fit: contain; object-position: left bottom; filter: drop-shadow(0 2px 6px rgba(0,0,0,.7)); }
+  .card h2 { margin: 0 0 .5rem; font-size: 1.3rem; line-height: 1.15; text-shadow: 0 2px 6px rgba(0,0,0,.8); }
+  .card .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .prog { display: grid; gap: .45rem; }
+  .row { display: grid; gap: .25rem; }
+  .row .label { display: flex; justify-content: space-between; gap: .5rem; font-size: .9rem; font-weight: 650; text-shadow: 0 1px 3px rgba(0,0,0,.9); }
+  .row .label span:last-child { color: #dfe5ee; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .meter { height: 6px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--bar, var(--accent)); }
+
+  /* Styled cards for games without art */
+  .card.dmc { --fallback: radial-gradient(120% 140% at 85% 10%, #7a0d12 0%, #2a0507 45%, #0b0203 100%); }
+  .card.dmc h2 { font-family: Georgia, "Times New Roman", serif; font-size: 1.6rem; letter-spacing: .04em; text-transform: uppercase; color: #f3e7d0; }
+  .card.so { --fallback: linear-gradient(135deg, #ff2e88 0%, #ff7a18 48%, #ffd23f 100%); }
+  .card.so::before { background: linear-gradient(180deg, rgba(10,0,20,.05) 0%, rgba(10,0,20,.45) 50%, rgba(10,0,20,.88) 100%); }
+  .card.so h2 { font-size: 1.6rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: .02em; }
+
+  footer { margin-top: 2rem; color: var(--soft); font-size: .85rem; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><img src="icon-192.png" alt="">My Checklists</h1>
+    <div class="tools">
+      <button class="btn" id="backup">Back up all</button>
+      <button class="btn" id="restore">Restore all</button>
+      <input type="file" id="file" accept=".json,application/json" hidden>
+    </div>
+  </header>
+  <p id="msg" role="status" hidden></p>
+  <main class="grid" id="grid"></main>
+  <footer>Progress is saved on this device. Use Back up all now and then to keep a copy.</footer>
+</div>
+
+<script>
+// To add a game: add an entry here (file, title, key = its localStorage key), add the file to FILES in sw.js, bump CACHE.
+// art/logo are optional; cls picks a styled card when there is no art.
+const GAMES = [
+  { file: "checklists/re4.html", title: "Resident Evil 4", key: "re4-remake-checklist-v1", art: "img/re4-hero.webp", logo: "img/re4-logo.webp", pos: "center 30%", bar: "#c8302c" },
+  { file: "checklists/gta4.html", title: "Grand Theft Auto IV: The Complete Edition", key: "gta4-complete-checklist-v1", art: "img/gta4-hero.webp", logo: "img/gta4-logo.webp", pos: "center 25%", bar: "#e8b64a" },
+  { file: "checklists/p4g.html", title: "Persona 4 Golden", key: "p4g-checklist-v1", art: "img/p4g-hero.webp", logo: "img/p4g-logo.webp", bar: "#ffd400" },
+  { file: "checklists/halo-mcc.html", title: "Halo: The Master Chief Collection", key: "mcc-tracker-v1", art: "img/halo-mcc-hero.webp", logo: "img/halo-mcc-logo.webp", bar: "#c9a64a" },
+  { file: "checklists/vanquish.html", title: "Vanquish", key: "vanquish-checklist-v1", art: "img/vanquish-hero.webp", pos: "70% center", bar: "#3fe0d0" },
+  { file: "checklists/dmc.html", title: "Devil May Cry", key: "dmc1-checklist-v1", cls: "dmc", bar: "#e0333a" },
+  { file: "checklists/sunset-overdrive.html", title: "Sunset Overdrive", key: "so-checklist-v1", cls: "so", bar: "#ffe14d" },
+  { file: "checklists/stick-of-truth.html", title: "The Stick of Truth", art: "img/stick-of-truth-hero.webp", pos: "center 45%", bar: "#f2bd4b",
+    parts: [ { file: "checklists/sot-missables.html", label: "Missable trophies", key: "sot-missables-v1" },
+             { file: "checklists/sot-collection.html", label: "Collectibles", key: "sot-collection-v1" } ] }
+];
+const PROGRESS = "hub-progress-v1";
+const APP = "my-checklists";
+
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+function readProgress() { try { return JSON.parse(localStorage.getItem(PROGRESS) || "{}") || {}; } catch (e) { return {}; } }
+function has(key) { try { return localStorage.getItem(key) !== null; } catch (e) { return false; } }
+
+function rowHTML(label, p, key) {
+  let right, pct = 0;
+  if (p && p.total > 0) { pct = Math.round(p.done / p.total * 100); right = `${p.done} / ${p.total} · ${pct}%`; }
+  else right = "Open";
+  return `<div class="row"><div class="label"><span>${esc(label)}</span><span>${right}</span></div>` +
+         `<div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div></div>`;
+}
+
+function render() {
+  const prog = readProgress();
+  document.getElementById("grid").innerHTML = GAMES.map(g => {
+    const parts = g.parts || [{ file: g.file, label: "Achievements", key: g.key }];
+    const style = [g.pos ? `--pos:${g.pos}` : "", g.bar ? `--bar:${g.bar}` : ""].filter(Boolean).join(";");
+    return `<a class="card ${g.cls || ""}" href="${esc(g.file)}" style="${style}">
+      ${g.art ? `<img class="art" src="${esc(g.art)}" alt="" loading="lazy" decoding="async">` : ""}
+      ${g.logo ? `<img class="logo" src="${esc(g.logo)}" alt="${esc(g.title)}">` : `<h2>${esc(g.title)}</h2>`}
+      <div class="prog">${parts.map(p => rowHTML(p.label, prog[p.file.split("/").pop()], p.key)).join("")}</div>
+    </a>`;
+  }).join("");
+}
+
+function allKeys() {
+  const keys = new Set([PROGRESS, "sot-hub-tab"]);
+  GAMES.forEach(g => (g.parts || [g]).forEach(p => keys.add(p.key)));
+  return keys;
+}
+function isOurs(k) { for (const key of allKeys()) if (k === key || k.startsWith(key + "-")) return true; return false; }
+
+function say(text, ok) {
+  const m = document.getElementById("msg");
+  m.textContent = text; m.className = ok ? "ok" : "bad"; m.hidden = false;
+  clearTimeout(say.t); say.t = setTimeout(() => { m.hidden = true; }, ok ? 6000 : 12000);
+}
+
+document.getElementById("backup").addEventListener("click", () => {
+  const data = {};
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (isOurs(k)) data[k] = localStorage.getItem(k); } }
+  catch (e) { say("Couldn't read saved progress on this device.", false); return; }
+  const n = Object.keys(data).filter(k => k !== PROGRESS && k !== "sot-hub-tab" && !k.endsWith("-tab")).length;
+  if (!n) { say("Nothing to back up yet. Tick something in a checklist first.", false); return; }
+  const out = { app: APP, version: 1, exported: new Date().toISOString(), data };
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `checklists-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  say(`Backed up ${n} checklist${n === 1 ? "" : "s"}.`, true);
+});
+
+const fileInput = document.getElementById("file");
+document.getElementById("restore").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", async () => {
+  const f = fileInput.files[0]; fileInput.value = "";
+  if (!f) return;
+  let obj;
+  try {
+    if (f.size > 20 * 1024 * 1024) throw new Error("That file is too large to be a checklist backup.");
+    try { obj = JSON.parse(await f.text()); } catch (e) { throw new Error("That file isn't valid JSON."); }
+    if (!obj || typeof obj !== "object" || obj.app !== APP || typeof obj.data !== "object" || obj.data === null || Array.isArray(obj.data))
+      throw new Error("That file isn't a My Checklists backup. Choose a checklists-backup-….json file made with Back up all.");
+    const entries = Object.entries(obj.data).filter(([k]) => isOurs(k));
+    if (!entries.length) throw new Error("That backup doesn't contain any checklist progress.");
+    for (const [k, v] of entries) {
+      if (typeof v !== "string") throw new Error(`The entry for "${k}" is damaged.`);
+      if (k.endsWith("-tab") || k === "sot-hub-tab") continue;
+      let parsed; try { parsed = JSON.parse(v); } catch (e) { throw new Error(`The entry for "${k}" is damaged.`); }
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error(`The entry for "${k}" is damaged.`);
+    }
+    try { entries.forEach(([k, v]) => localStorage.setItem(k, v)); }
+    catch (e) { throw new Error("Couldn't save to this device's storage. It may be full or blocked."); }
+    const n = entries.filter(([k]) => k !== PROGRESS && !k.endsWith("-tab")).length;
+    render();
+    say(`Restored ${n} checklist${n === 1 ? "" : "s"} from the backup made ${obj.exported ? new Date(obj.exported).toLocaleDateString("en-GB") : "earlier"}.`, true);
+  } catch (e) { say(e.message || "Restore failed.", false); }
+});
+
+addEventListener("pageshow", render);
+addEventListener("storage", render);
+render();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>

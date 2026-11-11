@@ -75,14 +75,14 @@
     .tools { display: flex; flex-wrap: nowrap; gap: .4rem; width: 100%; }
     .tools .btn { flex: 1 1 0; min-width: 0; min-height: 40px; padding: 0 .4rem; font-size: .8rem;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    /* Two compact cards per row */
-    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
-    .card, .card.has-art { min-height: 0; padding: .45rem .55rem; border-radius: 12px; }
+    /* One compact card per row; the artwork scales with the card width */
+    .grid { grid-template-columns: minmax(0, 1fr); gap: .7rem; }
+    .card, .card.has-art { min-height: 0; padding: .55rem .7rem; border-radius: 12px; }
     .prog { gap: .3rem; }
     .row { gap: .2rem; }
-    .row .label { font-size: .7rem; gap: .3rem; }
+    .row .label { font-size: .78rem; gap: .4rem; }
     .row .label span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .meter { height: 4px; }
+    .meter { height: 5px; }
     .empty { padding: 1.2rem 0; }
   }
 

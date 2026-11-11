@@ -12,6 +12,7 @@ The site is static. A checklist is **one self-contained HTML file** (inline CSS 
 5. Work at 360 px wide with no sideways page scroll.
 
 ## Must not have
+- Do **not** add your own `<link rel="icon">` or favicon. The shared tab icon (`../icon-192.png`) is added by the injected hub block.
 - Do **not** add the `<!-- hub:head -->` / `<!-- hub:body -->` blocks, the manifest link, a service worker, or any "back to home" button. They are injected afterwards by script.
 - No fixed element in the bottom-left corner (the "← All games" pill sits there). A fixed bottom bar is fine, the pill lifts above it.
 - No absolute links to other pages of the site.

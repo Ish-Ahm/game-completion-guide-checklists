@@ -158,7 +158,12 @@ function render() {
   if (!list.length) { document.getElementById("grid").innerHTML = `<p class="empty">No games match "${esc(q)}".</p>`; return; }
   document.getElementById("grid").innerHTML = list.map(g => {
     const parts = g.parts || [{ file: g.file, label: "Achievements", key: g.key }];
-    const lookup = p => { const n = p.file.split("/").pop(); return prog[n] || prog[n.replace(/\.html$/, "")]; };
+    // A guide records its readout under "name" (live site) or "name.html" (local), and Steam sync can leave a blank
+    // entry under both. Use whichever entry is newest, so a fresh visit always beats an older blank one.
+    const lookup = p => {
+      const n = p.file.split("/").pop(), a = prog[n], b = prog[n.replace(/\.html$/, "")];
+      return !a ? b : !b ? a : ((b.t || 0) > (a.t || 0) ? b : a);
+    };
     const complete = parts.every(p => { const e = lookup(p); return e && e.total > 0 && e.done >= e.total; });
     const style = [g.pos ? `--pos:${g.pos}` : "", g.bar ? `--bar:${g.bar}` : ""].filter(Boolean).join(";");
     return `<a class="card ${g.art ? "has-art" : ""} ${g.cls || ""}" href="${esc(g.file)}" style="${style}">

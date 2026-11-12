@@ -8,7 +8,7 @@ The site is static. A checklist is **one self-contained HTML file** (inline CSS 
    `const KEY = "<slug>-checklist-v1";`
    Progress is saved to `localStorage[KEY]` as `{ "got": { "<achievement-id>": true } }` (plus any other fields you need). Anything already unlocked from the Steam/PSN PDF is pre-ticked by default.
 3. **Visible progress readout** containing text like `7 / 46 unlocked` (also accepted: `done`, `collectibles`). The home page copies this number. It must stay in the page and update when items are ticked.
-4. `<meta name="viewport" content="width=device-width, initial-scale=1">` and a `<meta name="theme-color">`.
+4. `<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">` (0.85 is the site-wide phone scale; it is the same on every page) and a `<meta name="theme-color">`.
 5. Work at 360 px wide with no sideways page scroll.
 
 ## Must not have

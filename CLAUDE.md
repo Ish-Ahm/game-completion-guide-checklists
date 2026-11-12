@@ -9,6 +9,9 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
 - `manifest.json`, `sw.js`, `sync.js`, `steam-sync.js`, `steam-map.json`, `functions/api/` (sync.js, steam.js), `tools/` (add_guide.py, build_steam_map.py), `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
 
+## Phone scale
+Every page (home and all guides) has `<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">`. The `0.85` is the site-wide phone scale (lower = everything smaller, 1 = normal). To change it, replace that number in `index.html` and every file in `checklists/` by script, and update `CHECKLIST-SPEC.md`. Desktop ignores it.
+
 ## Rules for the checklist files
 - **Treat each checklist as an opaque, finished file.** They are large single-file pages (inline CSS/JS, base64 images; `re4.html` is about 5 MB). Do not read them in full, reformat or rewrite them.
 - Make any change to them with a script (Python with `-I`, or sed) or a targeted grep. Never load their whole contents into the conversation.

@@ -34,11 +34,15 @@ Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed so
 `sync.js` (loaded by `index.html` and by each checklist through the hub:body block) syncs every localStorage key ending in `-v<number>` to Cloudflare KV via the Pages Function `functions/api/sync.js` (needs KV binding `SYNC_KV` and secret `SYNC_PASSCODE`; see `SYNC-SETUP.md`). New checklists must keep the `<slug>-checklist-v1` key form to be picked up. `sw.js` never caches `/api/`.
 
 ## Adding a new checklist
-1. Copy the file in with a short lowercase name, e.g. `newgame.html`.
+Preferred: put the file in `checklists/` (short lowercase name, e.g. `newgame.html`), add its card image at `img/cards/newgame.webp` (920x430), then run from the project root:
+`python3 -I tools/add_guide.py checklists/newgame.html --title "New Game" --bar "#ff8800" [--pos "center 30%"] [--dry-run]`
+It checks the storage key and readout, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` and bumps `CACHE`. Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.
+Manual route (if the script cannot be used):
+1. Copy the file into `checklists/`.
 2. Inject the two hub blocks by script, copying them from an existing checklist (e.g. `vanquish.html`).
 3. Find its key with one grep: `grep -o 'const KEY = "[^"]*"' newgame.html`.
-4. Add an entry to `GAMES` in `index.html`. Card art goes in `img/cards/<slug>.webp` (920x430, 92:43); see `img/README.md`.
-5. Add the file (and any image) to `FILES` in `sw.js`.
+4. Add an entry to `GAMES` in `index.html`.
+5. Add the card image to `FILES` in `sw.js`, and bump `CACHE`.
 
 ## Every change: bump the service worker cache
 Increment `CACHE` in `sw.js` (`checklists-v1` → `checklists-v2` …) on **every** commit that changes any file, or installed phones keep serving old copies.

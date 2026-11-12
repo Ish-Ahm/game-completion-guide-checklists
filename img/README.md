@@ -13,3 +13,7 @@ Older checklists may have no logo or banner file here; only the card is needed f
 Tips: keep the subject centred in cards (they crop with `object-fit: cover`; `pos: "center 30%"` in `GAMES` moves the crop). Do not commit anything over 200 KB.
 
 Which guides use banners and logos (as of now): RE4, GTA IV, Persona 4 Golden, Halo MCC, Devil May Cry and Sunset Overdrive have a banner and a logo in their header. Vanquish and Stick of Truth have neither slot, so their `banners/` and `logos/` files are not used by the site. When swapping a banner into a guide, resize it to about 1600 px wide (WebP, quality about 62, roughly 50 to 100 KB) and a logo to about 800 px wide before embedding.
+
+## Icons
+
+`icons/steam-trophy.svg` is the trophy shown on a home card when a game reaches 100%. It is a normal standalone file (canvas 600 x 700) that you can edit in Inkscape or any editor. After saving a change, bump `CACHE` in `sw.js` (for example `checklists-v19` to `checklists-v20`) and push, otherwise devices keep showing the old cached copy. Keep the `viewBox` on the `<svg>` line, it is what lets the icon scale. The size, position and drop shadow are set in the `.trophy` rules in `index.html`.

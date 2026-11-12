@@ -7,7 +7,7 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 - `index.html`: home page. A `GAMES` array at the top of its script defines one card per game (file, title, localStorage key, optional `art`/`logo`/`pos`/`bar`/`cls`). Cards show progress, and the page has **Back up all** / **Restore all** (JSON with `{ app: "my-checklists", version: 1, exported, data: { key: string } }`).
 - Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc1.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
-- `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`; see `img/README.md`).
+- `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
 
 ## Rules for the checklist files
 - **Treat each checklist as an opaque, finished file.** They are large single-file pages (inline CSS/JS, base64 images; `re4.html` is about 5 MB). Do not read them in full, reformat or rewrite them.

@@ -39,24 +39,25 @@ Unlocked Steam achievements are ticked automatically (adds only, never removes; 
 - `steam-map.json`: generated, then committed. `{ "<file>.html": { appid, key, shape: "got" | "flat", map: { STEAM_APINAME: "itemId" } } }`. `sot-missables.html` is `flat` (`{ id: true }`), everything else `{ got: { id: true } }`. Halo ids are numeric strings.
 - `tools/build_steam_map.py`: rebuilds the map (reads `.dev.vars`, calls GetOwnedGames and GetSchemaForGame, extracts each checklist's ids and names by regex, matches on normalised titles, uses the description to split duplicate titles such as Halo's "Key" and "The Key"). Prints a short report. Hand fixes go in `tools/steam-map-overrides.json` (`{ "re4.html": { "APINAME": "itemId", "OTHER": null } }`) and survive rebuilds. Run: `python3 -I tools/build_steam_map.py [--only re4.html]`.
 - `steam-sync.js`: loaded by `index.html` and, through the shared hub:body block, by every checklist (also inside the Stick of Truth iframe). On a checklist it syncs that game, reloads once if something was added (guard `steam-reload-t` in sessionStorage), then shows a toast ("Synced N new achievements from Steam"). On the home page it syncs every mapped game, blanks the cached `hub-progress-v1` readout of changed games (cards show "Open" until visited) and shows a status line with a Sync now button. Failures are silent on checklists and friendly on the home page. Its own localStorage key is `steam-last` (no `-v<number>` ending on purpose, so the KV sync does not copy it).
+- "Reset to Steam data": any button with `data-steam-reset` is taken over by `steam-sync.js` (capture-phase click handler, tap twice to confirm). It replaces the `got` ticks (or the whole flat state for `sot-missables`) with exactly the live Steam unlocks, keeps other fields and reloads. Used by p4g, vanquish, dmc1, sunset-overdrive and sot-missables. RE4, GTA IV and Halo keep their own older "Reset to Steam data" buttons (reset to a saved snapshot, then the sync adds anything newer). Every guide with a backup row wraps it in `<details class="settings">` like RE4 (Stick of Truth collectibles included).
 - Because sync only adds, an item Steam has unlocked cannot be unticked by hand: it is ticked again on the next page load.
-- `sw.js` never caches `/api/`. `steam-map.json` and `steam-sync.js` are in `FILES`, so bump `CACHE` after regenerating the map.
-- Adding a game: add it to `GAMES` in `tools/build_steam_map.py` (file, appid, kind), run the script, fix unmatched names in the overrides file, bump `CACHE`. A guide with no map entry simply skips Steam sync. The Steam profile's Game details must be Public.
+- `sw.js` never caches `/api/`. `steam-map.json` and `steam-sync.js` are in `FILES`, so the `CACHE` version needs changing (ask the owner) after regenerating the map.
+- Adding a game: add it to `GAMES` in `tools/build_steam_map.py` (file, appid, kind), run the script, fix unmatched names in the overrides file, then ask the owner for the new `CACHE` version. A guide with no map entry simply skips Steam sync. The Steam profile's Game details must be Public.
 - Local test: `.dev.vars` in the project root, then `npx wrangler pages dev .` (needs `nodejs npm`: `sudo pacman -S --needed nodejs npm`; `npm` may ask you to approve the esbuild and workerd install scripts with `npm install-scripts approve`).
 
 ## Adding a new checklist
 Preferred: put the file in `checklists/` (short lowercase name, e.g. `newgame.html`), add its card image at `img/cards/newgame.webp` (920x430), then run from the project root:
 `python3 -I tools/add_guide.py checklists/newgame.html --title "New Game" --bar "#ff8800" [--pos "center 30%"] [--dry-run]`
-It checks the storage key and readout, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` and bumps `CACHE`. Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.
+It checks the storage key and readout, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` (the `CACHE` version is left for you to set, see below). Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.
 Manual route (if the script cannot be used):
 1. Copy the file into `checklists/`.
 2. Inject the two hub blocks by script, copying them from an existing checklist (e.g. `vanquish.html`).
 3. Find its key with one grep: `grep -o 'const KEY = "[^"]*"' newgame.html`.
 4. Add an entry to `GAMES` in `index.html`.
-5. Add the card image to `FILES` in `sw.js`, and bump `CACHE`.
+5. Add the card image to `FILES` in `sw.js`, and ask the owner for the new `CACHE` version.
 
 ## Every change: bump the service worker cache
-Increment `CACHE` in `sw.js` (`checklists-v1` → `checklists-v2` …) on **every** commit that changes any file, or installed phones keep serving old copies.
+Every commit that changes any file needs a new `CACHE` version in `sw.js`, or installed phones keep serving old copies. **Never pick the number yourself: ask the owner each time, quoting the previous version (e.g. "Previous version is 1.3.0, what should the new one be?"), and set exactly what they answer.** The owner decides whether a change is a minor update or a hotfix. The format is `checklists-v1.3.0`; only the name matters to the browser, any new, different string works. `tools/add_guide.py` does not bump it.
 
 ## Testing
 Serve locally (`python -m http.server 8765`) and use headless Chromium (Playwright) at 400px and 1200px: no JS errors, the "All games" pill is not covered by and does not overlap sticky/fixed bars, the home page shows progress after ticking an item, Back up all / Restore all round-trips, and `index.html` has no sideways scrolling at 360px. Google Fonts requests may fail in sandboxes; that is fine.

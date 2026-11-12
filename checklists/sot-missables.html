@@ -146,6 +146,11 @@
   @media (prefers-reduced-motion: reduce) {
     .stick-fill, .tick path, .row { transition: none; }
   }
+
+/* Save, back up and settings toggle (same pattern as the RE4 guide) */
+details.settings { margin-top: .7rem; padding-top: .5rem; border-top: 1px solid rgba(128,128,128,.35); }
+details.settings > summary { cursor: pointer; font-weight: 600; font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+details.settings > .save-row, details.settings > .controls { margin-top: .45rem; padding-top: 0; border-top: 0; }
 </style>
 <meta name="theme-color" content="#0f1115">
 <!-- hub:head -->
@@ -184,11 +189,16 @@
       <button class="chip" data-filter="todo" aria-pressed="false">Still to do</button>
       <button class="chip" data-filter="done" aria-pressed="false">Done</button>
       <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
-      <button class="chip local-only" id="export" hidden>Back up progress</button>
-      <button class="chip local-only" id="import" hidden>Restore backup</button>
-      <input type="file" id="import-file" accept=".json,application/json" hidden>
-      <button class="chip reset" id="reset">Reset checklist</button>
     </div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="controls">
+        <button class="chip local-only" id="export" hidden>Back up progress</button>
+        <button class="chip local-only" id="import" hidden>Restore backup</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
   </div>
 
   <div id="sections"></div>

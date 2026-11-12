@@ -206,6 +206,11 @@
     .sheet-head h2 { font-size: 1.45rem; }
   }
   @media (prefers-reduced-motion: reduce) { .meter span, .row, .check, .check::before { transition: none; } }
+
+/* Save, back up and settings toggle (same pattern as the RE4 guide) */
+details.settings { margin-top: .65rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+details.settings > summary { cursor: pointer; font-weight: 600; font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+details.settings > .save-row, details.settings > .controls { margin-top: .45rem; padding-top: 0; border-top: 0; }
 </style>
 <meta name="theme-color" content="#0f1115">
 <!-- hub:head -->
@@ -256,16 +261,19 @@
       <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
       <input type="search" class="search" id="search" placeholder="Search, e.g. Brucie or pigeons" aria-label="Search achievements">
     </div>
-    <div class="save-row">
-      <span class="save-status" id="save-status">Saved in this browser automatically.</span>
-      <span class="seg" role="group" aria-label="Button prompts">
-        <button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button>
-      </span>
-      <button class="chip" id="export">Back up</button>
-      <button class="chip" id="import">Restore</button>
-      <input type="file" id="import-file" accept=".json,application/json" hidden>
-      <button class="chip reset" id="reset">Reset to Steam data</button>
-    </div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="save-row">
+        <span class="save-status" id="save-status">Saved in this browser automatically.</span>
+        <span class="seg" role="group" aria-label="Button prompts">
+          <button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button>
+        </span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip reset" id="reset">Reset to Steam data</button>
+      </div>
+    </details>
   </div>
 
   <div id="view-trophies" role="tabpanel" aria-labelledby="tab-trophies"></div>

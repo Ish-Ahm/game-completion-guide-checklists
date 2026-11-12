@@ -8,7 +8,7 @@ Does, in order:
   1. checks the guide (storage key, progress readout, no favicon of its own)
   2. injects (or refreshes) the shared hub:head / hub:body blocks, copied from vanquish.html
   3. adds a GAMES entry to index.html (uses img/cards/<slug>.webp if it exists)
-  4. adds the card image to FILES in sw.js and bumps the CACHE version
+  4. adds the card image to FILES in sw.js (the CACHE version is left alone: ask the owner for the new number)
 Re-running on the same guide refreshes the blocks and does not add a second card.
 """
 import argparse, json, re, sys
@@ -110,16 +110,16 @@ def main():
     art = f'"img/cards/{slug}.webp"'
     if card.is_file() and art not in sw:
         sw_new = re.sub(r'(const FILES = \[.*?)(\n\];)', lambda mm: mm.group(1).rstrip().rstrip(",") + ",\n  " + art + mm.group(2), sw_new, count=1, flags=re.S)
-    cm = re.search(r'const CACHE = "checklists-v(\d+)";', sw_new)
-    if cm:
-        sw_new = sw_new.replace(cm.group(0), f'const CACHE = "checklists-v{int(cm.group(1)) + 1}";', 1)
-    else:
-        problems.append("could not find CACHE in sw.js; bump it by hand")
+    # The version is NOT bumped here: the owner decides the number each time (ask them, showing the current one).
+    cm = re.search(r'const CACHE = "checklists-v([^"]+)";', sw_new)
+    new_ver = None
+    if not cm:
+        problems.append("could not find CACHE in sw.js")
 
     print(f"Guide: checklists/{slug}.html   key: {key}")
     print(f"- hub blocks: {'refreshed' if HEAD[0] in text else 'injected'}")
     print(f"- {action}: {entry.strip()}")
-    print(f"- sw.js: cache {'bumped to v%d' % (int(cm.group(1)) + 1) if cm else 'unchanged'}{', card added to FILES' if sw_new != sw and art in sw_new and art not in sw else ''}")
+    print(f"- sw.js: version left at {'v' + cm.group(1) if cm else '?'} (ask the owner for the new number and set it by hand)" + f"{', card added to FILES' if sw_new != sw and art in sw_new and art not in sw else ''}")
     for p in problems:
         print("! " + p)
     if a.dry_run:

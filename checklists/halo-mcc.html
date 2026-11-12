@@ -121,6 +121,11 @@
     .tile:last-child { grid-column: 1 / -1; }
   }
   @media (prefers-reduced-motion: reduce) { .shield i, .check { transition: none; } }
+
+/* Save, back up and settings toggle (same pattern as the RE4 guide) */
+details.settings { margin-top: .6rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+details.settings > summary { cursor: pointer; font-weight: 600; font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+details.settings > .save-row, details.settings > .controls { margin-top: .45rem; padding-top: 0; border-top: 0; }
 </style>
 <meta name="theme-color" content="#0f1115">
 <!-- hub:head -->
@@ -164,14 +169,19 @@
         <input type="search" class="search" id="search" placeholder="Search names, missions, skulls…" aria-label="Search achievements">
       </div>
     </div>
-    <div class="save-row">
-      <span class="save-status" id="save-status">Saved in this browser automatically.</span>
+    <div class="save-row" style="border-top:0;padding-top:0;margin-top:.5rem">
       <button class="btn" id="clear-filters">Clear filters</button>
-      <button class="btn" id="export">Back up</button>
-      <button class="btn" id="import">Restore</button>
-      <input type="file" id="import-file" accept=".json,application/json" hidden>
-      <button class="btn warn" id="resync">Reset to Steam data</button>
     </div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="save-row">
+        <span class="save-status" id="save-status">Saved in this browser automatically.</span>
+        <button class="btn" id="export">Back up</button>
+        <button class="btn" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="btn warn" id="resync">Reset to Steam data</button>
+      </div>
+    </details>
   </div>
 
   <div class="tiles" id="tiles"></div>

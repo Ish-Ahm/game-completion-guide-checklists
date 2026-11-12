@@ -17,6 +17,10 @@ The site is static. A checklist is **one self-contained HTML file** (inline CSS 
 - No fixed element in the bottom-left corner (the "← All games" pill sits there). A fixed bottom bar is fine, the pill lifts above it.
 - No absolute links to other pages of the site.
 
+## Settings toggle and Steam reset (follow the RE4 guide)
+- Put the save, back up and settings controls inside a collapsed toggle: `<details class="settings"><summary>Save, back up and settings</summary> ... </details>` containing the save status text, Back up, Restore (with its hidden file input) and the reset button. Keep filters, search and "Clear filters" outside it.
+- If the game is on Steam, the reset button must be `<button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>`. `steam-sync.js` takes over that button (tap twice to confirm), sets the ticks to what Steam says is unlocked and keeps other saved fields. A guide's own reset handler is not needed for it.
+
 ## Images
 See `img/README.md`. Provide `img/cards/<slug>.webp` (home page card), and optionally `img/logos/<slug>.webp` and `img/banners/<slug>.webp` for the page header (embedded in the HTML as base64).
 

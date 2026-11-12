@@ -142,6 +142,57 @@
     return busy;
   }
 
+  // ---- "Reset to Steam data" button (any element with data-steam-reset) ----
+  // Replaces the achievement ticks with exactly what Steam says is unlocked. Other saved fields (steps, counters, spoilers) are kept.
+  function replaceWith(entry, names) {
+    var obj = parse(get(entry.key)) || {}, target = {};
+    for (var i = 0; i < names.length; i++) {
+      var id = entry.map[names[i]];
+      if (id !== undefined && id !== null) target[id] = true;
+    }
+    if (entry.shape === "got") obj.got = target; else obj = target;
+    set(entry.key, JSON.stringify(obj));
+    return Object.keys(target).length;
+  }
+
+  var armTimer = null;
+  document.addEventListener("click", function (e) {
+    var b = e.target && e.target.closest ? e.target.closest("[data-steam-reset]") : null;
+    if (!b) return;
+    e.preventDefault();
+    e.stopPropagation();   // capture phase: the guide's own older reset handler must not run as well
+    if (b.disabled) return;
+    var orig = b.getAttribute("data-orig") || b.textContent;
+    b.setAttribute("data-orig", orig);
+    if (!b.classList.contains("armed")) {
+      b.classList.add("armed");
+      b.textContent = "Tap again to reset to Steam";
+      clearTimeout(armTimer);
+      armTimer = setTimeout(function () { b.classList.remove("armed"); b.textContent = orig; }, 3500);
+      return;
+    }
+    clearTimeout(armTimer);
+    b.classList.remove("armed");
+    b.disabled = true;
+    b.textContent = "Resetting…";
+    var restore = function () { b.disabled = false; b.textContent = orig; };
+    loadMap().then(function (map) {
+      var entry = map && map[thisFile()];
+      if (!entry) { toast("Steam data isn't set up for this guide. Nothing was changed."); restore(); return; }
+      return fetchUnlocked([entry.appid]).then(function (res) {
+        var names = res && res.ok && res.games && res.games[String(entry.appid)];
+        if (!names) {
+          toast(res && res.kind === "private" ? "Steam profile is private: set Game details to Public. Nothing was changed."
+            : "Couldn't reach Steam. Nothing was changed.");
+          restore(); return;
+        }
+        var n = replaceWith(entry, names);
+        sset(TOAST, "Reset to Steam data: " + n + " achievement" + (n === 1 ? "" : "s") + " ticked");
+        location.reload();
+      });
+    }).catch(restore);
+  }, true);
+
   window.SteamSync = { status: status, syncNow: function () { return homeSync(true); } };
 
   function start() {

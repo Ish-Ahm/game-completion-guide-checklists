@@ -179,6 +179,11 @@ header.has-banner .sun { display: none; }
 header.has-banner .logo { position: relative; z-index: 2; display: block; width: min(520px, 80vw); height: auto; margin: 0 auto; filter: drop-shadow(0 4px 14px #000); }
 header.has-banner .eyebrow, header.has-banner p { position: relative; z-index: 2; }
 header.has-banner h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Save, back up and settings toggle (same pattern as the RE4 guide) */
+details.settings { margin-top: .65rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+details.settings > summary { cursor: pointer; font-weight: 600; font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+details.settings > .save-row, details.settings > .controls { margin-top: .45rem; padding-top: 0; border-top: 0; }
 </style>
 <meta name="theme-color" content="#0f1115">
 <!-- hub:head -->
@@ -222,16 +227,19 @@ header.has-banner h1 { position: absolute; width: 1px; height: 1px; overflow: hi
       <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
       <input type="search" class="search" id="search" placeholder="Search, e.g. Nightmare" aria-label="Search trophies">
     </div>
-    <div class="save-row">
-      <span class="save-status" id="save-status">Saved in this browser automatically.</span>
-      <span class="seg" role="group" aria-label="Button prompts">
-        <button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button>
-      </span>
-      <button class="chip" id="export">Back up</button>
-      <button class="chip" id="import">Restore</button>
-      <input type="file" id="import-file" accept=".json,application/json" hidden>
-      <button class="chip reset" id="reset">Reset</button>
-    </div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="save-row">
+        <span class="save-status" id="save-status">Saved in this browser automatically.</span>
+        <span class="seg" role="group" aria-label="Button prompts">
+          <button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button>
+        </span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
   </div>
 
   <div id="view-trophies" role="tabpanel" aria-labelledby="tab-trophies"></div>

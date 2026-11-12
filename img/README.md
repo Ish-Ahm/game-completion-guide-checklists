@@ -16,4 +16,4 @@ Which guides use banners and logos (as of now): RE4, GTA IV, Persona 4 Golden, H
 
 ## Icons
 
-`icons/steam-trophy.svg` is the trophy shown on a home card when a game reaches 100%. It is a normal standalone file (canvas 600 x 700) that you can edit in Inkscape or any editor. After saving a change, bump `CACHE` in `sw.js` (for example `checklists-v19` to `checklists-v20`) and push, otherwise devices keep showing the old cached copy. Keep the `viewBox` on the `<svg>` line, it is what lets the icon scale. The size, position and drop shadow are set in the `.trophy` rules in `index.html`.
+`icons/steam-trophy.svg` is the trophy shown on a home card when a game reaches 100%. It is a normal standalone file (canvas 600 x 700) that you can edit in Inkscape or any editor. After saving a change, bump `CACHE` in `sw.js` (for example `checklists-v1.3.0` to `checklists-v1.3.1`) and push, otherwise devices keep showing the old cached copy. Keep the `viewBox` on the `<svg>` line, it is what lets the icon scale. The size, position and drop shadow are set in the `.trophy` rules in `index.html`.

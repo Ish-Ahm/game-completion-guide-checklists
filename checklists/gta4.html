@@ -211,6 +211,11 @@
 details.settings { margin-top: .65rem; padding-top: .5rem; border-top: 1px solid var(--line); }
 details.settings > summary { cursor: pointer; font-weight: 600; font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
 details.settings > .save-row, details.settings > .controls { margin-top: .45rem; padding-top: 0; border-top: 0; }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+.controls > .chip, .controls > .seg { flex: 1 1 auto; text-align: center; }
+.controls > .seg { display: flex; }
+.controls > .seg > button { flex: 1 1 auto; text-align: center; }
 </style>
 <meta name="theme-color" content="#0f1115">
 <!-- hub:head -->

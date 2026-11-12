@@ -64,11 +64,26 @@
     return added;
   }
 
-  // Home cards read a cached "x / N" readout. After new ticks, blank it so the card says "Open" until the guide is visited.
-  function markStale(file) {
-    var all = parse(get(PROG)) || {}, now = Date.now();
-    all[file] = { t: now };
-    all[file.replace(/\.html$/, "")] = { t: now };
+  // Home cards read a cached "x / N" readout that a guide writes when it is opened. After Steam ticks new items we
+  // recompute it from the saved ticks (done = mapped items ticked, total = mapped items), so the card shows the new
+  // number straight away. Opening the guide later overwrites it with the guide's own count.
+  function readoutFor(entry) {
+    var obj = parse(get(entry.key));
+    if (!obj) return null;
+    var target = entry.shape === "got" ? (obj.got && typeof obj.got === "object" ? obj.got : {}) : obj;
+    var ids = {}, total = 0, done = 0, a, id;
+    for (a in entry.map) ids[String(entry.map[a])] = 1;
+    for (id in ids) { total++; if (target[id] === true) done++; }
+    return total ? { done: done, total: total } : null;
+  }
+  function currentReadout(file) {
+    var all = parse(get(PROG)) || {}, a = all[file], b = all[file.replace(/\.html$/, "")];
+    return !a ? b : !b ? a : ((b.t || 0) > (a.t || 0) ? b : a);
+  }
+  function writeReadout(file, r) {
+    var all = parse(get(PROG)) || {}, v = { done: r.done, total: r.total, t: Date.now() };
+    all[file] = v;
+    all[file.replace(/\.html$/, "")] = v;
     set(PROG, JSON.stringify(all));
   }
 
@@ -128,7 +143,12 @@
           var names = games[String(map[f].appid)];
           if (!names) return;
           var n = mergeInto(map[f], names);
-          if (n) { total += n; changed.push(f); markStale(f); }
+          if (n) total += n;
+          var cur = currentReadout(f);
+          if (n || !cur || !(cur.total > 0)) {   // new ticks, or no usable number yet (never opened, or blanked by an older version)
+            var r = readoutFor(map[f]);
+            if (r) { writeReadout(f, r); if (n) changed.push(f); }
+          }
         });
         var now = Date.now();
         set(LAST, String(now));

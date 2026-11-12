@@ -239,6 +239,11 @@
     .ci-title { flex: 0 1 auto; }
   }
   @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+#view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
+#view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
+#view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
 </style>
 <!-- hub:head -->
 <link rel="manifest" href="../manifest.json">

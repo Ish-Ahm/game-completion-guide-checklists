@@ -7,7 +7,7 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 - `index.html`: home page. A `GAMES` array at the top of its script defines one card per game (file, title, localStorage key, optional `art`/`logo`/`pos`/`bar`/`cls`). Cards show progress, and the page has **Back up all** / **Restore all** (JSON with `{ app: "my-checklists", version: 1, exported, data: { key: string } }`).
 - Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc1.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
-- `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
+- `manifest.json`, `sw.js`, `sync.js`, `steam-sync.js`, `steam-map.json`, `functions/api/` (sync.js, steam.js), `tools/` (add_guide.py, build_steam_map.py), `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
 
 ## Rules for the checklist files
 - **Treat each checklist as an opaque, finished file.** They are large single-file pages (inline CSS/JS, base64 images; `re4.html` is about 5 MB). Do not read them in full, reformat or rewrite them.
@@ -32,6 +32,17 @@ Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed so
 
 ## Sync
 `sync.js` (loaded by `index.html` and by each checklist through the hub:body block) syncs every localStorage key ending in `-v<number>` to Cloudflare KV via the Pages Function `functions/api/sync.js` (needs KV binding `SYNC_KV` and secret `SYNC_PASSCODE`; see `SYNC-SETUP.md`). New checklists must keep the `<slug>-checklist-v1` key form to be picked up. `sw.js` never caches `/api/`.
+
+## Steam achievement sync
+Unlocked Steam achievements are ticked automatically (adds only, never removes; guide steps, counters and collectibles stay manual).
+- `functions/api/steam.js`: Pages Function. `GET /api/steam?appids=a,b` returns `{ ok, fetched, games: { appid: [apinames unlocked] } }` or `{ ok: false, error }`. Uses secret `STEAM_API_KEY` and variable `STEAM_ID` (Pages dashboard; locally `.dev.vars`, git-ignored, never open or print it). Numeric appids only, max 10, Cache API about 2 minutes. The key never appears in a response.
+- `steam-map.json`: generated, then committed. `{ "<file>.html": { appid, key, shape: "got" | "flat", map: { STEAM_APINAME: "itemId" } } }`. `sot-missables.html` is `flat` (`{ id: true }`), everything else `{ got: { id: true } }`. Halo ids are numeric strings.
+- `tools/build_steam_map.py`: rebuilds the map (reads `.dev.vars`, calls GetOwnedGames and GetSchemaForGame, extracts each checklist's ids and names by regex, matches on normalised titles, uses the description to split duplicate titles such as Halo's "Key" and "The Key"). Prints a short report. Hand fixes go in `tools/steam-map-overrides.json` (`{ "re4.html": { "APINAME": "itemId", "OTHER": null } }`) and survive rebuilds. Run: `python3 -I tools/build_steam_map.py [--only re4.html]`.
+- `steam-sync.js`: loaded by `index.html` and, through the shared hub:body block, by every checklist (also inside the Stick of Truth iframe). On a checklist it syncs that game, reloads once if something was added (guard `steam-reload-t` in sessionStorage), then shows a toast ("Synced N new achievements from Steam"). On the home page it syncs every mapped game, blanks the cached `hub-progress-v1` readout of changed games (cards show "Open" until visited) and shows a status line with a Sync now button. Failures are silent on checklists and friendly on the home page. Its own localStorage key is `steam-last` (no `-v<number>` ending on purpose, so the KV sync does not copy it).
+- Because sync only adds, an item Steam has unlocked cannot be unticked by hand: it is ticked again on the next page load.
+- `sw.js` never caches `/api/`. `steam-map.json` and `steam-sync.js` are in `FILES`, so bump `CACHE` after regenerating the map.
+- Adding a game: add it to `GAMES` in `tools/build_steam_map.py` (file, appid, kind), run the script, fix unmatched names in the overrides file, bump `CACHE`. A guide with no map entry simply skips Steam sync. The Steam profile's Game details must be Public.
+- Local test: `.dev.vars` in the project root, then `npx wrangler pages dev .` (needs `nodejs npm`: `sudo pacman -S --needed nodejs npm`; `npm` may ask you to approve the esbuild and workerd install scripts with `npm install-scripts approve`).
 
 ## Adding a new checklist
 Preferred: put the file in `checklists/` (short lowercase name, e.g. `newgame.html`), add its card image at `img/cards/newgame.webp` (920x430), then run from the project root:

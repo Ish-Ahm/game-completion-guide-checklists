@@ -44,7 +44,7 @@
   .card .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .prog { display: grid; gap: .45rem; }
   .trophy { position: absolute; top: .7rem; right: .7rem; z-index: 1; line-height: 0; }
-  .trophy img { display: block; height: 64px; width: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,.9)) drop-shadow(0 0 14px rgba(0,0,0,.65)); }
+  .trophy img { display: block; height: 52px; width: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,.9)) drop-shadow(0 0 14px rgba(0,0,0,.65)); }
   .row { display: grid; gap: .25rem; }
   .row .label { display: flex; justify-content: space-between; gap: .5rem; font-size: .9rem; font-weight: 650; text-shadow: 0 1px 3px rgba(0,0,0,.9); }
   .row .label span:last-child { color: #dfe5ee; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -62,6 +62,9 @@
   .card.so::before { background: linear-gradient(180deg, rgba(10,0,20,.05) 0%, rgba(10,0,20,.45) 50%, rgba(10,0,20,.88) 100%); }
   .card.so h2 { font-size: 1.6rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: .02em; }
 
+  .steam { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: -.25rem 0 .9rem; color: var(--soft); font-size: .88rem; }
+  .steam .btn { min-width: 44px; min-height: 44px; padding: 0 1rem; font-size: .88rem; flex: none; }
+  .steam.bad #steamstat { color: var(--bad); }
   .search { display: block; width: 100%; margin: 0 0 1.1rem; min-height: 44px; padding: 0 1rem; font: inherit; color: var(--text);
     background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23a3abb9' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat 14px center;
     padding-left: 2.6rem; border: 1px solid var(--line); border-radius: 12px; }
@@ -106,6 +109,10 @@
     </div>
   </header>
   <p id="msg" role="status" hidden></p>
+  <div class="steam" id="steam">
+    <span id="steamstat" role="status">Steam: not synced yet</span>
+    <button class="btn" id="steambtn" type="button">Sync now</button>
+  </div>
   <input class="search" id="q" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off" enterkeyhint="search">
   <main class="grid" id="grid"></main>
   <footer>Progress is saved on this device, and synced between devices if you set up sync. Back up all now and then to keep a copy.</footer>
@@ -113,6 +120,7 @@
 
 <script>window.SYNC_HOME = true;</script>
 <script src="sync.js"></script>
+<script src="steam-sync.js"></script>
 <script>
 // To add a game: add an entry here (file, title, key = its localStorage key), add the file to FILES in sw.js, bump CACHE.
 // art (home-card artwork, see img/README.md) is optional; cls picks a styled card when there is no art.
@@ -240,6 +248,37 @@ addEventListener("sync-status", () => {
   if (window.Sync.status.state === "bad") say("That passcode was wrong. Tap Set up sync and try again.", false);
 });
 addEventListener("sync-updated", render);
+
+// Steam achievement sync (see steam-sync.js)
+const steamBox = document.getElementById("steam"), steamStat = document.getElementById("steamstat"), steamBtn = document.getElementById("steambtn");
+function steamLabel() {
+  const st = (window.SteamSync && window.SteamSync.status) || {};
+  steamBox.classList.toggle("bad", st.state === "error" && st.kind !== "offline");
+  steamBtn.disabled = st.state === "syncing";
+  if (st.state === "syncing") return "Steam: syncing…";
+  if (st.state === "error") {
+    const ago = st.time ? " Last synced " + steamAgo(st.time) + "." : "";
+    if (st.kind === "private") return "Steam profile is private: set Game details to Public." + ago;
+    if (st.kind === "config") return "Steam sync is not set up on the server yet.";
+    if (st.kind === "offline") return "Steam: can't reach the server." + ago;
+    const msg = String(st.error).replace(/\.+$/, "");
+    return (/^steam/i.test(msg) ? msg : "Steam: " + msg) + "." + ago;
+  }
+  if (!st.time) return "Steam: not synced yet";
+  return "Steam: synced " + steamAgo(st.time) + (st.state === "ok" && st.added ? " (" + st.added + " new)" : "");
+}
+function steamAgo(t) {
+  const m = Math.floor((Date.now() - t) / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return m + " min ago";
+  const h = Math.floor(m / 60);
+  return h < 24 ? h + " h ago" : Math.floor(h / 24) + " d ago";
+}
+steamBtn.addEventListener("click", () => { if (window.SteamSync) window.SteamSync.syncNow(); });
+addEventListener("steam-status", () => { steamStat.textContent = steamLabel(); });
+addEventListener("steam-synced", render);
+setInterval(() => { steamStat.textContent = steamLabel(); }, 30000);
+steamStat.textContent = steamLabel();
 syncBtn.textContent = syncLabel();
 
 document.getElementById("q").addEventListener("input", render);

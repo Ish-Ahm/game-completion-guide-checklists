@@ -1,10 +1,12 @@
 // Bump CACHE whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v19";
+const CACHE = "checklists-v20";
 const FILES = [
   "./",
   "manifest.json",
   "img/icons/steam-trophy.svg",
   "sync.js",
+  "steam-sync.js",
+  "steam-map.json",
   "icon-192.png",
   "icon-512.png",
   "img/cards/re4.webp",

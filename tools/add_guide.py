@@ -128,7 +128,7 @@ def main():
     guide.write_text(new, encoding="utf-8")
     index_p.write_text(index_new, encoding="utf-8")
     sw_p.write_text(sw_new, encoding="utf-8")
-    print("Done. Next: git add -A, commit, git push, then check the card, the guide and the All games button.")
+    print("Done. Next: link it to Steam (add it to GAMES in tools/build_steam_map.py, then run it with --only %s.html), ask the owner for the new CACHE version, then git add -A, commit, git push and check the card, the guide and the All games button." % slug)
 
 
 if __name__ == "__main__":

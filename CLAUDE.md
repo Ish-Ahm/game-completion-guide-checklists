@@ -49,9 +49,11 @@ Unlocked Steam achievements are ticked automatically (adds only, never removes; 
 - Local test: `.dev.vars` in the project root, then `npx wrangler pages dev .` (needs `nodejs npm`: `sudo pacman -S --needed nodejs npm`; `npm` may ask you to approve the esbuild and workerd install scripts with `npm install-scripts approve`).
 
 ## Adding a new checklist
+The full requirements for a guide, and the owner's step-by-step for adding one, are in `CHECKLIST-SPEC.md` (Part 1 is uploaded to the Claude project that builds the guides; Part 2 is the owner's steps). Keep that file in step with any change to how guides must be built. `NEW-GUIDE-TLDR.md` is the owner's six-line quick version (not uploaded to the Claude project); keep it in step with Part 2.
 Preferred: put the file in `checklists/` (short lowercase name, e.g. `newgame.html`), add its card image at `img/cards/newgame.webp` (920x430), then run from the project root:
 `python3 -I tools/add_guide.py checklists/newgame.html --title "New Game" --bar "#ff8800" [--pos "center 30%"] [--dry-run]`
 It checks the storage key and readout, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` (the `CACHE` version is left for you to set, see below). Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.
+Then link the game to Steam: add it to `GAMES` in `tools/build_steam_map.py` (file, appid, kind), run `python3 -I tools/build_steam_map.py --only newgame.html`, and fix any unmatched names in `tools/steam-map-overrides.json`. Finally ask the owner for the new `CACHE` version.
 Manual route (if the script cannot be used):
 1. Copy the file into `checklists/`.
 2. Inject the two hub blocks by script, copying them from an existing checklist (e.g. `vanquish.html`).

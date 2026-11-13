@@ -1,6 +1,6 @@
 // Cloudflare Pages Function: POST /api/sync
 // Stores checklist progress in Workers KV so it can sync between devices.
-// Needs a KV binding called SYNC_KV and a secret called SYNC_PASSCODE (see SYNC-SETUP.md).
+// Needs a KV binding called SYNC_KV and a secret called SYNC_PASSCODE (see "MD files/SYNC-SETUP.md").
 //
 // Request:  { keys: { "<localStorage key>": { v: "<value string>", t: <ms timestamp> } } }  (keys may be empty = just read)
 // Response: { keys: { ...everything stored }, accepted: [ "<keys that were saved>" ] }

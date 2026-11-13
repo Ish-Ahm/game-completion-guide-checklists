@@ -7,10 +7,11 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 - `index.html`: home page. A `GAMES` array at the top of its script defines one card per game (file, title, localStorage key, optional `art`/`logo`/`pos`/`bar`/`cls`). Cards show progress, and the page has **Back up all** / **Restore all** (JSON with `{ app: "my-checklists", version: 1, exported, data: { key: string } }`).
 - Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc1.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
+- `MD files/`: the other documentation (`CHECKLIST-SPEC.md`, `GUIDE-STYLE.md`, `NEW-GUIDE-TLDR.md`, `SYNC-SETUP.md`). This file (`CLAUDE.md`, which must stay in the project root to be loaded automatically) and `README.md` stay in the root.
 - `manifest.json`, `sw.js`, `sync.js`, `steam-sync.js`, `steam-map.json`, `functions/api/` (sync.js, steam.js), `tools/` (add_guide.py, build_steam_map.py), `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
 
 ## Phone scale
-Every page (home and all guides) has `<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">`. The `0.85` is the site-wide phone scale (lower = everything smaller, 1 = normal). To change it, replace that number in `index.html` and every file in `checklists/` by script, and update `CHECKLIST-SPEC.md`. Desktop ignores it.
+Every page (home and all guides) has `<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">`. The `0.85` is the site-wide phone scale (lower = everything smaller, 1 = normal). To change it, replace that number in `index.html` and every file in `checklists/` by script, and update `MD files/CHECKLIST-SPEC.md`. Desktop ignores it.
 
 ## Rules for the checklist files
 - **Treat each checklist as an opaque, finished file.** They are large single-file pages (inline CSS/JS, base64 images; `re4.html` is about 5 MB). Do not read them in full, reformat or rewrite them.
@@ -34,7 +35,7 @@ Every page (home and all guides) has `<meta name="viewport" content="width=devic
 Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed some unlocks by default, so the home page relies on `hub-progress-v1` rather than counting `got`.
 
 ## Sync
-`sync.js` (loaded by `index.html` and by each checklist through the hub:body block) syncs every localStorage key ending in `-v<number>` to Cloudflare KV via the Pages Function `functions/api/sync.js` (needs KV binding `SYNC_KV` and secret `SYNC_PASSCODE`; see `SYNC-SETUP.md`). New checklists must keep the `<slug>-checklist-v1` key form to be picked up. `sw.js` never caches `/api/`.
+`sync.js` (loaded by `index.html` and by each checklist through the hub:body block) syncs every localStorage key ending in `-v<number>` to Cloudflare KV via the Pages Function `functions/api/sync.js` (needs KV binding `SYNC_KV` and secret `SYNC_PASSCODE`; see `MD files/SYNC-SETUP.md`). New checklists must keep the `<slug>-checklist-v1` key form to be picked up. `sw.js` never caches `/api/`.
 
 ## Steam achievement sync
 Unlocked Steam achievements are ticked automatically (adds only, never removes; guide steps, counters and collectibles stay manual).
@@ -49,7 +50,8 @@ Unlocked Steam achievements are ticked automatically (adds only, never removes; 
 - Local test: `.dev.vars` in the project root, then `npx wrangler pages dev .` (needs `nodejs npm`: `sudo pacman -S --needed nodejs npm`; `npm` may ask you to approve the esbuild and workerd install scripts with `npm install-scripts approve`).
 
 ## Adding a new checklist
-The full requirements for a guide, and the owner's step-by-step for adding one, are in `CHECKLIST-SPEC.md` (Part 1 is uploaded to the Claude project that builds the guides; Part 2 is the owner's steps). Keep that file in step with any change to how guides must be built. `NEW-GUIDE-TLDR.md` is the owner's six-line quick version (not uploaded to the Claude project); keep it in step with Part 2.
+**Every guide must follow `MD files/GUIDE-STYLE.md`.** RE4 is the reference design and `re7.html` is the first guide built from that document: only the colour palette, part colours and content change per game; fonts, layout, components, behaviour and the base CSS stay the same. It sits alongside `MD files/CHECKLIST-SPEC.md` (the technical contract: storage key, Steam data, hub blocks); where they overlap, follow both. Do not read `GUIDE-STYLE.md` in full unless building or restyling a guide (it is about 65 KB); use its headings and a targeted grep.
+The full requirements for a guide, and the owner's step-by-step for adding one, are in `MD files/CHECKLIST-SPEC.md` (Part 1 is uploaded to the Claude project that builds the guides; Part 2 is the owner's steps). Keep that file in step with any change to how guides must be built. `MD files/NEW-GUIDE-TLDR.md` is the owner's six-line quick version (not uploaded to the Claude project); keep it in step with Part 2.
 Preferred: put the file in `checklists/` (short lowercase name, e.g. `newgame.html`), add its card image at `img/cards/newgame.webp` (920x430), then run from the project root:
 `python3 -I tools/add_guide.py checklists/newgame.html --title "New Game" --bar "#ff8800" [--pos "center 30%"] [--dry-run]`
 It checks the storage key and readout, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` (the `CACHE` version is left for you to set, see below). Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.

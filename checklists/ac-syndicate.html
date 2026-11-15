@@ -291,6 +291,38 @@ img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
 .ci .step-btn { width: 38px; height: 38px; }
 .ci .unlocks { font-size: .85rem; color: var(--ink-soft); margin-left: .3rem; }
 
+
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
 </style>
 <!-- hub:head -->
 <link rel="manifest" href="../manifest.json">
@@ -324,7 +356,7 @@ img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
     </div>
     <span class="search-count" id="search-count" aria-live="polite"></span>
   </div>
-  <nav class="tabs" role="tablist" aria-label="Sections">
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
     <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
     <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
     <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
@@ -672,10 +704,55 @@ function toggleGuide(btn, force) {
   panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
   if (open) state.open[id] = true; else delete state.open[id];
 }
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
 function setTab(t, quiet) {
   state.tab = t;
   document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
   ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
   if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
 }
 function jumpTo(id) {

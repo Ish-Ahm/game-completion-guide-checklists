@@ -1,19 +1,18 @@
 # Guide style template (every checklist follows this)
-
+ 
 The **Resident Evil 4** guide (`re4.html`) is the reference design for every guide on the site. `re7.html` is the first guide built from this document. A new guide must look and behave like these two. Only three things change per game:
-
+ 
 1. the **colour palette** (the first block of `:root` in the CSS),
 2. the **part colours** (one per base game or DLC),
 3. the **content** (achievements, playthroughs, 100% guide chapters).
-
 Fonts, layout, spacing, components and behaviour stay the same. This file sits alongside `CHECKLIST-SPEC.md`, which covers the site rules (storage key, Steam data, hub blocks). Where they overlap, follow both. The full CSS and page engine are at the end of this file, so no other file is needed to rebuild the look.
-
+ 
 ---
-
+ 
 ## 1. Colours: match the game, not RE4
-
+ 
 Red and bone white suit RE4, not every game. Take the palette from the game's own logo and key art (the person may attach images for reference only; never put reference images in the guide unless asked).
-
+ 
 | Token | Role | RE4 | RE7 |
 |---|---|---|---|
 | `--bg`, `--bg-2` | page, inputs | `#0b0a09`, `#13110f` | `#0d0b07`, `#15110b` (sepia black) |
@@ -25,30 +24,38 @@ Red and bone white suit RE4, not every game. Take the palette from the game's ow
 | `--green` | done / ticked | `#7fc77a` | `#a3ad62` (olive, fits sepia) |
 | `--warn` | missable tag, reset, errors | `#ff8a80` | `#f2876f` |
 | `--c-<part>` | one per part (base game, each DLC) | red, gold | base orange, Vol. 1 `#b4452f` blood, Vol. 2 gold, End of Zoe `#8e9b55` swamp, Not a Hero `#7f9db3` steel |
-
+ 
 Rules:
 - Pick `--accent` from the logo's strongest colour. If it is light (orange, yellow, cyan), set `--accent-ink` dark so text on it stays readable.
 - Keep backgrounds near-black but tinted towards the game's mood (warm sepia, cold blue and so on). Keep contrast of `--ink` on `--card` at 7:1 or better.
 - Give each base game or DLC its own `--c-<key>` that can be told apart in the meter and legend. Elements carry `data-p="<key>"` and pick up the colour automatically.
 - Set `<meta name="theme-color">` to `--bg`.
-
 ---
-
+ 
 ## 2. Page structure
-
+ 
 Top to bottom, as in RE4:
-
+ 
 1. **Header** (`<header>`, centred): darkened banner image behind (`img.hero`, `object-fit: cover`, `brightness(.38)`), logo centred (`img.logo`, max 560 px), then the **eyebrow** (`Steam · 100% checklist`, gold, spaced capitals) and a one-paragraph summary. The game title stays in the page as `h1.title`; it is visually hidden once the logo has a `src`, and shown as large condensed capitals when there is no logo yet. Banner and logo are embedded as base64 WebP.
-2. **Top bar** (sticky): rounded search box with icon and clear button, a result count, then the three **tabs**: Achievements, Playthroughs, 100% Guide, each with its icon. On phones (under 700 px) the tabs become a **fixed bottom bar** with icons above labels. The "← All games" pill lifts itself above it.
+2. **Top bar** (sticky): rounded search box with icon and clear button, a result count, then the three **tabs**: Achievements, Playthroughs, 100% Guide, each with its icon. On phones (under 700 px) the tabs become the **floating tab bar** described in section 2a.
 3. **Completion panel**: "COMPLETION" heading, big `x / N unlocked · y%` readout (the home page reads this text), a segmented meter with one coloured segment per part, a legend, and the collapsed `<details class="settings">` with save status, Back up, Restore, the PlayStation / Xbox button-prompt toggle and `Reset to Steam data` (exact markup from CHECKLIST-SPEC rule 9).
 4. **Three tab panels** (`#view-ach`, `#view-runs`, `#view-coll`).
 5. **Footer**: centred, small, names the sources (Steam for names and descriptions, the trophy guides for strategy) and how many achievements were unlocked when it was made.
 6. **Back-to-top** round button, bottom right.
-
+### 2a. Phone tab bar (required on every guide with bottom tabs)
+ 
+On phones the three tabs sit in an iOS-style floating tab bar, the same in every guide (first used in `ac-syndicate.html`, then RE4, RE7 and Ace Attorney). Copy it exactly from Appendices B and C; only its colours change, through the palette.
+ 
+- **Shape:** a solid (not see-through) pill floating 12 px from the sides and 10 px above the bottom edge, fully rounded, `--card-2` background, thin `--line` border and a soft shadow. About 54 px tall: 46 px tabs, 19 px icons, small labels in sentence case ("Achievements", "Playthroughs", "100% Guide").
+- **Selected tab:** a rounded highlight (`span.tab-glow`, the first child of `nav.tabs`) sits behind it. The selected icon takes `--accent`, the label `--ink`, the others `--ink-soft`.
+- **Switching:** tapping a tab slides the highlight to it with a slight spring (`moveGlow()`, called from `setTab()` and on resize). Tabs shrink slightly while pressed.
+- **Dragging:** sliding a finger along the bar drags the highlight, which grows slightly brighter and larger; the nearest tab lights up, and on release the highlight snaps to it and switches. Moves under 8 px count as taps, and the tap after a drag is ignored.
+- **Spacing:** `--nav-h: 70px` keeps the page end, the back-to-top button and the "← All games" pill clear of the bar. The hub only lifts its pill over bars touching the bottom edge, so the CSS places `.hub-back` above the floating bar on phones.
+- **Motion:** "reduce motion" turns off the spring and the grow effect. Desktop (700 px and over) keeps the plain top tabs; the highlight is hidden there.
 ---
-
+ 
 ## 3. Achievements tab
-
+ 
 - **Filter row** (`.row-tools`): a status segment (All, To do, Unlocked, Missable), a game segment (All plus one button per part, short labels), a playthrough dropdown ("Any playthrough" plus every run) and a "Show all guides" chip. The segments stretch to fill the row with centred text.
 - **Jump chips** (`nav.jumps`): one per category with its count, scrolling sideways on phones, left border in the part colour.
 - **Category sheets** (`section.sheet`): coloured top border, small part label above a big condensed uppercase title, count on the right, one-line intro in your own words plus a "Guide source ↗" link.
@@ -56,26 +63,23 @@ Top to bottom, as in RE4:
 - Group achievements into meaningful **categories** (story, first steps, chapter moments, collectables, difficulty, one sheet per DLC), not one long list.
 - **Unlock rates are not shown.** Keep `pct` in the data (Steam sync needs it) but do not display it.
 - Collectable achievements that depend on 100% Guide ticks show a summary line ("Files ticked in the 100% Guide: 12 / 32"), an indeterminate checkbox while partly done, and tick themselves when the last item is ticked.
-
 ## 4. Playthroughs tab
-
+ 
 - **Run 1 is always a blind, standard first playthrough** on the normal difficulty, just to enjoy the game: no guide, no collectible hunting. Missables move to later runs.
 - Then the cleanup and challenge runs, then each DLC (its own runs, in a sensible order).
 - A top sheet "YOUR PLAN · PLAYTHROUGHS" with `x / N done` and a **run map**: a grid of cards (top border in the part colour) showing run label, title and `tasks · achievements` progress. Cards link to the runs.
 - Each **run sheet**: small label (part · run), big title, gold mode line (`New Game · Normal`), a summary, tickable **tasks** (name plus a short detail line), **achievement chips** for that run (turn green when unlocked), optional prose, and optional collapsible reference boxes (`details.more`) for long tables such as unlockables or card lists.
-
 ## 5. 100% Guide tab
-
+ 
 - A top sheet with the total count, a kind filter segment (All, Achievements, Files and so on) and "Hide ticked".
 - One collapsible **chapter** (`details.chapter`) per area or chapter, in story order, then one per DLC mode. The summary shows the title, `got / total` and per-kind counts; the left border turns green when complete.
 - Inside: **"Achievements here"** (every chapter-specific or story achievement that happens in that chapter, ticking the real achievement, with a one-line tip in your own words and an "Open its guide ›" link), then the **collectibles** in walkthrough order with a kind tag, title, location and description.
 - DLC chapters list their mode's achievements and any countable items (for RE7: Bedroom rats, Jack's 55th Birthday foods).
 - Chapters render their contents only when first opened (keeps the page fast).
-
 ---
-
+ 
 ## 6. Behaviour
-
+ 
 - One `localStorage` key, `<slug>-checklist-v1`, holding `{ got, open, tasks, coll, pad, tab }`. `got` is `{ id: true }`.
 - Ticking anywhere (row, chip, 100% Guide) updates every view at once.
 - Search filters achievements by name, description and guide text, and switches to the Achievements tab.
@@ -83,16 +87,19 @@ Top to bottom, as in RE4:
 - Button prompts are written as `[X]`, `[SQ]`, `[O]`, `[TR]`, `[L1]`, `[R2]`, `[R3]`, `[ST]` and rendered as coloured PlayStation or Xbox glyphs from the toggle.
 - Back up downloads `<slug>-progress.json`; Restore validates it (must have a `got` object) and shows a clear message on failure.
 - No unlock rates, no own favicon, no manifest or service worker (the hub blocks add those), nothing fixed in the bottom-left corner.
-
+- **Every guide must include the images that matter for playing.** This is a requirement, not an extra: collectible locations, maps, enemy and boss pictures, puzzle solutions, item and card art, route screenshots and anything else the guide text relies on. Leave out only decoration: trophy and achievement icons, site logos and banners, avatars, and the 40 px trophy chips in roadmaps.
+- **File size is not a concern.** Never drop, shrink or merge useful images to save space. Keep screenshots at their source resolution up to 1920 px wide, as WebP at quality 85; small card or item art at about 2x its display size.
+- **Where to find them:** saved HTML pages (inline `data:` images and SingleFile `--sf-img-N` CSS variables) and PDFs of the same guides (extract with PyMuPDF and place each image by the text around it). Check both: lazy-loaded pictures often save as blank placeholders in HTML, while the PDF has them. Compare the two so nothing is missed or added twice.
+- **How they appear:** store each image once in an `IMGS` map and reference it as `<img data-img="key">` in the guide HTML. Screenshots render full width (`img.shot`) and open in a full-screen lightbox when tapped; small art renders as `img.card` (64 px). Tables that contain screenshots stack into labelled cards. Collectible items in the 100% Guide show their own location screenshot.
+- **If any are still missing** after checking every source, list them in the hand-over note (which guide section, how many) and ask for a PDF or a re-save of that page.
 ## 7. Writing
-
+ 
 - British English, never em dashes. Short, practical sentences in your own words.
 - Intros, run summaries, tasks and chapter tips are your own wording. Longer strategy text from trophy guides goes in the "Show guide" panels and reference boxes, with the source linked.
-
 ---
-
+ 
 ## Appendix A: data shapes
-
+ 
 ```js
 const PARTS = [{ key: "base", label: "Base game", short: "Base game" }, ...];   // display order; colour from --c-<key>
 const SECTIONS = [{ id, game: "<part key>", title, intro, src,
@@ -105,13 +112,13 @@ const COLL = [{ key, game, title, obj, sections: [{ title, items: [
 const BOXES = { "<key>": { title, html } };
 const AUTO = [{ ach: "<id>", kind: "<collectible kind>", part: "<part key>", label: "Files", min: 1 /* optional; default all */ }];
 ```
-
+ 
 Each achievement object keeps `id`, `name`, `desc`, `pct` first and in that order (the Steam map builder reads them). Other objects must not use the `id` then `name` pattern.
-
+ 
 ## Appendix B: base CSS
-
+ 
 Change only the first `:root` block (and the part keys in the `[data-p]` rules if the parts differ).
-
+ 
 ```css
 :root {
     /* ---- game palette: the only block that changes per game ---- */
@@ -135,7 +142,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   h3 { font-weight: 700; font-size: 1.07rem; line-height: 1.3; }
   a { color: var(--gold); }
   button { font: inherit; }
-
+ 
   /* header */
   header { position: relative; overflow: hidden; padding: calc(1.6rem + env(safe-area-inset-top, 0px)) 1rem 2.6rem; text-align: center; background: #000; }
   .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: brightness(.38) saturate(.8); }
@@ -145,9 +152,9 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .eyebrow { margin-top: .9rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-size: .85rem; }
   header p { max-width: 38rem; margin: .5rem auto 0; color: var(--header-ink); text-shadow: 0 1px 3px #000; font-size: .97rem; }
-
+ 
   main { max-width: 56rem; margin: 0 auto; padding: 0 .75rem 3rem; }
-
+ 
   /* tabs: top on wide screens, fixed bottom bar on phones */
   .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -.75rem; padding: 0 .75rem; border-bottom: 1px solid var(--line); }
   .searchrow { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; }
@@ -165,7 +172,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .tab { flex: 1; min-height: 48px; font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: .45rem; padding: 0 .4rem; }
   .tab svg { width: 20px; height: 20px; flex: none; }
   .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-
+ 
   .panel { margin: 1rem 0; padding: .85rem .9rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
   .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
   .panel-top h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
@@ -190,18 +197,18 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   details.settings > summary { cursor: pointer; font-weight: 600; color: var(--ink-soft); font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
   .save-status { color: var(--ink-soft); font-size: .88rem; flex: 1 1 100%; }
   button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, .spoil:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-
+ 
   .jumps { display: flex; gap: .35rem; overflow-x: auto; margin: 0 -.75rem 1rem; padding: 0 .75rem .3rem; scrollbar-width: thin; }
   .jump { flex: none; font-size: .88rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .35rem .65rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .jump span { color: var(--ink-soft); }
-
+ 
   section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .9rem .85rem .4rem; margin-bottom: 1.3rem; scroll-margin-top: var(--sm); }
   .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; }
   .sheet-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; line-height: 1.05; }
   .sheet-head h2 small { display: block; font-size: .55em; letter-spacing: .16em; color: var(--accent); }
   .sheet-head .sub { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
   .intro { margin: .3rem 0 .5rem; color: var(--ink-soft); font-size: .96rem; }
-
+ 
   ul.items { list-style: none; margin: 0; padding: 0; }
   li.item { border-top: 1px solid var(--line); padding: .55rem 0; scroll-margin-top: var(--sm); }
   li.item.hidden { display: none; }
@@ -209,7 +216,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .row > div { min-width: 0; }
   li.item.done > .row { background: var(--done-bg); }
   .flash { outline: 2px solid var(--blue); outline-offset: 2px; }
-
+ 
   .check { appearance: none; -webkit-appearance: none; margin: 0; width: 30px; height: 30px; cursor: pointer; border: 2px solid var(--check-line); background: var(--bg-2); border-radius: 3px; display: grid; place-content: center; flex: none; }
   .check.small { width: 24px; height: 24px; }
   .check::before { content: ""; width: 17px; height: 17px; clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 22%, 85% 8%, 39% 69%); background: #08130a; transform: scale(0); transition: transform .12s; }
@@ -218,7 +225,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .check:checked::before { transform: scale(1); }
   .check:indeterminate { border-color: var(--gold); }
   .check:indeterminate::before { clip-path: none; height: 3px; width: 13px; background: var(--gold); transform: scale(1); }
-
+ 
   .title-line { display: flex; align-items: center; gap: .25rem .45rem; flex-wrap: wrap; }
   .title-line h3 { flex: 1 1 100%; }
   .title-line h3 label { cursor: pointer; }
@@ -227,7 +234,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .tag.story { color: var(--blue); } .tag.missable { color: var(--warn); } .tag.collect { color: var(--green); } .tag.timed { color: var(--orange); }
   .run-badge { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; padding: 0 .45rem; line-height: 1.55; background: var(--pc, var(--accent)); color: var(--accent-ink); text-decoration: none; }
   .desc { margin: .15rem 0 0; color: var(--desc-ink); }
-
+ 
   .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
   .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .35rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); font-size: .94rem; min-height: 44px; }
   .steps li.got { border-left-color: var(--green); background: var(--done-bg); }
@@ -239,14 +246,14 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   details.steps-wrap > summary { cursor: pointer; font-weight: 600; color: var(--gold); font-size: .95rem; min-height: 36px; display: flex; align-items: center; }
   .mini { min-height: 34px; font-size: .85rem; font-weight: 600; cursor: pointer; padding: .1rem .6rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); }
   .step-tools { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
-
+ 
   .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
   .step-btn { font-weight: 700; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 1.2rem; line-height: 1; }
   .count-input { font: inherit; font-size: 16px; font-weight: 700; width: 4.2rem; height: 42px; text-align: center; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
   .counter .of { color: var(--ink-soft); }
   .summary-line { margin-top: .45rem; font-size: .93rem; font-weight: 600; color: var(--ink-soft); }
   .summary-line b { color: var(--ink); }
-
+ 
   .guide-btn { min-height: 36px; font-weight: 600; font-size: .93rem; margin-top: .25rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
   .guide { margin: .4rem 0 0; padding: .7rem .8rem; border-left: 2px solid var(--accent); background: var(--bg-2); font-size: .97rem; }
   .guide > * + *, .prose > * + * { margin-top: .5rem; }
@@ -258,16 +265,16 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .warn { color: var(--warn); font-weight: 600; }
   .spoil { background: var(--kbd-line); color: transparent; border-radius: 2px; cursor: pointer; user-select: none; }
   .spoil.shown, body.spoilers .spoil { background: transparent; color: inherit; user-select: auto; cursor: auto; }
-
+ 
   kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.45em; height: 1.45em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px; font: 700 .78em/1 "Source Sans 3", sans-serif; vertical-align: .08em; background: var(--kbd-bg); color: var(--ink); border: 1px solid var(--kbd-line); }
   kbd.b.sh { border-radius: 3px; }
   kbd.ps-X { color: #8ab8ff; } kbd.ps-SQ { color: #f29ac8; } kbd.ps-O { color: #ff7676; } kbd.ps-TR { color: #5fd6aa; }
   kbd.xb-X { color: #7bd67b; } kbd.xb-SQ { color: #6aa8ff; } kbd.xb-O { color: #ff7676; } kbd.xb-TR { color: #f4cf55; }
-
+ 
   .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
   .tlink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .15rem .5rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
   .tlink.done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
-
+ 
   /* runs */
   .runmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr)); gap: .4rem; margin-bottom: 1rem; }
   .runmap a { display: block; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .45rem .55rem; }
@@ -288,7 +295,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   table { border-collapse: collapse; width: 100%; font-size: .92rem; }
   th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { font-family: "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
-
+ 
   /* 100% guide */
   .kinds { display: flex; gap: .35rem; flex-wrap: wrap; }
   details.chapter { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); margin-bottom: .55rem; scroll-margin-top: var(--sm); }
@@ -316,11 +323,11 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .maplink { display: inline-block; margin-top: .3rem; font-size: .88rem; font-weight: 600; min-height: 30px; }
   .ci ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
   .ci li + li { margin-top: .2rem; }
-
+ 
   .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
   footer { text-align: center; padding: 0 1rem 2rem; font-size: .87rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
-
-
+ 
+ 
   /* ---- parts: every element with data-p takes its part colour ---- */
   [data-p="base"] { --pc: var(--c-base); } [data-p="bf1"] { --pc: var(--c-bf1); } [data-p="bf2"] { --pc: var(--c-bf2); } [data-p="eoz"] { --pc: var(--c-eoz); } [data-p="nah"] { --pc: var(--c-nah); }
   section.sheet, .runmap a { border-top-color: var(--pc, var(--accent)); }
@@ -329,12 +336,12 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   .guide { border-left-color: var(--pc, var(--accent)); }
   .meter span { background: var(--pc, var(--accent)); }
   .legend i { background: var(--pc, var(--accent)); }
-
+ 
   /* header: title text shown only until a logo image is embedded */
   .logo[src=""], .hero[src=""] { display: none; }
   .logo:not([src=""]) ~ h1.title { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   h1.title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(2.2rem, 9vw, 3.6rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1; text-shadow: 0 3px 16px #000; }
-
+ 
   /* 100% Guide item kinds and helpers */
   .kind.k-ach { color: var(--accent); } .kind.k-story { color: var(--blue); } .kind.k-file { color: var(--blue); } .kind.k-coin { color: var(--gold); }
   .kind.k-statue { color: var(--orange); } .kind.k-tape { color: var(--violet); } .kind.k-food { color: var(--green); } .kind.k-rat { color: var(--warn); }
@@ -350,7 +357,7 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
   details.more > .prose { padding: 0 .8rem .8rem; }
   .prose h4 { margin-top: .8rem; }
   .prose table td, .guide table td { overflow-wrap: anywhere; }
-
+ 
   @media (max-width: 699px) {
     :root { --nav-h: 62px; --sm: 70px; }
     .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 20; margin: 0; padding: 0 0 env(safe-area-inset-bottom, 0px); background: var(--bg); }
@@ -367,17 +374,63 @@ Change only the first `:root` block (and the part keys in the `[data-p]` rules i
     .ci-title { flex: 0 1 auto; }
   }
   @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
-
+ 
 /* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
 #view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
 #view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
 #view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
+ 
+/* guide screenshots: full width, tap to enlarge; tables that hold screenshots stack as cards */
+img.shot { display: block; width: 100%; max-width: 560px; height: auto; aspect-ratio: auto; object-fit: contain; margin-top: .5rem; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
+.tablewrap.stack { overflow: visible; }
+.tablewrap.stack table, .tablewrap.stack tbody, .tablewrap.stack tr, .tablewrap.stack td { display: block; min-width: 0 !important; width: auto; }
+.tablewrap.stack thead { display: none; }
+.tablewrap.stack tr { border: 1px solid var(--line); background: var(--card); padding: .5rem .6rem; margin-bottom: .5rem; }
+.tablewrap.stack tr:has(th):not(:has(td)) { display: none; }
+.tablewrap.stack td { border: 0; padding: .2rem 0; white-space: normal !important; }
+.tablewrap.stack td:empty { display: none; }
+.tablewrap.stack td[data-label]::before { content: attr(data-label); display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.tablewrap.stack td img.shot { margin-top: .2rem; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .92); display: grid; place-items: center; padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
 ```
-
+ 
 ## Appendix C: page template and engine
-
-This is `re7.html` before its data is filled in. To start a new guide, copy it and change: the `<title>`, header text, footer, `KEY`, the intro sentences in `renderRuns` and `renderColl`, `KIND_LABEL` / `KIND_PLURAL` (collectible kinds for that game), the CSS palette, and fill the data placeholders (`/*PARTS*/`, `/*SECTIONS*/` and so on). Keep everything else.
-
+ 
+This is `re7.html` before its data is filled in. To start a new guide, copy it and change: the `<title>`, header text, footer, `KEY`, the intro sentences in `renderRuns` and `renderColl`, `KIND_LABEL` / `KIND_PLURAL` (collectible kinds for that game), the CSS palette, and fill the data placeholders (`/*PARTS*/`, `/*SECTIONS*/`, `/*IMGS*/` and so on). Keep everything else, including the phone tab bar code (`span.tab-glow`, `moveGlow()`, `dragGlow()`).
+ 
 ```html
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -401,7 +454,7 @@ This is `re7.html` before its data is filled in. To start a new guide, copy it a
   <div class="eyebrow">Steam · 100% checklist</div>
   <p>All 58 achievements for the base game, Banned Footage Vol. 1 and 2, End of Zoe and Not a Hero, your playthrough plan run by run, and a 100% guide with every collectible and chapter achievement. Progress saves in this browser.</p>
 </header>
-
+ 
 <main>
   <div class="topbar">
   <div class="searchrow" role="search">
@@ -412,13 +465,13 @@ This is `re7.html` before its data is filled in. To start a new guide, copy it a
     </div>
     <span class="search-count" id="search-count" aria-live="polite"></span>
   </div>
-  <nav class="tabs" role="tablist" aria-label="Sections">
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
     <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
     <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
     <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
   </nav>
   </div>
-
+ 
   <div class="panel" role="region" aria-label="Progress">
     <div class="panel-top"><h2>Completion</h2><span class="count" id="count"></span></div>
     <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"></div>
@@ -435,12 +488,12 @@ This is `re7.html` before its data is filled in. To start a new guide, copy it a
       </div>
     </details>
   </div>
-
+ 
   <div id="view-ach" role="tabpanel" aria-labelledby="tab-ach"></div>
   <div id="view-runs" role="tabpanel" aria-labelledby="tab-runs" hidden></div>
   <div id="view-coll" role="tabpanel" aria-labelledby="tab-coll" hidden></div>
 </main>
-
+ 
 <footer>
   Achievement names and descriptions from Steam (app 418370, 0 of 58 unlocked when this was made). Strategies, the collectible walkthrough and the Miracle Chef and Ratcatcher tables come from the PSNProfiles trophy guides for the base game and each DLC, linked in every section.
 </footer>
@@ -449,30 +502,33 @@ This is `re7.html` before its data is filled in. To start a new guide, copy it a
 (function () {
 "use strict";
 const KEY = "re7-checklist-v1";
-
+ 
 /* Game parts, in display order. Colours come from --c-<key> in the CSS. */
 const PARTS = /*PARTS*/;
-
+ 
 /* Achievement categories. Each achievement object starts id, name, desc, pct (Steam sync reads these). */
 const SECTIONS = [
 /*SECTIONS*/
 ];
-
+ 
 /* Guide text per achievement (HTML; [X] style tokens become button glyphs). */
 const GUIDES = /*GUIDES*/;
-
+ 
 /* Playthroughs. */
 const RUNS = /*RUNS*/;
-
+ 
 /* 100% Guide chapters: collectibles and chapter achievements in story order. */
 const COLL = /*COLL*/;
-
+ 
+/* Screenshots from the guides (WebP). */
+const IMGS = /*IMGS*/;
+ 
 /* Reference boxes (HTML) shown inside runs. */
 const BOXES = /*BOXES*/;
-
+ 
 /* Collectible totals that tick an achievement automatically. */
 const AUTO = /*AUTO*/;
-
+ 
 const PADS = {
   ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], ST: ["Options", "sh"] },
   xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], ST: ["Menu", "sh"] }
@@ -486,7 +542,7 @@ const ALL = SECTIONS.flatMap(s => s.items.map(a => Object.assign(a, { game: s.ga
 const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
 const CITEMS = COLL.flatMap(ch => ch.sections.flatMap(s => s.items.map(it => Object.assign(it, { ch: ch.key }))));
 const CBY = Object.fromEntries(CITEMS.filter(i => i.key).map(i => [i.key, i]));
-
+ 
 /* ---------------- state ---------------- */
 function blank() { return { got: {}, open: {}, tasks: {}, coll: {}, pad: "ps", tab: "ach" }; }
 function clean(src) {
@@ -501,7 +557,7 @@ let state;
 try { const raw = localStorage.getItem(KEY); state = raw ? clean(JSON.parse(raw)) : blank(); } catch (e) { state = blank(); }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 let filter = "all", game = "all", runFilter = "all", query = "", kindFilter = "all", hideGot = false;
-
+ 
 /* ---------------- helpers ---------------- */
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 function targetId(id) {
@@ -525,12 +581,26 @@ function blocks(list) {
 function rich(h) {
   return buttons(h)
     .replace(/<div class="achrefs" data-ids="([^"]*)"><\/div>/g, (_, ids) => `<div class="tlinks">${ids.split(",").filter(id => BY_ID[id]).map(id => `<a class="tlink" href="#a-${id}" data-jump="${id}" data-tl="${id}">${esc(BY_ID[id].name)}</a>`).join("")}</div>`)
+    .replace(/<img data-img="(\w+)" alt="([^"]*)">/g, (_, k, alt) => IMGS[k] ? `<img class="${k[0] === "c" ? "card" : "shot"}" src="${IMGS[k]}" alt="${alt}" loading="lazy" decoding="async">` : "")
     .replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, "</table></div>");
+}
+/* after inserting guide HTML: tables holding screenshots become labelled cards */
+function enhance(root) {
+  root.querySelectorAll(".tablewrap").forEach(w => {
+    if (w.classList.contains("stack") || !w.querySelector("img.shot")) return;
+    w.classList.add("stack");
+    const rows = [...w.querySelectorAll("tr")];
+    const head = rows.find(r => r.querySelector("th") && !r.querySelector("td"));
+    const labels = head ? [...head.cells].map(c => c.textContent.trim()) : [];
+    rows.forEach(r => [...r.cells].forEach((c, i) => {
+      if (c.tagName === "TD" && labels[i] && !/^image$/i.test(labels[i]) && !c.querySelector("img.shot")) c.dataset.label = labels[i];
+    }));
+  });
 }
 const runBadge = id => { const r = RUN_BY_ID[id]; return `<a class="run-badge" data-p="${r.game}" href="#run-${id}" data-jump="${id}">${esc(r.n)}</a>`; };
 const autoGot = rule => CITEMS.filter(i => i.k === rule.kind && i.ch !== undefined && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part) && state.coll[i.key]).length;
 const autoTotal = rule => CITEMS.filter(i => i.k === rule.kind && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part)).length;
-
+ 
 /* ---------------- progress & auto ticks ---------------- */
 function snapshot() { return AUTO.map(autoGot); }
 function applyAuto(before) {
@@ -540,7 +610,7 @@ function applyAuto(before) {
   });
 }
 function change(fn) { const b = snapshot(); fn(); applyAuto(b); save(); update(); }
-
+ 
 /* ---------------- render: achievements ---------------- */
 function renderItem(a) {
   const auto = AUTO.find(r => r.ach === a.id && !r.min);
@@ -575,7 +645,7 @@ function renderAch() {
       <p class="empty" data-empty="${sec.id}" hidden>Nothing here for this filter.</p>
     </section>`).join("")}`;
 }
-
+ 
 /* ---------------- render: runs ---------------- */
 function renderRuns() {
   const achFor = id => ALL.filter(a => a.runs.includes(id));
@@ -593,8 +663,9 @@ function renderRuns() {
       ${r.body ? `<div class="prose" style="margin-top:.7rem">${blocks(r.body)}</div>` : ""}
       <p></p>
     </section>`).join("")}`;
+  enhance(document.getElementById("view-runs"));
 }
-
+ 
 /* ---------------- render: 100% guide ---------------- */
 function renderColl() {
   const kinds = [...new Set(CITEMS.map(i => i.k))];
@@ -634,9 +705,10 @@ function renderChapter(key) {
   body.dataset.done = "1";
   body.innerHTML = (ch.obj ? `<p class="ch-obj">${fmt(ch.obj)}</p>` : "") +
     ch.sections.map(s => `${s.title ? `<div class="sec-h">${esc(s.title)}</div>` : ""}${s.items.map(ciHtml).join("")}`).join("");
+  enhance(body);
   updateColl();
 }
-
+ 
 function render() {
   renderAch(); renderRuns(); renderColl();
   document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
@@ -644,19 +716,64 @@ function render() {
   syncChips(); syncPad();
   update();
 }
-
+ 
 /* ---------------- behaviour ---------------- */
 function toggleGuide(btn, force) {
   const id = btn.getAttribute("aria-controls").slice(2), panel = document.getElementById("g-" + id);
   const open = force !== undefined ? force : panel.hidden;
-  if (open && !panel.dataset.done) { panel.innerHTML = rich(GUIDES[id]); panel.dataset.done = "1"; update(); }
+  if (open && !panel.dataset.done) { panel.innerHTML = rich(GUIDES[id]); panel.dataset.done = "1"; enhance(panel); update(); }
   panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
   if (open) state.open[id] = true; else delete state.open[id];
 }
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
 function setTab(t, quiet) {
   state.tab = t;
   document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
   ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
   if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
 }
 function jumpTo(id) {
@@ -672,7 +789,7 @@ function jumpTo(id) {
     el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
   });
 }
-
+ 
 const mainEl = document.querySelector("main");
 mainEl.addEventListener("change", e => {
   const t = e.target;
@@ -703,6 +820,7 @@ window.addEventListener("scroll", () => { if (ticking) return; ticking = true; r
 toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
 mainEl.addEventListener("toggle", e => { const d = e.target; if (d.matches && d.matches("details.chapter") && d.open) renderChapter(d.dataset.ch); }, true);
 mainEl.addEventListener("click", e => {
+  if (e.target.matches("img.shot")) { openShot(e.target); return; }
   const t = e.target.closest("button, a[data-jump]");
   if (!t) return;
   if (t.classList.contains("tab")) setTab(t.dataset.tab);
@@ -715,7 +833,16 @@ mainEl.addEventListener("click", e => {
   else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); render(); }
   else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
 });
-
+ 
+/* tap a screenshot to see it full size */
+const lb = document.createElement("div");
+lb.className = "lightbox"; lb.hidden = true; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Screenshot, tap to close");
+lb.innerHTML = '<img alt="">';
+document.body.appendChild(lb);
+function openShot(img) { lb.firstChild.src = img.src; lb.firstChild.alt = img.alt; lb.hidden = false; }
+lb.addEventListener("click", () => { lb.hidden = true; lb.firstChild.removeAttribute("src"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) lb.click(); });
+ 
 function syncChips() {
   document.querySelectorAll("[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
   document.querySelectorAll("[data-game]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.game === game)));
@@ -723,7 +850,7 @@ function syncChips() {
   const h = document.getElementById("hide-got"); if (h) h.setAttribute("aria-pressed", String(hideGot));
 }
 function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
-
+ 
 const flat = h => String(h || "").replace(/<[^>]+>/g, " ");
 function matches(a) {
   const d = !!state.got[a.id];
@@ -735,7 +862,7 @@ function matches(a) {
   if (query && ![a.name, a.desc, flat(GUIDES[a.id])].join(" ").toLowerCase().includes(query)) return false;
   return true;
 }
-
+ 
 const isGot = it => it.ach ? !!state.got[it.ach] : !!state.coll[it.key];
 function updateColl() {
   const got = CITEMS.filter(isGot).length;
@@ -758,7 +885,7 @@ function updateColl() {
     el.classList.toggle("hidden", (kindFilter !== "all" && el.dataset.k !== kindFilter) || (hideGot && on));
   });
 }
-
+ 
 function update() {
   const per = Object.fromEntries(PARTS.map(p => [p.key, [0, 0]]));
   SECTIONS.forEach(sec => {
@@ -802,7 +929,7 @@ function update() {
   document.getElementById("legend").innerHTML = PARTS.map(p => `<span data-p="${p.key}"><i></i>${esc(p.label)} ${per[p.key][0]}/${per[p.key][1]}</span>`).join("");
   document.getElementById("bar").setAttribute("aria-valuenow", pct);
 }
-
+ 
 /* ---------------- panel ---------------- */
 let statusTimer = null;
 function status(msg) { const el = document.getElementById("save-status"), d = el.dataset.d || (el.dataset.d = el.textContent); el.textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { el.textContent = d; }, 4500); }
@@ -820,10 +947,11 @@ fileInput.addEventListener("change", () => {
     .catch(() => status("That file isn't a checklist backup. Choose a re7-progress.json file."));
   fileInput.value = "";
 });
-
+ 
 render();
 })();
 </script>
 </body>
 </html>
 ```
+ 

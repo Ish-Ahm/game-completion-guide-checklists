@@ -199,6 +199,19 @@ details.settings > .save-row, details.settings > .controls { margin-top: .45rem;
 .controls > .seg > button { flex: 1 1 auto; text-align: center; }
 </style>
 <meta name="theme-color" content="#0f1115">
+<style>
+/* Mobile header fix and sticky search bar (same as the newer guides) */
+header { padding-bottom: 1.9rem; }
+.panel { position: static; margin: 1rem 0 1.4rem; }
+.topbar { position: sticky; top: 0; z-index: 20; margin: 0 -1rem; padding: .55rem 1rem; background: var(--bg); border-bottom: 1px solid var(--line); }
+.searchbox { position: relative; }
+.searchbox svg { position: absolute; left: .7rem; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+.topsearch { display: block; width: 100%; min-height: 42px; font: inherit; font-size: 16px; padding: .3rem 2.5rem .3rem 2.3rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); color: var(--ink); }
+.topsearch::-webkit-search-cancel-button { display: none; }
+.topsearch:focus { outline: none; border-color: var(--cyan); }
+.clear-search { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--ink-soft); font-size: 1.25rem; line-height: 1; cursor: pointer; }
+.clear-search:focus-visible { outline: 2px solid var(--cyan); }
+</style>
 <!-- hub:head -->
 <link rel="manifest" href="../manifest.json">
 <link rel="icon" href="../icon-192.png">
@@ -220,6 +233,13 @@ details.settings > .save-row, details.settings > .controls { margin-top: .45rem;
 </header>
 
 <main>
+  <div class="topbar">
+    <div class="searchbox" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" class="topsearch" id="search" placeholder="Search, e.g. Romanov or 3-4" aria-label="Search achievements" autocomplete="off" enterkeyhint="search">
+      <button class="clear-search" id="clear-search" type="button" aria-label="Clear search" hidden>×</button>
+    </div>
+  </div>
   <div class="panel" role="region" aria-label="Progress">
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-trophies" data-tab="trophies" aria-selected="true" aria-controls="view-trophies">Achievements</button>
@@ -236,7 +256,6 @@ details.settings > .save-row, details.settings > .controls { margin-top: .45rem;
       <button class="chip" data-filter="done" aria-pressed="false">Unlocked</button>
       <button class="chip" data-filter="act" aria-pressed="false">Act-specific</button>
       <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
-      <input type="search" class="search" id="search" placeholder="Search, e.g. Romanov or 3-4" aria-label="Search achievements">
     </div>
     <details class="settings">
       <summary>Save, back up and settings</summary>
@@ -932,6 +951,24 @@ fileInput.addEventListener("change", () => {
 
 syncPad();
 render();
+})();
+</script>
+<script>
+/* Top search bar: typing on another tab switches to Achievements; × clears it */
+(function () {
+  var s = document.getElementById("search"), c = document.getElementById("clear-search");
+  var tab = document.getElementById("tab-trophies"), view = document.getElementById("view-trophies");
+  if (!s || !c) return;
+  s.addEventListener("input", function () {
+    if (s.value && view && view.hidden && tab) {
+      tab.click();
+      var y = view.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 10;
+      if (window.scrollY > y) window.scrollTo(0, y);
+    }
+  }, true);
+  s.addEventListener("input", function () { c.hidden = !s.value; });
+  s.addEventListener("keydown", function (e) { if (e.key === "Enter") s.blur(); if (e.key === "Escape" && s.value) { s.value = ""; s.dispatchEvent(new Event("input", { bubbles: true })); } });
+  c.addEventListener("click", function () { s.value = ""; s.dispatchEvent(new Event("input", { bubbles: true })); s.focus(); });
 })();
 </script>
 <!-- hub:body -->

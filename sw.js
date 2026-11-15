@@ -1,5 +1,5 @@
 // Bump CACHE (a version like 1.3.0) whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v1.3.7";
+const CACHE = "checklists-v1.3.8";
 const FILES = [
   "./",
   "manifest.json",
@@ -17,7 +17,8 @@ const FILES = [
   "img/cards/dmc1.webp",
   "img/cards/sunset-overdrive.webp",
   "img/cards/stick-of-truth.webp",
-  "img/cards/re7.webp"
+  "img/cards/re7.webp",
+  "img/cards/ace-attorney-trilogy.webp"
 ];
 
 self.addEventListener("install", e => {

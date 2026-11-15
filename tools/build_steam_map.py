@@ -33,6 +33,7 @@ GAMES = {
     "sunset-overdrive.html": {"appid": 847370,  "kind": "sections", "name": "Sunset Overdrive"},
     "sot-missables.html":    {"appid": 213670,  "kind": "sections", "name": "South Park: The Stick of Truth"},
     "re7.html":              {"appid": 418370,  "kind": "sections", "name": "Resident Evil 7 Biohazard"},
+    "ace-attorney-trilogy.html": {"appid": 787480, "kind": "sections", "name": "Phoenix Wright: Ace Attorney Trilogy"},
 }
 FLAT = {"sot-missables.html"}  # these store { id: true } instead of { got: { id: true } }
 

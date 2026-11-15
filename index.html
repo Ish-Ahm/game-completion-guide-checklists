@@ -65,11 +65,17 @@
   .steam { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: -.25rem 0 .9rem; color: var(--soft); font-size: .88rem; }
   .steam .btn { min-width: 44px; min-height: 44px; padding: 0 1rem; font-size: .88rem; flex: none; }
   .steam.bad #steamstat { color: var(--bad); }
-  .search { display: block; width: 100%; margin: 0 0 1.1rem; min-height: 44px; padding: 0 1rem; font: inherit; color: var(--text);
+  .search { display: block; width: 100%; margin: 0 0 .6rem; min-height: 44px; padding: 0 1rem; font: inherit; color: var(--text);
     background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23a3abb9' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat 14px center;
     padding-left: 2.6rem; border: 1px solid var(--line); border-radius: 12px; }
   .search::placeholder { color: var(--soft); }
   .search:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .sortrow { display: flex; gap: .5rem; margin: 0 0 1.1rem; }
+  .sortrow select { flex: 1; min-width: 0; min-height: 44px; padding: 0 .9rem; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+  .sortrow button { flex: none; width: 44px; min-height: 44px; display: grid; place-items: center; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+  .sortrow select:focus-visible, .sortrow button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .sortrow svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .sortrow svg .dim { opacity: .3; }
   .empty { grid-column: 1 / -1; text-align: center; color: var(--soft); padding: 2rem 0; }
 
   /* Desktop: smaller buttons and status text */
@@ -122,6 +128,16 @@
     <button class="btn" id="steambtn" type="button">Sync now</button>
   </div>
   <input class="search" id="q" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off" enterkeyhint="search">
+  <div class="sortrow">
+    <select id="sortby" aria-label="Sort games by">
+      <option value="added">Date added</option>
+      <option value="name">Name (A to Z)</option>
+      <option value="done">Completed first</option>
+    </select>
+    <button type="button" id="sortdir" aria-label="Ascending order" title="Ascending">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path id="arrUp" d="M8 10l-3-3-3 3M5 7v11"/><path id="arrDn" d="M16 14l3 3 3-3M19 17V6"/></svg>
+    </button>
+  </div>
   <main class="grid" id="grid"></main>
   <footer>Progress is saved on this device, and synced between devices if you set up sync. Back up all now and then to keep a copy.</footer>
 </div>
@@ -161,10 +177,30 @@ function rowHTML(label, p, key) {
          `<div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div></div>`;
 }
 
+let sortBy = "added", sortAsc = true;
+try { const sv = JSON.parse(localStorage.getItem("home-sort") || "{}"); if (["added", "name", "done"].includes(sv.by)) sortBy = sv.by; if (sv.asc === false) sortAsc = false; } catch (e) {}
+function syncSortUI() {
+  document.getElementById("sortby").value = sortBy;
+  const b = document.getElementById("sortdir"), t = sortAsc ? "Ascending" : "Descending";
+  b.setAttribute("aria-label", t + " order"); b.title = t;
+  document.getElementById("arrUp").classList.toggle("dim", !sortAsc);
+  document.getElementById("arrDn").classList.toggle("dim", sortAsc);
+}
+function saveSort() { try { localStorage.setItem("home-sort", JSON.stringify({ by: sortBy, asc: sortAsc })); } catch (e) {} syncSortUI(); render(); }
 function render() {
   const prog = readProgress();
   const q = document.getElementById("q").value.trim().toLowerCase();
-  const list = GAMES.filter(g => !q || g.title.toLowerCase().includes(q));
+  const lookupFor = p => {
+    const n = p.file.split("/").pop(), a = prog[n], b = prog[n.replace(/\.html$/, "")];
+    return !a ? b : !b ? a : ((b.t || 0) > (a.t || 0) ? b : a);
+  };
+  const isDone = g => (g.parts || [g]).every(p => { const e = lookupFor(p); return e && e.total > 0 && e.done >= e.total; });
+  const list = GAMES.map((g, i) => ({ g, i, done: isDone(g) })).filter(x => !q || x.g.title.toLowerCase().includes(q))
+    .sort((a, b) => {
+      const byName = a.g.title.localeCompare(b.g.title, "en", { sensitivity: "base" });
+      const c = sortBy === "name" ? byName : sortBy === "done" ? (b.done - a.done) || byName : a.i - b.i;
+      return sortAsc ? c : -c;
+    }).map(x => x.g);
   if (!list.length) { document.getElementById("grid").innerHTML = `<p class="empty">No games match "${esc(q)}".</p>`; return; }
   document.getElementById("grid").innerHTML = list.map(g => {
     const parts = g.parts || [{ file: g.file, label: "Achievements", key: g.key }];
@@ -297,6 +333,9 @@ steamStat.textContent = steamLabel();
 syncBtn.textContent = syncLabel();
 
 document.getElementById("q").addEventListener("input", render);
+document.getElementById("sortby").addEventListener("change", e => { sortBy = e.target.value; saveSort(); });
+document.getElementById("sortdir").addEventListener("click", () => { sortAsc = !sortAsc; saveSort(); });
+syncSortUI();
 addEventListener("pageshow", render);
 addEventListener("storage", render);
 render();

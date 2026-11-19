@@ -35,6 +35,7 @@ GAMES = {
     "re7.html":              {"appid": 418370,  "kind": "sections", "name": "Resident Evil 7 Biohazard"},
     "ace-attorney-trilogy.html": {"appid": 787480, "kind": "sections", "name": "Phoenix Wright: Ace Attorney Trilogy"},
     "ac-syndicate.html": {"appid": 368500, "kind": "sections", "name": "Assassin's Creed Syndicate"},
+    "metal-gear-solid.html": {"appid": 2131630, "kind": "sections", "name": "Metal Gear Solid"},
 }
 FLAT = {"sot-missables.html"}  # these store { id: true } instead of { got: { id: true } }
 
@@ -97,6 +98,21 @@ def checklist_items(file, kind):
             if m.group(1) not in seen:
                 seen.add(m.group(1)); items.append((m.group(1), unescape(m.group(2)), unescape(m.group(3))))
         return items
+    if kind == "sections":
+        sections = re.search(r"const\s+SECTIONS\s*=\s*(\[.*?\]);", text, re.S)
+        if sections:
+            try:
+                data = json.loads(sections.group(1))
+            except json.JSONDecodeError:
+                pass
+            else:
+                for section in data:
+                    for item in section.get("items", []):
+                        if all(key in item for key in ("id", "name", "desc", "pct")) and item["id"] not in seen:
+                            seen.add(item["id"])
+                            items.append((item["id"], item["name"], item["desc"]))
+                if items:
+                    return items
     pat = re.compile(r'\bid:\s*"([^"]+)"\s*,\s*name:\s*"((?:[^"\\]|\\.)*)"(?:[^{}]{0,120}?\bdesc:\s*"((?:[^"\\]|\\.)*)")?')
     for m in pat.finditer(text):
         tail = text[m.end():m.end() + 400]

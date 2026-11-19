@@ -908,6 +908,31 @@
   },
   "shape": "got"
  },
+ "metal-gear-solid.html": {
+  "appid": 2131630,
+  "key": "metal-gear-solid-checklist-v1",
+  "map": {
+   "MEDAL_ALL_SCENARIO": "cover-to-cover",
+   "MEDAL_BOSS_HIND": "hind-d",
+   "MEDAL_BOSS_LIQUID": "liquid",
+   "MEDAL_BOSS_MANTIS": "mantis",
+   "MEDAL_BOSS_METALGEAR": "rex",
+   "MEDAL_BOSS_NINJA": "ninja",
+   "MEDAL_BOSS_OCELOT": "ocelot",
+   "MEDAL_BOSS_RAVEN": "vulcan-raven",
+   "MEDAL_BOSS_TANK": "m1-tank",
+   "MEDAL_BOSS_WOLF": "sniper-wolf",
+   "MEDAL_BOSS_WOLF2": "sniper-wolf-rematch",
+   "MEDAL_CODE_FOX": "elite",
+   "MEDAL_GET_BANDANA": "decked-out",
+   "MEDAL_GET_STEALTH": "dress-for-job",
+   "MEDAL_MISSION_START": "commencing-mission",
+   "MEDAL_PHOTO_EXORCISE": "ghostly-encounter",
+   "MEDAL_VR_COMPLETE": "practice-perfect",
+   "MEDAL_VR_START": "git-gud"
+  },
+  "shape": "got"
+ },
  "p4g.html": {
   "appid": 1113000,
   "key": "p4g-checklist-v1",

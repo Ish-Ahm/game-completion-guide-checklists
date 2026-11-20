@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c0b">
+<title>Resident Evil Village 100%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    /* ---- game palette: the only block that changes per game ---- */
+    --bg: #0c0c0b; --bg-2: #131311; --card: #1a1a17; --card-2: #23231f; --ink: #ecebe4; --ink-soft: #a7a6a0;
+    --accent: #c2b578; --accent-ink: #15130b; --gold: #d6cd9c; --green: #9fb780; --blue: #9db3c4; --violet: #b9a8c9; --orange: #d9a464; --warn: #e98d7e;
+    --line: rgba(167, 166, 160, .2); --done-bg: rgba(159, 183, 128, .08);
+    --check-line: #4f4e47; --task-line: #34332e; --kbd-bg: #24231f; --kbd-line: #44433c; --header-ink: #e3e1d6; --desc-ink: #d6d4ca; --totop-bg: rgba(35, 35, 31, .92);
+    /* one colour per part, from the logo: base game ("VIII" antique gold), Winters' Expansion (steel silver) */
+    --c-base: var(--accent); --c-wex: #a7aba8;
+    /* ---- layout (do not change) ---- */
+    --nav-h: 0px; --sm: 116px;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.55;
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px)); -webkit-tap-highlight-color: transparent; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+  .cond, h2, .tab, .count, .tag, .run-badge { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; }
+  h3 { font-weight: 700; font-size: 1.07rem; line-height: 1.3; }
+  a { color: var(--gold); }
+  button { font: inherit; }
+
+  /* header */
+  header { position: relative; overflow: hidden; padding: calc(1.6rem + env(safe-area-inset-top, 0px)) 1rem 2.6rem; text-align: center; background: #000; }
+  .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: brightness(.38) saturate(.8); }
+  header::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.45), transparent 75%), linear-gradient(180deg, rgba(0,0,0,.2), transparent 40%, rgba(11,10,9,.7) 80%, var(--bg)); }
+  header > :not(.hero) { position: relative; z-index: 1; }
+  .logo { display: block; width: min(560px, 88vw); height: auto; margin: 0 auto; filter: drop-shadow(0 4px 14px #000); }
+  .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .eyebrow { margin-top: .9rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-size: .85rem; }
+  header p { max-width: 38rem; margin: .5rem auto 0; color: var(--header-ink); text-shadow: 0 1px 3px #000; font-size: .97rem; }
+
+  main { max-width: 56rem; margin: 0 auto; padding: 0 .75rem 3rem; }
+
+  /* tabs: top on wide screens, fixed bottom bar on phones */
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -.75rem; padding: 0 .75rem; border-bottom: 1px solid var(--line); }
+  .searchrow { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; }
+  .searchbox { position: relative; flex: 1; min-width: 0; }
+  .searchbox svg { position: absolute; left: .65rem; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+  .topsearch { width: 100%; min-height: 42px; font: inherit; font-size: 16px; padding: .3rem 2.4rem .3rem 2.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); color: var(--ink); }
+  .topsearch::-webkit-search-cancel-button { display: none; }
+  .topsearch:focus { border-color: var(--accent); outline: none; }
+  .clear-search { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--ink-soft); font-size: 1.2rem; cursor: pointer; }
+  .search-count { flex: none; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 0; border-top: 1px solid var(--line); }
+  .totop { position: fixed; right: max(1rem, env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 19; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--totop-bg); color: var(--ink); display: grid; place-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .totop.show { opacity: 1; transform: none; pointer-events: auto; }
+  .totop svg { width: 20px; height: 20px; }
+  .tab { flex: 1; min-height: 48px; font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: .45rem; padding: 0 .4rem; }
+  .tab svg { width: 20px; height: 20px; flex: none; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .panel { margin: 1rem 0; padding: .85rem .9rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
+  .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
+  .panel-top h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .count { font-weight: 700; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+  .count small { font-family: "Source Sans 3", sans-serif; font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  .meter { margin-top: .45rem; height: 10px; background: #000; border: 1px solid var(--line); display: flex; overflow: hidden; }
+  .meter span { display: block; height: 100%; transition: width .4s ease; }
+  .legend { display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin-top: .35rem; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .legend i { display: inline-block; width: .65rem; height: .65rem; margin-right: .3rem; vertical-align: -.05rem; }
+  .row-tools { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; }
+  .chip { min-height: 38px; font-weight: 600; font-size: .9rem; cursor: pointer; padding: .2rem .75rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip.reset { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .chip.reset.armed { background: var(--warn); color: var(--accent-ink); }
+  .select, .search { min-height: 38px; font: inherit; font-size: 16px; padding: .2rem .6rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .search { flex: 1 1 12rem; min-width: 0; }
+  .select { flex: 1 1 12rem; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+  .seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; flex-wrap: wrap; }
+  .seg button { min-height: 36px; font-size: .88rem; font-weight: 600; padding: .2rem .65rem; border: 0; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  details.settings { margin-top: .7rem; border-top: 1px solid var(--line); padding-top: .55rem; }
+  details.settings > summary { cursor: pointer; font-weight: 600; color: var(--ink-soft); font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+  .save-status { color: var(--ink-soft); font-size: .88rem; flex: 1 1 100%; }
+  button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, .spoil:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .jumps { display: flex; gap: .35rem; overflow-x: auto; margin: 0 -.75rem 1rem; padding: 0 .75rem .3rem; scrollbar-width: thin; }
+  .jump { flex: none; font-size: .88rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .35rem .65rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .jump span { color: var(--ink-soft); }
+
+  section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .9rem .85rem .4rem; margin-bottom: 1.3rem; scroll-margin-top: var(--sm); }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; line-height: 1.05; }
+  .sheet-head h2 small { display: block; font-size: .55em; letter-spacing: .16em; color: var(--accent); }
+  .sheet-head .sub { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .3rem 0 .5rem; color: var(--ink-soft); font-size: .96rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 1px solid var(--line); padding: .55rem 0; scroll-margin-top: var(--sm); }
+  li.item.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: start; padding: .35rem .3rem; }
+  .row > div { min-width: 0; }
+  li.item.done > .row { background: var(--done-bg); }
+  .flash { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .check { appearance: none; -webkit-appearance: none; margin: 0; width: 30px; height: 30px; cursor: pointer; border: 2px solid var(--check-line); background: var(--bg-2); border-radius: 3px; display: grid; place-content: center; flex: none; }
+  .check.small { width: 24px; height: 24px; }
+  .check::before { content: ""; width: 17px; height: 17px; clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 22%, 85% 8%, 39% 69%); background: #08130a; transform: scale(0); transition: transform .12s; }
+  .check.small::before { width: 13px; height: 13px; }
+  .check:checked { background: var(--green); border-color: var(--green); }
+  .check:checked::before { transform: scale(1); }
+  .check:indeterminate { border-color: var(--gold); }
+  .check:indeterminate::before { clip-path: none; height: 3px; width: 13px; background: var(--gold); transform: scale(1); }
+
+  .title-line { display: flex; align-items: center; gap: .25rem .45rem; flex-wrap: wrap; }
+  .title-line h3 { flex: 1 1 100%; }
+  .title-line h3 label { cursor: pointer; }
+  li.item.done .title-line h3 { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 0 .4rem; letter-spacing: .06em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.5; }
+  .tag.story { color: var(--blue); } .tag.missable { color: var(--warn); } .tag.collect { color: var(--green); } .tag.timed { color: var(--orange); }
+  .run-badge { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; padding: 0 .45rem; line-height: 1.55; background: var(--pc, var(--accent)); color: var(--accent-ink); text-decoration: none; }
+  .desc { margin: .15rem 0 0; color: var(--desc-ink); }
+
+  .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .35rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); font-size: .94rem; min-height: 44px; }
+  .steps li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .steps li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .steps label { cursor: pointer; min-width: 0; }
+  .st-name { font-weight: 600; }
+  .st-desc { display: block; color: var(--ink-soft); font-size: .84rem; }
+  details.steps-wrap { margin-top: .5rem; }
+  details.steps-wrap > summary { cursor: pointer; font-weight: 600; color: var(--gold); font-size: .95rem; min-height: 36px; display: flex; align-items: center; }
+  .mini { min-height: 34px; font-size: .85rem; font-weight: 600; cursor: pointer; padding: .1rem .6rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); }
+  .step-tools { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
+
+  .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .step-btn { font-weight: 700; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+  .count-input { font: inherit; font-size: 16px; font-weight: 700; width: 4.2rem; height: 42px; text-align: center; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .counter .of { color: var(--ink-soft); }
+  .summary-line { margin-top: .45rem; font-size: .93rem; font-weight: 600; color: var(--ink-soft); }
+  .summary-line b { color: var(--ink); }
+
+  .guide-btn { min-height: 36px; font-weight: 600; font-size: .93rem; margin-top: .25rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .guide { margin: .4rem 0 0; padding: .7rem .8rem; border-left: 2px solid var(--accent); background: var(--bg-2); font-size: .97rem; }
+  .guide > * + *, .prose > * + * { margin-top: .5rem; }
+  .guide p, .prose p { margin: 0; }
+  .guide h4, .prose h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-top: .8rem; }
+  .guide ul, .prose ul { margin: 0; padding-left: 1.1rem; }
+  .guide li + li, .prose li + li { margin-top: .3rem; }
+  .note { color: var(--ink-soft); font-style: italic; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .spoil { background: var(--kbd-line); color: transparent; border-radius: 2px; cursor: pointer; user-select: none; }
+  .spoil.shown, body.spoilers .spoil { background: transparent; color: inherit; user-select: auto; cursor: auto; }
+
+  kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.45em; height: 1.45em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px; font: 700 .78em/1 "Source Sans 3", sans-serif; vertical-align: .08em; background: var(--kbd-bg); color: var(--ink); border: 1px solid var(--kbd-line); }
+  kbd.b.sh { border-radius: 3px; }
+  kbd.ps-X { color: #8ab8ff; } kbd.ps-SQ { color: #f29ac8; } kbd.ps-O { color: #ff7676; } kbd.ps-TR { color: #5fd6aa; }
+  kbd.xb-X { color: #7bd67b; } kbd.xb-SQ { color: #6aa8ff; } kbd.xb-O { color: #ff7676; } kbd.xb-TR { color: #f4cf55; }
+
+  .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+  .tlink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .15rem .5rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
+  .tlink.done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
+
+  /* runs */
+  .runmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr)); gap: .4rem; margin-bottom: 1rem; }
+  .runmap a { display: block; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .45rem .55rem; }
+  .runmap a.full { background: var(--done-bg); }
+  .runmap b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.05rem; letter-spacing: .03em; }
+  .runmap span { font-size: .82rem; color: var(--ink-soft); }
+  .run { scroll-margin-top: var(--sm); }
+  .run .mode { font-family: "Barlow Condensed", sans-serif; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-size: .95rem; }
+  .run .tasks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .3rem; }
+  .run .tasks li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: center; padding: .4rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); min-height: 48px; }
+  .run .tasks li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .run .tasks li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .box { margin-top: .7rem; padding: .7rem .8rem; background: var(--bg-2); border: 1px solid var(--line); }
+  .box h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-size: 1rem; margin-bottom: .3rem; }
+  .box ul, .box ol { margin: .2rem 0 0; padding-left: 1.2rem; }
+  .box li + li { margin-top: .25rem; }
+  .ok { color: var(--green); font-weight: 700; } .no { color: var(--warn); font-weight: 700; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+
+  /* 100% guide */
+  .kinds { display: flex; gap: .35rem; flex-wrap: wrap; }
+  details.chapter { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); margin-bottom: .55rem; scroll-margin-top: var(--sm); }
+  details.chapter.full { border-left-color: var(--green); }
+  details.chapter > summary { list-style: none; cursor: pointer; padding: .7rem .8rem; display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; min-height: 56px; }
+  details.chapter > summary::-webkit-details-marker { display: none; }
+  .ch-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: .04em; text-transform: uppercase; }
+  .ch-count { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .15rem .7rem; font-size: .84rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta .kd { color: var(--ink); font-weight: 600; }
+  .ch-body { padding: 0 .6rem .6rem; }
+  .ch-obj { font-size: .9rem; color: var(--ink-soft); margin: 0 0 .4rem; }
+  .sec-h { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin: .9rem 0 .35rem; padding-bottom: .2rem; border-bottom: 1px solid var(--line); }
+  .sec-note { font-size: .9rem; color: var(--ink-soft); font-style: italic; }
+  .ci { display: grid; grid-template-columns: auto 1fr; gap: .6rem; padding: .55rem .35rem; border-top: 1px solid var(--line); scroll-margin-top: var(--sm); }
+  .ci.got { background: var(--done-bg); }
+  .ci.got .ci-title { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .ci.hidden { display: none; }
+  .ci > div { min-width: 0; }
+  .ci-head { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; }
+  .kind { font-family: "Barlow Condensed", sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 0 .4rem; border: 1px solid currentColor; line-height: 1.5; color: var(--ink-soft); }
+  .ci-title { font-weight: 700; flex: 1 1 100%; }
+  .shot { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-top: .45rem; background: #000; border: 1px solid var(--line); cursor: zoom-in; }
+  .shot.zoom { max-width: none; cursor: zoom-out; }
+  .maplink { display: inline-block; margin-top: .3rem; font-size: .88rem; font-weight: 600; min-height: 30px; }
+  .ci ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
+  .ci li + li { margin-top: .2rem; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .87rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
+
+
+  /* ---- parts: every element with data-p takes its part colour ---- */
+  [data-p="base"] { --pc: var(--c-base); } [data-p="wex"] { --pc: var(--c-wex); }
+  section.sheet, .runmap a { border-top-color: var(--pc, var(--accent)); }
+  .sheet-head h2 small { color: var(--pc, var(--accent)); }
+  .jump, details.chapter { border-left-color: var(--pc, var(--accent)); }
+  .guide { border-left-color: var(--pc, var(--accent)); }
+  .meter span { background: var(--pc, var(--accent)); }
+  .legend i { background: var(--pc, var(--accent)); }
+
+  /* header: title text shown only until a logo image is embedded */
+  .logo[src=""], .hero[src=""] { display: none; }
+  .logo:not([src=""]) ~ h1.title { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  h1.title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(2.2rem, 9vw, 3.6rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1; text-shadow: 0 3px 16px #000; }
+
+  /* 100% Guide item kinds and helpers */
+  .kind.k-ach { color: var(--warn); } .kind.k-story { color: var(--blue); } .kind.k-goat { color: var(--gold); } .kind.k-file { color: var(--blue); } .kind.k-outhouse { color: var(--orange); }
+  .kind.k-window { color: var(--violet); } .kind.k-part { color: #d9b38c; } .kind.k-recipe { color: var(--green); } .kind.k-stage { color: var(--warn); } .kind.k-craft { color: var(--c-wex); }
+  .ci-loc { font-size: .85rem; color: var(--ink-soft); }
+  .ci-desc { margin-top: .3rem; font-size: .95rem; color: var(--desc-ink); }
+  .ci-desc > * + * { margin-top: .4rem; } .ci-desc p { margin: 0; }
+  .tablewrap { overflow-x: auto; margin-top: .4rem; }
+  .tablewrap table { min-width: 34rem; }
+  .guide table, .box table { font-size: .9rem; }
+  .guide .tablewrap table td:first-child { white-space: nowrap; }
+  details.more { margin-top: .7rem; background: var(--bg-2); border: 1px solid var(--line); }
+  details.more > summary { cursor: pointer; padding: .55rem .8rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); min-height: 44px; display: flex; align-items: center; }
+  details.more > .prose { padding: 0 .8rem .8rem; }
+  .prose h4 { margin-top: .8rem; }
+  .prose table td, .guide table td { overflow-wrap: anywhere; }
+
+  @media (max-width: 699px) {
+    :root { --nav-h: 62px; --sm: 70px; }
+    .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 20; margin: 0; padding: 0 0 env(safe-area-inset-bottom, 0px); background: var(--bg); }
+    .totop { width: 38px; height: 38px; right: .75rem; bottom: calc(var(--nav-h) + .7rem + env(safe-area-inset-bottom, 0px)); }
+    .totop svg { width: 17px; height: 17px; }
+    .tab { flex-direction: column; gap: .1rem; font-size: .8rem; min-height: var(--nav-h); border-bottom: 0; border-top: 3px solid transparent; }
+    .tab[aria-selected="true"] { border-top-color: var(--accent); }
+  }
+  @media (min-width: 700px) {
+    main { padding: 0 1.2rem 3rem; }
+    .topbar { margin: 0 -1.2rem; padding: 0 1.2rem; }
+    section.sheet { padding: 1.1rem 1.2rem .5rem; }
+    .title-line h3 { flex: 0 1 auto; }
+    .ci-title { flex: 0 1 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+#view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
+#view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
+#view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
+
+/* guide screenshots: full width, tap to enlarge; tables that hold screenshots stack as cards */
+img.shot { display: block; width: 100%; max-width: 560px; height: auto; aspect-ratio: auto; object-fit: contain; margin-top: .5rem; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
+.tablewrap.stack { overflow: visible; }
+.tablewrap.stack table, .tablewrap.stack tbody, .tablewrap.stack tr, .tablewrap.stack td { display: block; min-width: 0 !important; width: auto; }
+.tablewrap.stack thead { display: none; }
+.tablewrap.stack tr { border: 1px solid var(--line); background: var(--card); padding: .5rem .6rem; margin-bottom: .5rem; }
+.tablewrap.stack tr:has(th):not(:has(td)) { display: none; }
+.tablewrap.stack td { border: 0; padding: .2rem 0; white-space: normal !important; }
+.tablewrap.stack td:empty { display: none; }
+.tablewrap.stack td[data-label]::before { content: attr(data-label); display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.tablewrap.stack td img.shot { margin-top: .2rem; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .92); display: grid; place-items: center; padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
+
+/* spoilers: story text sits behind a bar until tapped; "Show all spoilers" in the settings reveals everything */
+.spoil { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body:not(.spoilers) .spoil:not(.shown) * { visibility: hidden; }
+div.spoil { display: block; border-radius: 4px; }
+body:not(.spoilers) div.spoil:not(.shown) { position: relative; max-height: 3rem; overflow: hidden; }
+body:not(.spoilers) div.spoil:not(.shown)::before { content: "Story spoiler · tap to reveal"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); font-size: .9rem; font-weight: 600; }
+
+</style>
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <img class="hero" src="../img/banners/re8.webp" alt="" width="1600" height="516" onerror="this.onerror=null;this.setAttribute('src','')">
+  <img class="logo" src="../img/logos/re8.webp" alt="Resident Evil Village" width="800" height="300" onerror="this.onerror=null;this.setAttribute('src','')">
+  <h1 class="title">Resident Evil Village</h1>
+  <div class="eyebrow">Steam · 100% checklist</div>
+  <p>All 56 achievements for the base game and the Winters' Expansion, a nine-run plan from a blind first playthrough to Village of Shadows, The Mercenaries and Shadows of Rose, and a 100% guide with every goat, file, outhouse, window, weapon part and recipe in story order. Progress saves in this browser.</p>
+</header>
+
+<main>
+  <div class="topbar">
+  <div class="searchrow" role="search">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" class="topsearch" id="search" placeholder="Search achievements" aria-label="Search achievements" autocomplete="off" enterkeyhint="search">
+      <button class="clear-search" id="clear-search" aria-label="Clear search" hidden>×</button>
+    </div>
+    <span class="search-count" id="search-count" aria-live="polite"></span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
+    <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
+    <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
+    <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
+  </nav>
+  </div>
+
+  <div class="panel" role="region" aria-label="Progress">
+    <div class="panel-top"><h2>Completion</h2><span class="count" id="count"></span></div>
+    <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="row-tools">
+        <span class="save-status" id="save-status">Saved in this browser automatically. To move progress to your phone, Back up here and Restore there.</span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip" id="spoilers" aria-pressed="false">Show all spoilers</button>
+        <span class="seg" role="group" aria-label="Button prompts"><button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button></span>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="view-ach" role="tabpanel" aria-labelledby="tab-ach"></div>
+  <div id="view-runs" role="tabpanel" aria-labelledby="tab-runs" hidden></div>
+  <div id="view-coll" role="tabpanel" aria-labelledby="tab-coll" hidden></div>
+</main>
+
+<footer>
+  Achievement names and descriptions from Steam (Resident Evil Village, app 1196590, 0 of 56 unlocked when this was made). Strategies, treasures and The Mercenaries data come from the PSNProfiles trophy guides for the base game and the Winters' Expansion by angelbless45, linked in every section. The collectible order and locations follow PowerPyx's collectibles guide, reworded.
+</footer>
+<button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function () {
+"use strict";
+const KEY = "re8-checklist-v1";
+
+/* Game parts, in display order. Colours come from --c-<key> in the CSS. */
+const PARTS = [{"key": "base", "label": "Base game", "short": "Base game"}, {"key": "wex", "label": "Winters' Expansion", "short": "Winters' Expansion"}];
+
+/* Achievement categories. Each achievement object starts id, name, desc, pct (Steam sync reads these). */
+const SECTIONS = [
+{ id: "story", game: "base", title: "Story", src: "https://psnprofiles.com/guide/12200-resident-evil-village-trophy-guide",
+  intro: "The story bosses and set pieces, in order. Steam hides these, so they stay behind spoiler bars until you tap them.",
+  items: [
+  { id: "notlycan", name: "Not Lycan This...", desc: "Survive the lycan attack.", pct: 84.7, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "fourlords", name: "Four Lords", desc: "Escape the mine.", pct: 79.0, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "thatsucked", name: "That Sucked!", desc: "Defeat the mutated Dimitrescu.", pct: 68.4, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "nostrings", name: "Got No Strings", desc: "Defeat Donna and Angie.", pct: 64.2, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "fishout", name: "Fish Out of Water", desc: "Defeat the mutated Moreau.", pct: 62.4, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "upurs", name: "Up Urs!", desc: "Defeat Uriaș in the stronghold.", pct: 61.2, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "tempmeasures", name: "Temporary Measures", desc: "Place the Giant's Chalice in the ceremony site.", pct: 61.0, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "irongiant", name: "Iron Giant Down", desc: "Defeat the mutated Heisenberg.", pct: 59.4, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "rootmatter", name: "The Root of the Matter", desc: "Find the Megamycete in the underground ruins.", pct: 59.2, tags: ["story"], runs: ["r1"], sp: "n" }
+  ] },
+{ id: "runs", game: "base", title: "Difficulty and challenge runs", src: "https://psnprofiles.com/guide/12200-resident-evil-village-trophy-guide",
+  intro: "Difficulty rewards stack, so Village of Shadows also gives Hardcore, Standard and Casual. The four challenge achievements fit in one knife-only New Game+ run on Casual.",
+  items: [
+  { id: "greatdad", name: "Great Dad", desc: "Finish the story on at least Casual difficulty.", pct: 58.4, tags: ["story"], runs: ["r1"] },
+  { id: "bestdad", name: "Best Dad Ever", desc: "Finish the story on at least Standard difficulty.", pct: 48.4, tags: ["story"], runs: ["r1"] },
+  { id: "worldsbest", name: "World's Best Dad", desc: "Finish the story on at least Hardcore difficulty.", pct: 15.8, tags: [], runs: ["r4"] },
+  { id: "universe", name: "Universe's Best Dad", desc: "Finish the story on the Village of Shadows difficulty.", pct: 9.4, tags: [], runs: ["r4"] },
+  { id: "dashing", name: "Dashing Dad", desc: "Finish the story within 3 hours.", pct: 8.0, tags: ["timed"], runs: ["r3"] },
+  { id: "frugal", name: "Frugal Father", desc: "Finish the story without spending more than 10,000 Lei.", pct: 5.7, tags: [], runs: ["r3"] },
+  { id: "snakeoil", name: "Don't Trust That Snake Oil", desc: "Finish the story only using four or less recovery items.", pct: 10.4, tags: [], runs: ["r3"] },
+  { id: "knivesout", name: "Knives Out", desc: "Not including some boss fights, finish the story using nothing but close combat weapons.", pct: 3.7, tags: [], runs: ["r3"] }
+  ] },
+{ id: "first", game: "base", title: "First steps", src: "https://psnprofiles.com/guide/12200-resident-evil-village-trophy-guide",
+  intro: "Small actions that come naturally while you play. None of them is ever lost: any later playthrough works.",
+  items: [
+  { id: "crafter", name: "Crafter", desc: "Craft an item in the Crafting menu.", pct: 86.4, tags: [], runs: ["r1"] },
+  { id: "patron", name: "Patron", desc: "Purchase something from the Duke in the story.", pct: 77.0, tags: [], runs: ["r1"] },
+  { id: "pettythief", name: "Petty Thief", desc: "Unlock a simple lock with a lockpick.", pct: 74.9, tags: [], runs: ["r1"] },
+  { id: "hunter", name: "Hunter", desc: "Hunt an animal during the story.", pct: 69.3, tags: [], runs: ["r1"] },
+  { id: "push", name: "Push Comes to Shove", desc: "Push away an enemy after guarding in the story.", pct: 42.7, tags: [], runs: ["r1"] },
+  { id: "photographer", name: "Photographer", desc: "Use Photo Mode.", pct: 50.8, tags: [], runs: ["r2"] },
+  { id: "repairer", name: "Repairer", desc: "Combine a treasure into its complete form.", pct: 57.7, tags: [], runs: ["r2"] },
+  { id: "getball", name: "Get the Ball Rolling", desc: "Solve a Labyrinth.", pct: 66.6, tags: [], runs: ["r2"] },
+  { id: "strategist", name: "Strategist", desc: "Defeat at least three enemies with one attack in the story.", pct: 67.4, tags: [], runs: ["r2"] }
+  ] },
+{ id: "moments", game: "base", title: "Story moments", src: "https://psnprofiles.com/guide/12200-resident-evil-village-trophy-guide",
+  intro: "One-off actions tied to a place in the story. Missing one only means doing it on a later New Game+ run.",
+  items: [
+  { id: "goal", name: "Goooaaal!", desc: "Move the ball from the Winterses' bedroom into the study.", pct: 14.2, tags: ["missable"], runs: ["r2"] },
+  { id: "squawk", name: "Squawk Shot", desc: "Shoot down five flying crows in the story.", pct: 15.4, tags: [], runs: ["r2"] },
+  { id: "trick", name: "Trick Shot", desc: "Defeat an enemy from long range with the sniper rifle in the story.", pct: 42.4, tags: [], runs: ["r2"] },
+  { id: "mediumrare", name: "Medium Rare", desc: "Set fire to a Moroaică in the story.", pct: 46.0, tags: ["missable"], runs: ["r2"] },
+  { id: "fastreflex", name: "Fast Reflexes", desc: "Knock a flaming arrow out of the sky with a close combat weapon in the story.", pct: 11.0, tags: ["missable"], runs: ["r2"] },
+  { id: "quithang", name: "Quit Hanging Around", desc: "Shoot down a Soldat hanging from the production line in the Factory.", pct: 19.9, tags: ["missable"], runs: ["r2"], sp: "d" },
+  { id: "leader", name: "Leader of the Pack", desc: "Take down the Vârcolac Alfa in the story.", pct: 30.3, tags: ["missable"], runs: ["r2"] },
+  { id: "timber", name: "Timber", desc: "Defeat Uriaș during the first lycan attack when you enter the village.", pct: 14.9, tags: ["missable"], runs: ["r5"], sp: "d" },
+  { id: "lucky7", name: "Lucky Number 7", desc: "Have 777, 7,777, or 77,777 Lei in your possession in the story.", pct: 4.9, tags: [], runs: ["r2"] }
+  ] },
+{ id: "collect", game: "base", title: "Collectables", src: "https://psnprofiles.com/guide/12200-resident-evil-village-trophy-guide",
+  intro: "Goats, files, outhouses, castle windows, weapon parts and recipes. Every one is listed in story order in the 100% Guide. Outhouses and windows must all be done in a single playthrough; the rest are recorded as you go.",
+  items: [
+  { id: "cynic", name: "Cynic", desc: "Destroy a Goat of Warding.", pct: 76.9, tags: ["collect"], runs: ["r2"] },
+  { id: "heretic", name: "Heretic", desc: "Destroy all the Goats of Warding.", pct: 5.8, tags: ["collect"], runs: ["r2"] },
+  { id: "bookworm", name: "Bookworm", desc: "Read every single file in the story.", pct: 7.0, tags: ["collect"], runs: ["r2"] },
+  { id: "outhouse", name: "When You Gotta Go...", desc: "Open the door to every outhouse in the village in a single playthrough.", pct: 18.2, tags: ["missable", "collect"], runs: ["r2"] },
+  { id: "hooligan", name: "Hooligan", desc: "Break every breakable window in Castle Dimitrescu in a single playthrough.", pct: 8.7, tags: ["missable", "collect"], runs: ["r2"] },
+  { id: "mapmatician", name: "Mapmatician", desc: "Complete the village map.", pct: 37.1, tags: ["collect"], runs: ["r2"] },
+  { id: "gunsmith", name: "Gunsmith", desc: "Equip a gun with a customizable part.", pct: 74.9, tags: ["collect"], runs: ["r2"] },
+  { id: "vetgunsmith", name: "Veteran Gunsmith", desc: "Equip every gun with their customizable parts in the story.", pct: 6.2, tags: ["collect"], runs: ["r5"] },
+  { id: "artisan", name: "Artisan", desc: "Collect every crafting recipe.", pct: 5.9, tags: ["collect"], runs: ["r5"] },
+  { id: "tinkerer", name: "Tinkerer", desc: "Create every type of item available in the Crafting menu.", pct: 4.6, tags: ["collect"], runs: ["r5"] }
+  ] },
+{ id: "extras", game: "base", title: "Extras and The Mercenaries", src: "https://psnprofiles.com/guide/12200-resident-evil-village-trophy-guide",
+  intro: "Bonuses bought with CP in the Extra Content Shop, and the S ranks in The Mercenaries.",
+  items: [
+  { id: "doll", name: "Doll Collector", desc: "View all character and weapon models.", pct: 9.4, tags: ["collect"], runs: ["r5"] },
+  { id: "artcol", name: "Art Collector", desc: "View all concept art.", pct: 8.3, tags: ["collect"], runs: ["r5"] },
+  { id: "comboking", name: "Combo King", desc: "Get a combo of at least 30 during The Mercenaries.", pct: 13.2, tags: [], runs: ["r6"] },
+  { id: "cowboy", name: "Legendary Cowboy", desc: "Achieve at least an S Rank on all stages in The Mercenaries.", pct: 4.3, tags: [], runs: ["r6"] }
+  ] },
+{ id: "sor", game: "wex", title: "Shadows of Rose", src: "https://psnprofiles.com/guide/15384-resident-evil-village-winters-expansion-dlc-trophy-guide",
+  intro: "The Winters' Expansion story. Hardcore is unlocked from the start, and difficulty rewards stack here too.",
+  items: [
+  { id: "green", name: "Green Teen", desc: "Finish Shadows of Rose on at least Casual difficulty.", pct: 14.6, tags: ["story"], runs: ["r7"] },
+  { id: "serene", name: "Serene Teen", desc: "Finish Shadows of Rose on at least Standard difficulty.", pct: 12.6, tags: ["story"], runs: ["r7"] },
+  { id: "grow", name: "It's Starting to Grow on Me", desc: "Use Rose's mutamycete powers at least 20 times.", pct: 16.9, tags: [], runs: ["r7"], sp: "d" },
+  { id: "craftsmaster", name: "Craftsmaster", desc: "Craft every type of item in Shadows of Rose.", pct: 5.4, tags: ["missable", "collect"], runs: ["r7"] },
+  { id: "supreme", name: "Supreme Teen", desc: "Finish Shadows of Rose on Hardcore difficulty.", pct: 4.3, tags: [], runs: ["r8"] }
+  ] },
+{ id: "ao", game: "wex", title: "The Mercenaries: Additional Orders", src: "https://psnprofiles.com/guide/15384-resident-evil-village-winters-expansion-dlc-trophy-guide",
+  intro: "Two new stages. Clearing them is enough: no rank needed.",
+  items: [
+  { id: "villageblood", name: "Village of Blood", desc: "Complete the Bloody Village in Additional Orders.", pct: 4.7, tags: [], runs: ["r9"] },
+  { id: "riverblood", name: "River of Blood", desc: "Complete the Bloody River in Additional Orders.", pct: 4.6, tags: [], runs: ["r9"] }
+  ] }
+];
+
+/* Guide text per achievement (HTML; [X] style tokens become button glyphs). */
+const GUIDES = {"notlycan": "<p>On your first arrival in the village you are trapped by a red gate and attacked by a pack of lycans. Keep moving rather than barricading yourself in a house, and survive until the giant with the hammer arrives. A cutscene follows and this unlocks.</p><p>The house near the locked red gate has an explosive barrel: let a few lycans bunch up at its door and shoot the barrel for <div class=\"achrefs\" data-ids=\"strategist\"></div></p>", "fourlords": "<p>After you are captured you play a short section in the mines, escaping a series of traps. It unlocks as you reach the surface.</p>", "thatsucked": "<p>The castle's final fight has two halves.</p><ul><li><b>On the roof:</b> aim at the upper, still-human part of her body and dodge her lunges by circling the tower. When she flies out of reach, switch to the rifle. If she sends swarms after you, hide in a corner turret.</li><li><b>Inside the tower:</b> very little room, so keep shooting the same upper body and block when she strikes.</li></ul><p>On a knife-only run, stay behind her and slash her back: she struggles to hit you there.</p>", "nostrings": "<p>After escaping the creature in the basement of House Beneviento, the fight is a game of hide and seek: find the doll three times.</p><ul><li>The first time she is always in the upstairs room.</li><li>The second and third spots vary, but are usually by the living-room sofa or next to the lift.</li><li>Press the action button quickly when you spot her, or she moves again.</li></ul>", "fishout": "<p>The reservoir boss, in two parts.</p><ul><li><b>Part 1:</b> you cannot hurt him. Stay out of his path, get the crank, turn the windmills to restore power and drain the reservoir.</li><li><b>Part 2:</b> shoot the human torso that sticks out of his mouth. When he climbs onto a house roof, get under cover at once: the green liquid he spits hurts. You can still shoot him or the explosive barrels while he is up there.</li></ul>", "upurs": "<p>Fight your way through the lycan stronghold to a cavern at its bottom. While the giant roars at the top of the cave, land headshots, then move out of the spot he is staring at before he leaps down. On the ground, keep your distance, circle the small arena and aim for his upper back when there is an opening.</p>", "tempmeasures": "<p>After the fourth flask, go back to the Altar where the Duke waits, put all four flasks in the Chalice to make the Giant's Chalice, then place it in the centre of the Ceremonial Site a little to the west.</p>", "irongiant": "<p>The factory boss, in two stages.</p><ul><li><b>In the vehicle:</b> keep shooting the glowing red points on its arms or base while you keep moving. Use the cannon if it gets close, and block with [L1] when it charges.</li><li><b>On foot:</b> aim at the head. Watch which arm it raises and run to the opposite side, guarding just in case: the attack usually misses and leaves the head open.</li></ul>", "rootmatter": "<p>After the factory boss you play a short section <span class=\"spoil\">as Chris Redfield</span>, fighting through to a cavern. <span class=\"spoil\">After a fight with an older, stronger version of the stronghold giant</span>, you reach the Megamycete.</p>", "greatdad": "<p>Finish on Casual or higher. Casual gives you the USM-AI handgun.</p><img data-img=\"c_usmai\" alt=\"USM-AI\">", "bestdad": "<p>Finish on Standard or higher. Standard gives you the Dragoon assault rifle.</p><img data-img=\"c_dragoon\" alt=\"Dragoon\">", "worldsbest": "<p>Finish on Hardcore or higher (Village of Shadows counts). Hardcore gives you the Handcannon PZ.</p><img data-img=\"c_handcannon\" alt=\"Handcannon PZ\">", "universe": "<p>Village of Shadows unlocks after your first clear. Enemies hit much harder, take less damage and harder variants appear early. Plan for infinite ammo:</p><ul><li><b>Best:</b> the infinite-ammo S.T.A.K.E. Magnum. To unlock it in the Extra Content Shop you must first fully upgrade the S.T.A.K.E. in a story save (about 2,100,000 Lei in total). Save in a new slot first, upgrade everything, quit, then reload the earlier save: the shop option stays unlocked and you get your Lei back.</li><li><b>Back-up:</b> the infinite GM79 with flashbangs to blind enemies (not armoured lycans, some Soldats or the castle lady), finishing them with the magnum.</li><li><span class=\"spoil\">The Chris section</span> has no access to your infinite weapons, so consider buying the infinite Dragoon and keep some flash grenades.</li></ul><p>Village of Shadows gives you the Rocket Pistol, needed for its ammo recipe (Artisan). <a href=\"https://www.youtube.com/watch?v=k8g0lVF9pVo\" target=\"_blank\" rel=\"noopener\">Village of Shadows walkthrough ↗</a></p><img data-img=\"c_rocket\" alt=\"Rocket Pistol\">", "dashing": "<p>Finish within 3 hours (New Game+ is fine). Pausing stops the clock, so you can pause and check the route, and skip every cutscene. Done together with the other three in Run 3. About two and a half hours is comfortable.</p>", "frugal": "<p>Spend no more than 10,000 Lei in one playthrough. On the knife-only Casual run you barely need the Duke, so this comes with it.</p>", "snakeoil": "<p>Use four or fewer healing items in a whole playthrough. Try it on Casual with all of the Duke's permanent health and guard dishes from earlier runs. The game also heals you for free at four points:</p><ul><li>after first meeting the three daughters in the castle;</li><li>during House Beneviento;</li><li>just before the factory boss;</li><li><span class=\"spoil\">at the start of the Chris section</span>.</li></ul>", "knivesout": "<p>Finish using only close-combat weapons, on Casual, ideally with the Karambit Knife (10,000 CP in the Extra Content Shop, then 100 Lei from the Duke). Flashbangs count as ranged, so no flashbangs.</p><h4>Allowed exceptions</h4><ul><li>Story actions: the castle bells, the orange generators by the factory fan, <span class=\"spoil\">the house held by the Megamycete in the Chris section</span>, puzzles and shooting down treasures.</li><li>The first (vehicle) half of the factory boss.</li><li><span class=\"spoil\">The final boss when you are told to shoot the giant orb; switch back to the knife afterwards</span>.</li><li><span class=\"spoil\">Not allowed: the laser gun against the giant in the Chris section</span>.</li></ul><p>Track it in Challenges (Options menu): the Knives Out counter must stay at 0. <a href=\"https://www.youtube.com/watch?v=Y1TrDkavTAE\" target=\"_blank\" rel=\"noopener\">Knife-only run with all four ↗</a></p>", "crafter": "<p>Open your inventory, go to the crafting tab with [R1] and craft a First Aid Med or Handgun Ammo. Possible as soon as you reach the village.</p>", "patron": "<p>Buy anything from the Duke. You first meet him after escaping the mines, just before the castle.</p><img data-img=\"s_duke\" alt=\"The Duke's shop\">", "pettythief": "<p>Your first lockpick is in the room next to the castle kitchen, after the first fight with one of the daughters. A locked cupboard is a few steps back.</p><img data-img=\"m_ccastle1f\" alt=\"Castle 1F map: lockpick and cupboard\">", "hunter": "<p>Kill any animal (fish, chicken, pig, goat and so on) with the knife or a gun. Their meat goes to the Duke's kitchen for permanent upgrades: see the Duke's kitchen box in Run 2 on the Playthroughs tab.</p>", "push": "<p>Block an attack with [L1], then press [L1] again to shove the enemy away. Try it on the first lycan; restart the checkpoint if it goes wrong.</p>", "photographer": "<p>Open Photo Mode from the pause menu, then back out.</p>", "repairer": "<p>Combine the parts of any combinable treasure. Earliest: the Azure Eye Ring in the castle. The Silver Ring is in the Hall of Pleasure (2F). For the Azure Eye, take the Iron Insignia Key from the piano in the Opera Hall back to the dungeon (B1), open the locked door, blow the breakable wall with the pipe bomb in that room and solve the puzzle. All five combinable treasures are in the treasures box in Run 2 on the Playthroughs tab. <a href=\"https://www.youtube.com/watch?v=kFIChj5tYVs\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><img data-img=\"c_azurering\" alt=\"Azure Eye Ring\">", "getball": "<p>Solve one of the four labyrinth puzzles. Earliest: take the Flower Sword Ball from the left side of the balcony on the Opera Hall's second floor to the Duke's room on the castle's first floor (the door nearest the mask doors), then roll it to the goal. <a href=\"https://www.youtube.com/watch?v=kX1MUHShjgU\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><img data-img=\"m_ccastle2f\" alt=\"Castle 2F map: the Flower Sword Ball\">", "strategist": "<p>Kill three enemies with one attack: a pipe bomb, mine, explosive round or barrel. Easiest during the opening lycan attack: the house near the locked red gate has a barrel inside. Wait for a few lycans to gather at its door and shoot it. The stronghold has plenty of other chances.</p>", "goal": "<p>In the prologue, after putting Rose in her cot, push the yellow ball from that bedroom into the study next door. Walk rather than run, and do not let it roll under the small table in front of you; restart if it does. <a href=\"https://www.youtube.com/watch?v=MW7U5LdaCDw\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "squawk": "<p>Shoot five crows in flight (not on the ground). First chance: on the way to the castle after using the two crests on the village gate. Others: before the Beneviento garden, the graveyard on your second village visit, and the path to Otto's Mill. A shotgun helps, and if you miss you can restart the checkpoint: kills already made are recorded. <a href=\"https://www.youtube.com/watch?v=IcOU6_eLnhM\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "trick": "<p>The sniper rifle sits on a chair by the door at the end of the castle attic. The flying Samca enemies are right outside on the roof: back off as far as you can and shoot one. The stronghold also has chances.</p>", "mediumrare": "<p>Shoot a hanging brazier so it swings into a Moroaică (the hooded enemies). First chance: the castle dungeon room with the Azure Eye puzzle. Second: the Riverbank Treasure House puzzle.</p><img data-img=\"e_moroaica\" alt=\"A Moroaică\">", "fastreflex": "<p>On the way to the stronghold, lycans fire flaming crossbow bolts. Stay where they can see you (not too close, or they switch weapons), equip the knife and swing with [R2] as the arrow arrives. Easiest on Casual, where the arrows do less damage.</p>", "quithang": "<p>In the factory, look out through the gap in the Duke's lift shaft: Soldats hang from a production line in the background. Shoot one. <span class=\"spoil\">A second chance comes during the lift ride in the vehicle before the boss, with infinite ammo</span>. <a href=\"https://www.youtube.com/watch?v=ZZBuZCC4Ic0\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "leader": "<p>A hidden mini-boss in the Fallow Plot (the scarecrow field between the church and Luiza's house) once you are back from the reservoir. It is fast and hits hard; if you are short on firepower, leave it for a later run with an infinite weapon.</p><img data-img=\"e_alfa\" alt=\"Vârcolac Alfa\">", "timber": "<p>Kill the hammer giant during the opening lycan attack instead of escaping. Do it on a New Game+ Casual run with an infinite weapon, ideally the S.T.A.K.E. Magnum: it only takes a few minutes to get there.</p><img data-img=\"e_urias\" alt=\"The hammer giant\">", "lucky7": "<p>Hold exactly 777, 7,777 or 77,777 Lei at once. Buying and selling with the Duke is the only way to land on it.</p><ul><li>Buy the WCX in the Extra Content Shop (also needed for Veteran Gunsmith) to get the Rifle Ammo recipe. Rifle rounds sell for 7 Lei each.</li><li>Spend down as close to 0 as you can, then sell rifle rounds (111 of them makes 777), mixing in handgun ammo buys and sells to fix the remainder.</li></ul>", "cynic": "<p>Destroy one Goat of Warding. The first is in the graveyard altar right next to the placard, early in your first village visit.</p>", "heretic": "<p>All 20 Goats of Warding, listed in story order in the 100% Guide. Each one is recorded the moment you break it, even if you die afterwards. Track them in the Challenges menu after your first clear. <a href=\"https://www.youtube.com/watch?v=XJbxTaso-TE\" target=\"_blank\" rel=\"noopener\">All collectibles video by PowerPyx ↗</a></p>", "bookworm": "<p>Read all 47 files. They are listed in story order in the 100% Guide, and the Journal shows which you have. The last six are in the final area.</p>", "outhouse": "<p>Open all 10 outhouse doors in one playthrough. Listed in the 100% Guide.</p>", "hooligan": "<p>Break all 19 breakable windows in Castle Dimitrescu in one playthrough. Listed room by room in the 100% Guide.</p>", "mapmatician": "<p>Uncover the whole village map. Following the 100% Guide gets you there; it pops shortly after <span class=\"spoil\">you take control of Chris</span>.</p><img data-img=\"m_village\" alt=\"The completed village map\">", "gunsmith": "<p>Attach any customisable part to a gun. The first, the LEMI Recoil Compensator, is in a metal box in the hallway after the castle kitchen.</p>", "vetgunsmith": "<p>Attach all 22 parts to their guns in the story. Five are found in the world; the other 17 are sold by the Duke, some only on New Game+, for about 1,061,000 Lei, plus the guns themselves. You do not need to own everything at once: sell a finished gun and buy it back later with its parts and upgrades kept. The WCX comes from the Extra Content Shop (30,000 CP). Every part is listed in the 100% Guide.</p><table><tr><th>Gun</th><th>Parts</th></tr><tr><td><img data-img=\"c_lemi\" alt=\"LEMI\">LEMI</td><td>High-Capacity Mag (found), Recoil Compensator (found)</td></tr><tr><td><img data-img=\"c_m1911\" alt=\"M1911\">M1911</td><td>Improved Grip, High-Capacity Mag (found)</td></tr><tr><td><img data-img=\"c_v61\" alt=\"V61 Custom\">V61 Custom</td><td>Drum Magazine, Gunstock, Long Barrel</td></tr><tr><td><img data-img=\"c_m1897\" alt=\"M1897\">M1897</td><td>Hair Trigger</td></tr><tr><td><img data-img=\"c_syg12\" alt=\"SYG-12\">SYG-12</td><td>Long Barrel, Drum Magazine, Red Dot Sight</td></tr><tr><td><img data-img=\"c_w870\" alt=\"W870 TAC\">W870 TAC</td><td>Foregrip (found), Improved Gunstock</td></tr><tr><td><img data-img=\"c_f2\" alt=\"F2 Rifle\">F2 Rifle</td><td>High-Capacity Mag (found), High Magnification Scope, Cheek Rest</td></tr><tr><td><img data-img=\"c_wcx\" alt=\"WCX\">WCX</td><td>Foregrip, Red Dot Sight</td></tr><tr><td><img data-img=\"c_wolfsbane\" alt=\"M1851 Wolfsbane\">M1851 Wolfsbane</td><td>Increased Capacity Cylinder, Long Barrel (found)</td></tr><tr><td><img data-img=\"c_stake\" alt=\"S.T.A.K.E.\">S.T.A.K.E.</td><td>High-Capacity Mag, Improved Grip</td></tr></table><p class=\"note\">The LEMI's mag is sold by the Duke in some lists and found in others; tick it whichever way you get it.</p>", "artisan": "<p>Own all 11 crafting recipes. Two are automatic, six are bought from the Duke as the story goes on, and three (Magnum, Rifle and Rocket Pistol ammo) appear only once you own that type of gun. The Rocket Pistol comes from finishing Village of Shadows. All listed in the 100% Guide.</p>", "tinkerer": "<p>Craft one of every item, after collecting all 11 recipes.</p>", "doll": "<p>Buy all 76 figures in the Extra Content Shop (8,900 CP in total), then scroll through every one in Bonuses, Figures. To keep your CP, back up your save to the cloud first, buy and view them, then restore the backup.</p>", "artcol": "<p>Buy all 120 concept art pieces in the Extra Content Shop (12,000 CP in total) and view them all in Bonuses, Concept Art. The same cloud-save trick works.</p>", "comboking": "<p>Reach a 30-kill combo in The Mercenaries. Comes naturally while going for S ranks.</p>", "cowboy": "<p>S rank or better on all eight base stages (The Village, The Castle, The Factory and The Mad Village, I and II). You do not have to finish a stage: once you have the points, dying still records them. On PS5, turning off adaptive triggers makes shooting easier. Strategies, stage scores and the ability list are in the boxes in Run 6 on the Playthroughs tab.</p><h4>Easiest with the DLC</h4><ul><li><b>Stages I:</b> Chris Redfield, punching and stomping to fill his Onslaught gauge.</li><li><b>Stages II:</b> Lady Dimitrescu (unlocked with an S on Bloody River), using her Slam to one-shot most enemies and her flies for anything far away.</li></ul><h4>Ethan only</h4><ul><li><b>Stages I:</b> the F2 sniper rifle, upgraded for power and fire rate first.</li><li><b>Stages II:</b> upgraded handgun plus Wolfsbane for strong enemies, or knife with the Masamune ability and GM79 flashbangs.</li></ul>", "green": "<p>Finish Shadows of Rose on Casual or higher. Play the base game first: the DLC is its epilogue. <a href=\"https://www.youtube.com/watch?v=ynXQDP1eKsA\" target=\"_blank\" rel=\"noopener\">Casual route video ↗</a></p>", "serene": "<p>Finish on Standard or higher (also gives Green Teen).</p>", "grow": "<p><span class=\"spoil\">Rose</span> uses her powers by holding [R1] once you find the first Variant Flask. Three uses count:</p><ul><li>Destroying mould cores, which opens paths and hidden items (does not drain the gauge).</li><li>Freezing enemies (drains the gauge).</li><li>Breaking free from a grab (drains the gauge).</li></ul><p>You use them constantly, so 20 comes naturally.</p><img data-img=\"s_flask\" alt=\"A Variant Flask\"><img data-img=\"s_moldcore\" alt=\"Destroying a mould core\"><img data-img=\"s_freeze\" alt=\"Freezing an enemy\"><img data-img=\"s_counter\" alt=\"Breaking a grab\">", "craftsmaster": "<p>Craft one of each of the four items. The Shotgun Ammo and Pipe Bomb recipes appear on their own later in the story (no need to find them). Rusted Scrap is rare, so save before the three masks in the castle Main Hall, craft one of each, tick them here, and reload to spend the materials on shotgun ammo instead. Check room colours on the map: red still has items, blue is empty.</p><table><tr><th>Item</th><th>Materials</th></tr><tr><td>First Aid Med</td><td>Chem Fluid, Herb</td></tr><tr><td>Handgun Ammo</td><td>Chem Fluid, Gunpowder</td></tr><tr><td>Shotgun Ammo</td><td>Gunpowder, Rusted Scrap</td></tr><tr><td>Pipe Bomb</td><td>Rusted Scrap, Gunpowder, Herb</td></tr></table><img data-img=\"c_chem\" alt=\"Chem Fluid\"><img data-img=\"c_herb\" alt=\"Herb\"><img data-img=\"c_gunpowder\" alt=\"Gunpowder\"><img data-img=\"c_scrap\" alt=\"Rusted Scrap\"><img data-img=\"s_sormap\" alt=\"Map room colours\">", "supreme": "<p>Finish on Hardcore (also gives the two lower ones). Hardcore is open from the start.</p><ul><li>Typewriter saves and generous autosaves: reload freely if a section goes badly.</li><li>Run from groups of Face Eaters rather than fight them.</li><li>Clear every room until it turns blue on the map.</li><li>Pick up the shotgun in the dining room once you have the Triocular Key, and save its ammo for the two bosses.</li><li>In the final fight, [L1] plus the action button triggers a strong stun that uses three gauge circles: keep White Sage for it.</li></ul><p><a href=\"https://www.youtube.com/watch?v=Rh74FduRSzY\" target=\"_blank\" rel=\"noopener\">One-hour Hardcore route ↗</a></p>", "villageblood": "<p>Clear every area of The Bloody Village (rank does not matter). It unlocks after an A rank on The Mad Village I, which itself needs the stages before it. Chris makes it easy: see Run 9 on the Playthroughs tab. <a href=\"https://www.youtube.com/watch?v=TNWRv6zOVHE\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><img data-img=\"s_stbloodyv\" alt=\"The Bloody Village\">", "riverblood": "<p>Clear The Bloody River, unlocked with an A rank on The Bloody Village. An S rank here also unlocks Lady Dimitrescu for The Mercenaries. <a href=\"https://www.youtube.com/watch?v=tDI4ccUYcSU\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><img data-img=\"s_stbloodyr\" alt=\"The Bloody River\">"};
+
+/* Playthroughs. */
+const RUNS = [{"id": "r1", "game": "base", "n": "Run 1", "title": "Blind first playthrough", "mode": "New Game · Standard", "summary": "Play the story your own way: no guide, no collectible hunting. The story and difficulty achievements come from this run, plus a few that happen naturally. Finishing unlocks Village of Shadows, the Extra Content Shop and New Game+.", "tasks": [["Prologue to the village", "Survive the first night"], ["Castle Dimitrescu", ""], ["House Beneviento", ""], ["Moreau's Reservoir", ""], ["The stronghold and the Giant's Chalice", ""], ["The factory", ""], ["||The final chapter||", ""], ["Save the clear data in its own slot", "Needed for New Game+"]], "body": ["Sell treasures to the Duke rather than spending Lei freely: later runs need about 2,100,000 Lei for the infinite S.T.A.K.E. and around 1,000,000 more for weapon parts.", {"box": "duke"}]}, {"id": "r2", "game": "base", "n": "Run 2", "title": "Collectibles and Lei", "mode": "New Game+ · Casual", "summary": "Load your clear save and replay on Casual with the 100% Guide open, chapter by chapter: every goat, file, outhouse, window and found weapon part, plus the story moments. Sell every treasure and save Lei for Run 4.", "tasks": [["Push the ball into the study in the prologue", "Goooaaal!"], ["Barrel kill during the lycan attack", "Strategist"], ["All three village goats and the first outhouses", ""], ["Castle: lockpick, labyrinth, Azure Eye Ring", "Petty Thief, Get the Ball Rolling, Repairer"], ["Castle: all 19 windows", "Hooligan, one playthrough"], ["Castle: sniper kill on the roof", "Trick Shot"], ["Five crows in flight", "Squawk Shot"], ["Burn a Moroaică with a brazier", "Medium Rare"], ["All 10 outhouses", "One playthrough"], ["Knock a flaming arrow down", "Stronghold path"], ["Vârcolac Alfa in the Fallow Plot", "Or later with infinite ammo"], ["Shoot a hanging Soldat", "Factory lift"], ["All 20 goats and 47 files", ""], ["Complete the village map", ""], ["Photo Mode and Lucky Number 7", "Any time"], ["Finish and save", "Keep the Lei"]], "body": [{"box": "treasures"}, {"box": "combine"}, {"box": "shop"}]}, {"id": "r3", "game": "base", "n": "Run 3", "title": "Knife-only speedrun", "mode": "New Game+ · Casual · knife only", "summary": "Four achievements in one run: under 3 hours, no more than 10,000 Lei spent, four or fewer healing items, and only close-combat weapons. Buy the Karambit Knife in the Extra Content Shop first (10,000 CP). Skip every cutscene and pause to check the route.", "tasks": [["Buy the Karambit Knife in the Extra Content Shop", "Then 100 Lei from the Duke"], ["Check the Knives Out counter stays at 0", "Challenges menu"], ["Finish in under 3 hours", ""], ["Spend 10,000 Lei or less", ""], ["Use four or fewer healing items", "Four free heals in the story"]], "body": [{"box": "knifevid"}]}, {"id": "r4", "game": "base", "n": "Run 4", "title": "Village of Shadows", "mode": "New Game+ · Village of Shadows", "summary": "The hardest difficulty, made bearable by infinite ammo. First unlock the infinite S.T.A.K.E. using the save-and-reload trick, then play through. Gives World's Best Dad and Universe's Best Dad, plus the Rocket Pistol for Artisan.", "tasks": [["Make a manual save in a new slot", ""], ["Buy and fully upgrade the S.T.A.K.E.", "About 2,100,000 Lei"], ["Quit and reload the earlier save", "The shop unlock stays, the Lei comes back"], ["Buy infinite S.T.A.K.E. ammo", "120,000 CP"], ["Consider infinite Dragoon too", "||For the Chris section||"], ["Finish on Village of Shadows", ""]]}, {"id": "r5", "game": "base", "n": "Run 5", "title": "Cleanup and Extra Content Shop", "mode": "New Game+ · Casual · any order", "summary": "What is left: Timber at the very start of a new run, every weapon part, every recipe and crafted item, and the figures and concept art from the shop.", "tasks": [["Kill the hammer giant in the opening lycan attack", "Timber, infinite S.T.A.K.E."], ["Buy and fit all 22 weapon parts", "Veteran Gunsmith"], ["Own all 11 recipes", "Artisan"], ["Craft one of every item", "Tinkerer"], ["Buy and view all 76 figures", "Doll Collector"], ["Buy and view all 120 concept art pieces", "Art Collector"]]}, {"id": "r6", "game": "base", "n": "Run 6", "title": "The Mercenaries", "mode": "Bonuses · The Mercenaries", "summary": "S rank or better on the eight base stages. With the DLC, Chris handles stages I and Lady Dimitrescu stages II; Ethan-only strategies are in the boxes too.", "tasks": [["The Village I", "S: 630,000"], ["The Castle I", "S: 1,470,000"], ["The Factory I", "S: 1,080,000"], ["The Mad Village I", "S: 1,485,000"], ["The Village II", "S: 516,000"], ["The Castle II", "S: 851,000"], ["The Factory II", "S: 545,000"], ["The Mad Village II", "S: 658,000"], ["A 30-kill combo", "Combo King"]], "body": [{"box": "merc"}, {"box": "mercethan"}, {"box": "mercdlc"}, {"box": "perks"}]}, {"id": "r7", "game": "wex", "n": "Run 7", "title": "Shadows of Rose", "mode": "Shadows of Rose · Standard", "summary": "Play the epilogue after the main story. Standard is a good first run (Hardcore is open from the start if you prefer). Collect every crafting material in the castle and craft one of each item; the power uses come naturally.", "tasks": [["Craft all four items", "Save first, then reload"], ["Use the powers 20 times", "Comes naturally"], ["Finish the scenario", ""]]}, {"id": "r8", "game": "wex", "n": "Run 8", "title": "Shadows of Rose on Hardcore", "mode": "Shadows of Rose · Hardcore", "summary": "About an hour with the route video. Run from groups, save shotgun ammo for the two bosses and White Sage for the final fight.", "tasks": [["Shotgun from the dining room", "After the Triocular Key"], ["Castle boss", ""], ["Final boss", "Save gauge for the stun"]]}, {"id": "r9", "game": "wex", "n": "Run 9", "title": "Additional Orders", "mode": "Bonuses · The Mercenaries", "summary": "Clear both DLC stages with Chris. They unlock after A ranks on the four base stages I, so this fits alongside Run 6. An S on The Bloody River unlocks Lady Dimitrescu for stages II.", "tasks": [["A rank on The Mad Village I", "Unlocks The Bloody Village"], ["Clear The Bloody Village", "A rank unlocks The Bloody River"], ["Clear The Bloody River", "S rank unlocks Lady Dimitrescu"]], "body": [{"box": "chris"}, {"box": "newchars"}]}];
+
+/* Reference boxes (HTML) shown inside runs. */
+const BOXES = {"knifevid": {"title": "Route video", "html": "<p>One run that gets all four: <a href=\"https://www.youtube.com/watch?v=Y1TrDkavTAE\" target=\"_blank\" rel=\"noopener\">knife-only Casual speedrun ↗</a>. Pause the game to check the route: the clock stops while paused.</p>"}, "duke": {"title": "The Duke's kitchen (permanent upgrades)", "html": "<p>Hunt animals and give the Duke their meat (partial deliveries are fine). From your second village visit he cooks these permanent boosts, which help a lot with Don't Trust That Snake Oil.</p><table><tr><th>Dish</th><th>Effect</th><th>Ingredients</th></tr><tr><td>Herbed Fish</td><td>Health up slightly</td><td>Fish 3, Poultry 2</td></tr><tr><td>Bird and Beast Pilaf</td><td>Less damage when guarding</td><td>Poultry 4, Meat 1</td></tr><tr><td>Three-Flavoured Mititei</td><td>Health up</td><td>Fish 4, Poultry 2, Meat 3</td></tr><tr><td>Tochitură de Pui</td><td>Health up greatly</td><td>Poultry 4, Meat 3, Juicy Game 1</td></tr><tr><td>Ciorbă de Porc</td><td>Much less damage when guarding</td><td>Fish 1, Meat 5, Quality Meat 1</td></tr><tr><td>Sarmale de Pește</td><td>Faster movement</td><td>Fish 6, Finest Fish 1</td></tr></table><h4>Where to hunt</h4><ul><li><b>Fish:</b> the lagoon left of the bridge before the castle; the cave after leaving the castle (missable); a cave right of the boat landing at the reservoir and the area opened after draining it (both missable); the southern river by boat; Otto's Mill.</li><li><b>Poultry:</b> the church graveyard after the castle; the dead end south of the Fallow Plot; the yard by the red-chimney house in East Old Town; right of the reservoir control room (missable); behind the crank door west of East Old Town; Otto's Mill.</li><li><b>Meat:</b> West Old Town near the workshop; south of the Gardener's House; by the windmill before the reservoir lift; the graveyard after the reservoir boss; the left path towards the stronghold; Otto's Mill.</li><li><b>Juicy Game</b> (blue bird) and <b>Quality Meat</b> (white pig) appear after the castle; <b>Finest Fish</b> after the reservoir.</li></ul><img data-img=\"m_juicy\" alt=\"Map: Juicy Game\"><img data-img=\"m_quality\" alt=\"Map: Quality Meat\"><img data-img=\"m_finest\" alt=\"Map: Finest Fish\">"}, "treasures": {"title": "Valuable treasures (Lei)", "html": "<p>Sell treasures to the Duke. Rooms on the map turn blue once everything in them is collected.</p><table><tr><th>Treasure</th><th>Picture</th><th>Where</th></tr><tr><td>Crimson Glass (3,500)</td><td><img data-img=\"t_crimsonglass\" alt=\"Crimson Glass\"></td><td>Castle: the table near your first meeting with the three daughters.</td></tr><tr><td>Wooden Angel Statue (3,000)</td><td><img data-img=\"t_woodenangel\" alt=\"Wooden Angel Statue\"></td><td>Castle: locked drawer outside the kitchen (lockpick nearby).</td></tr><tr><td>Lady's Lipstick (6,000)</td><td><img data-img=\"t_lipstick\" alt=\"Lady's Lipstick\"></td><td>Castle: bathroom in Dimitrescu's chamber, on a return visit.</td></tr><tr><td>Luiza's Heirloom</td><td><img data-img=\"t_luiza\" alt=\"Luiza's Heirloom\"></td><td>Luiza's house after the castle: the necklace gives a Necklace Stone and Luiza's Key.</td></tr><tr><td>Maestro's Collection</td><td><img data-img=\"t_maestro\" alt=\"Maestro's Collection\"></td><td>Luthier's house, West Old Town: key from the Gardener's shack, safe code 27-09-17. Steel Hraesvelgr (14,000) and the F2 Rifle High-Capacity Mag.</td></tr><tr><td>Beneviento's Treasure</td><td><img data-img=\"t_beneviento\" alt=\"Beneviento's Treasure\"></td><td>Beneviento garden grave: needs the Broken Slab from the village mausoleum north of the Maiden of War. Berengario's Chalice (18,000).</td></tr><tr><td>Waterwheel Weapon</td><td><img data-img=\"t_waterwheel\" alt=\"Waterwheel Weapon\"></td><td>Iron Insignia door in East Old Town: the GM79 grenade launcher.</td></tr><tr><td>Teddy Bear (4,000)</td><td><img data-img=\"t_teddy\" alt=\"Teddy Bear\"></td><td>Basement shelf of the house with a well nearest the Maiden of War.</td></tr><tr><td>Moreau's Hidden Weapon</td><td><img data-img=\"t_moreauweapon\" alt=\"Moreau's Hidden Weapon\"></td><td>After the reservoir, take the lift back to the first windmill and go right to Moreau's lab: the M1851 Wolfsbane.</td></tr><tr><td>Riverbank Treasure House</td><td><img data-img=\"t_riverbank\" alt=\"Riverbank Treasure House\"></td><td>After the reservoir: lower the bridge at the Ceremonial Site, take the boat north, go right through the torch doors and solve the puzzle. Golden Lady Statue (20,000).</td></tr><tr><td>Cesare's Goblet (19,000)</td><td><img data-img=\"t_cesare\" alt=\"Cesare's Goblet\"></td><td>On the way to the previous one: locked box in a building just before the bridge, opened with Luiza's Key.</td></tr><tr><td>Cannibal's Plunder</td><td><img data-img=\"t_cannibal\" alt=\"Cannibal's Plunder\"></td><td>Otto's Mill after its mini-boss: Father Nicola's Angel (22,000).</td></tr><tr><td>Treasure under the stronghold</td><td><img data-img=\"t_stronghold\" alt=\"Treasure under the stronghold\"></td><td>The room after the fourth flask: Guglielmo's Plate (25,000).</td></tr><tr><td>Antique Coin (8,000)</td><td><img data-img=\"t_coin\" alt=\"Antique Coin\"></td><td>After the reservoir: lower the bridge, take the boat downriver, go right into the cave.</td></tr><tr><td>Ingrid's Necklace (2,000)</td><td><img data-img=\"t_ingrid\" alt=\"Ingrid's Necklace\"></td><td>Dropped by Moroaică, for example in the castle prison.</td></tr><tr><td>Silver Angel Statue (10,000)</td><td><img data-img=\"t_silverangel\" alt=\"Silver Angel Statue\"></td><td>After draining the reservoir: back to the first boat, left path, box at the end.</td></tr><tr><td>Crimson Skull (8,000)</td><td><img data-img=\"t_crimsonskull\" alt=\"Crimson Skull\"></td><td>Castle labyrinth (Duke's room, 1F) with the Flower Sword Ball from the Opera Hall 2F balcony.</td></tr><tr><td>Onyx Skull (15,000)</td><td><img data-img=\"t_onyxskull\" alt=\"Onyx Skull\"></td><td>Labyrinth in the Gardener's House, with the Sun and Moon Ball from a grave in the south-east corner of the Beneviento garden.</td></tr><tr><td>Chartreuse Skull (20,000)</td><td><img data-img=\"t_chartreuse\" alt=\"Chartreuse Skull\"></td><td>Labyrinth in the windmill before the reservoir lift, with the Mermaid Ball found on the way to Moreau's Hidden Weapon.</td></tr><tr><td>Bister Skull (30,000)</td><td><img data-img=\"t_bister\" alt=\"Bister Skull\"></td><td>Labyrinth at the factory lift, with the Iron Horse Ball made from the Ball Mold (far east room after the Grinder Shaft on B2, behind the wall reached by pushing the lone cart).</td></tr><tr><td>Cigar (3,000)</td><td><img data-img=\"t_cigar\" alt=\"Cigar\"></td><td>Factory B1, the room after the propeller mini-boss.</td></tr><tr><td>Boss crystals</td><td><img data-img=\"t_cdimitrescu\" alt=\"Crystal Dimitrescu\"><img data-img=\"t_angie\" alt=\"Angie\"><img data-img=\"t_cmoreau\" alt=\"Crystal Moreau\"><img data-img=\"t_cheisenberg\" alt=\"Crystal Heisenberg\"></td><td>Each lord drops one: 25,000, 28,000, 40,000 and 70,000.</td></tr></table>"}, "combine": {"title": "Combinable treasures (Repairer)", "html": "<p>Combined, these sell for far more than their parts.</p><table><tr><th>Treasure</th><th>Parts and where</th></tr><tr><td><img data-img=\"c_azurering\" alt=\"Azure Eye Ring\">Azure Eye Ring (12,000)</td><td><img data-img=\"c_silverring\" alt=\"Silver Ring\">Silver Ring: castle Hall of Pleasure (Iron Insignia Key). <img data-img=\"c_azureeye\" alt=\"Azure Eye\">Azure Eye: castle dungeon puzzle room (see Repairer).</td></tr><tr><td><img data-img=\"c_goat\" alt=\"Wooden Goat\">Wooden Goat (15,000)</td><td><img data-img=\"c_goatbody\" alt=\"Wooden animal body\">Body: second visit, the house right of the Maiden of War. <img data-img=\"c_goathead\" alt=\"Wooden animal head\">Head: the well outside that house.</td></tr><tr><td><img data-img=\"c_madalina\" alt=\"Miss Madalina\">Miss Madalina (20,000)</td><td><img data-img=\"c_madbody\" alt=\"Madalina body\">Body: small house in West Old Town, south of the Maestro's Collection. <img data-img=\"c_madhead\" alt=\"Madalina head\">Head: after House Beneviento, the house to the north (where Luthier's Key is).</td></tr><tr><td><img data-img=\"c_necklace\" alt=\"Dimitrescu's Necklace\">Dimitrescu's Necklace (50,000)</td><td><img data-img=\"c_necktwo\" alt=\"Necklace with two holes\">Necklace: the well in the church area. <img data-img=\"c_ruby\" alt=\"Pigeon Blood Ruby\">Ruby: west end of East Old Town, through the crank door and up the ladder to the roof. <img data-img=\"c_largeruby\" alt=\"Large Pigeon Blood Ruby\">Large ruby: with the crank, head towards the Riverbank Treasure House but cross the bridge left and solve the puzzle in the far well.</td></tr><tr><td><img data-img=\"c_hammer\" alt=\"Heisenberg's Hammer\">Heisenberg's Hammer (45,000)</td><td><img data-img=\"c_cylinder\" alt=\"Cylinder\">Cylinder: factory B4, behind a wall marked with a yellow X (explosive). <img data-img=\"c_shaft\" alt=\"Shaft\">Shaft: factory MB4, Heisenberg's Quarters.</td></tr></table>"}, "shop": {"title": "Extra Content Shop (CP)", "html": "<p>Bonuses, Extra Content Shop, after your first clear. It uses Completion Points from challenges. Buy only what helps: the Karambit Knife, WCX, infinite S.T.A.K.E. or GM79, figures and concept art.</p><table><tr><th>Item</th><th>CP</th><th>Why</th></tr><tr><td>The Mercenaries</td><td>10 (free with the DLC)</td><td>Legendary Cowboy</td></tr><tr><td>WCX</td><td>30,000</td><td>Veteran Gunsmith, Artisan, Lucky Number 7</td></tr><tr><td>Karambit Knife</td><td>10,000</td><td>Knives Out</td></tr><tr><td>Infinite GM79</td><td>80,000</td><td>Village of Shadows back-up</td></tr><tr><td>Infinite S.T.A.K.E.</td><td>120,000</td><td>Village of Shadows (fully upgrade the gun first)</td></tr><tr><td>Infinite Dragoon</td><td>50,000</td><td><span class=\"spoil\">Chris section</span> on Village of Shadows</td></tr><tr><td>Rocket Pistol</td><td>after Village of Shadows</td><td>Artisan</td></tr><tr><td>76 figures</td><td>8,900 in total</td><td>Doll Collector</td></tr><tr><td>120 concept art</td><td>12,000 in total</td><td>Art Collector</td></tr></table>"}, "merc": {"title": "How The Mercenaries works", "html": "<p>Kill as many enemies as you can before time runs out and reach the goal. Points, ammo, Lei and abilities carry through every area of a stage. Score comes from the combo chain (most important), Lei left, time left and a bonus for clearing an area. Gold orbs add time; blue orbs offer a choice of three abilities, which stack.</p><img data-img=\"s_hud\" alt=\"The Mercenaries HUD\"><img data-img=\"s_abilities\" alt=\"Choosing an ability\"><img data-img=\"s_orb\" alt=\"An ability orb\"><table><tr><th>Stage</th><th>Areas</th><th>S rank</th><th>SS rank</th></tr><tr><td><img data-img=\"s_stvillage\" alt=\"The Village\">The Village I</td><td>3</td><td>630,000</td><td>756,000</td></tr><tr><td><img data-img=\"s_stcastle\" alt=\"The Castle\">The Castle I</td><td>4</td><td>1,470,000</td><td>1,764,000</td></tr><tr><td><img data-img=\"s_stfactory\" alt=\"The Factory\">The Factory I</td><td>2</td><td>1,080,000</td><td>1,296,000</td></tr><tr><td><img data-img=\"s_stmad\" alt=\"The Mad Village\">The Mad Village I</td><td>5</td><td>1,485,000</td><td>1,782,000</td></tr><tr><td><img data-img=\"s_stvillage2\" alt=\"The Village II\">The Village II</td><td>3</td><td>516,000</td><td>650,000</td></tr><tr><td><img data-img=\"s_stcastle2\" alt=\"The Castle II\">The Castle II</td><td>4</td><td>851,000</td><td>1,073,000</td></tr><tr><td><img data-img=\"s_stfactory2\" alt=\"The Factory II\">The Factory II</td><td>2</td><td>545,000</td><td>690,000</td></tr><tr><td><img data-img=\"s_stmad2\" alt=\"The Mad Village II\">The Mad Village II</td><td>5</td><td>658,000</td><td>796,000</td></tr></table><p class=\"note\">Each stage needs an A rank on the one before it. An earlier B rank gives you 5,000 bonus Lei at the start of stages I.</p>"}, "mercethan": {"title": "Ethan strategy (no DLC)", "html": "<h4>Stages I: sniper rifle</h4><p>Sell the shotgun ammo, handgun ammo and healing items, buy the F2 Rifle and upgrade power and fire rate first (around power 3 to 4, fire rate 2), then capacity. Keep about 50 handgun rounds to save the combo if the rifle runs dry. Best abilities: Magic Magazine, Break Shot, Out of Reach, Execution, Fickle Shooter, Corpse Combustor, and Lightning Speed or Agile early.</p><p>Videos: <a href=\"https://www.youtube.com/watch?v=guUGwSPcL7k\" target=\"_blank\" rel=\"noopener\">Village I</a> · <a href=\"https://www.youtube.com/watch?v=HlRyfbP9pjY\" target=\"_blank\" rel=\"noopener\">Castle I</a> · <a href=\"https://www.youtube.com/watch?v=QBMeV80OCoo\" target=\"_blank\" rel=\"noopener\">Factory I</a> · <a href=\"https://www.youtube.com/watch?v=d4JTTAIOiOU\" target=\"_blank\" rel=\"noopener\">Mad Village I</a></p><h4>Stages II: handgun and magnum, or knife</h4><ul><li><b>Handgun and magnum:</b> buy the Wolfsbane for strong enemies and upgrade the handgun (power 4, fire rate 2, capacity 3 to start). Shoot Moroaică legs to drop them; mines and pipe bombs strip armour. Add Pistol Master, No Brainer, Agile and Super Guard.</li><li><b>Knife with Masamune:</b> sell the handgun, buy the GM79 and flashbangs, restart until an early blue orb offers Masamune, then add Blade Master and Infighter. Helmeted lycans and the propeller enemy ignore flashbangs.</li></ul><p>Videos: <a href=\"https://www.youtube.com/watch?v=AzB5mKE117o\" target=\"_blank\" rel=\"noopener\">Village II</a> · <a href=\"https://www.youtube.com/watch?v=Nt6JN2UV_Rg\" target=\"_blank\" rel=\"noopener\">Castle II</a> · <a href=\"https://www.youtube.com/watch?v=KMiirMR0hhc\" target=\"_blank\" rel=\"noopener\">Factory II</a> · <a href=\"https://www.youtube.com/watch?v=CGNJEDcgGcg\" target=\"_blank\" rel=\"noopener\">Mad Village II</a></p>"}, "mercdlc": {"title": "DLC strategy: Chris and Lady Dimitrescu", "html": "<h4>Stages I with Chris</h4><p>Sell half the rifle ammo and all but 70 handgun rounds, buy Energized Punch (or Hook), level the gloves (Straight Punch 2, Left Hook 3) and handgun fire rate 2. Space yourself so the slow straight punch lands, use the left hook to interrupt attacks, punch Soldats in their weak point and grenade armoured ones. Use Onslaught when surrounded or to dash between spawns. Weaken enemies with the handgun, then finish with a punch to charge the gauge.</p><p>Videos: <a href=\"https://www.youtube.com/watch?v=QVuY1UbMGaI\" target=\"_blank\" rel=\"noopener\">Village I</a> · <a href=\"https://www.youtube.com/watch?v=wmeD2NHeahk\" target=\"_blank\" rel=\"noopener\">Castle I</a> · <a href=\"https://www.youtube.com/watch?v=T6Cki7TPV2M\" target=\"_blank\" rel=\"noopener\">Factory I</a> · <a href=\"https://www.youtube.com/watch?v=2NsbNOJ03Ts\" target=\"_blank\" rel=\"noopener\">Mad Village I</a></p><h4>Stages II with Lady Dimitrescu</h4><p>Unlocked with an S on The Bloody River. Buy Slam-tastic, raise Insect Swarm power to 5 and nail power to 2; after the first area buy Thrill Keeper. Hold [L1] to Slam: it one-shots lycans, Moroaică and basic Soldats, is invincible and chains. Use the flies for anything far away, the vanity for propeller and armoured Soldats, and daughters for the strongest enemies. Take Gruesome Gourmet, Thick Skinned, Healthy and a speed perk.</p><p>Videos: <a href=\"https://www.youtube.com/watch?v=1AreN6jmxaA\" target=\"_blank\" rel=\"noopener\">Village II</a> · <a href=\"https://www.youtube.com/watch?v=1rgOmuSUhuQ\" target=\"_blank\" rel=\"noopener\">Castle II</a> · <a href=\"https://www.youtube.com/watch?v=8xHfcCpZQ9U\" target=\"_blank\" rel=\"noopener\">Factory II</a> · <a href=\"https://www.youtube.com/watch?v=JmNvwTMLXh4\" target=\"_blank\" rel=\"noopener\">Mad Village II</a></p>"}, "perks": {"title": "Abilities and how to unlock them", "html": "<table><tr><th>Ability</th><th>Effect</th></tr><tr><td>Pistol / Shotgun / Blade Master</td><td>That weapon type does more damage.</td></tr><tr><td>Magic Magazine</td><td>Double ammo capacity (S rank on The Village I).</td></tr><tr><td>Masamune</td><td>Knife ten times stronger, other weapons much weaker (A rank on The Mad Village I).</td></tr><tr><td>No Brainer</td><td>Stronger headshots.</td></tr><tr><td>Break Shot</td><td>First hit on a full-health enemy is stronger.</td></tr><tr><td>Fickle Shooter</td><td>Damage rises when switching targets.</td></tr><tr><td>Out of Reach</td><td>Stronger long-range shots.</td></tr><tr><td>Execution</td><td>Much more damage below 30% enemy health (A rank on The Castle I).</td></tr><tr><td>Infighter / All Brawn</td><td>Stronger close combat / more damage but slower.</td></tr><tr><td>Agile / Lightning Speed</td><td>Faster / much faster but you take more damage (A rank on The Factory I).</td></tr><tr><td>Assassination Dash</td><td>Faster with the knife out.</td></tr><tr><td>Adrenaline / Gruesome Gourmet</td><td>Heal a little when shooting / on each kill.</td></tr><tr><td>Thick Skinned / Super Guard / Healthy</td><td>Less damage / no damage when guarding / more max health.</td></tr><tr><td>Slow Motion</td><td>Slower enemies.</td></tr><tr><td>Corpse Combustor</td><td>Gun kills often explode.</td></tr></table>"}, "chris": {"title": "Chris in Additional Orders", "html": "<p>Same plan as stages I: fists first, handgun to keep the combo. The two stages need only to be cleared.</p><img data-img=\"s_chris1\" alt=\"Straight punch\"><img data-img=\"s_chris2\" alt=\"Left hook\"><img data-img=\"s_chris3\" alt=\"Stomp\"><img data-img=\"s_chris4\" alt=\"Onslaught\"><table><tr><th>Stage</th><th>Areas</th><th>A rank</th><th>S rank</th></tr><tr><td>The Bloody Village I</td><td>3</td><td>745,000</td><td>1,117,500</td></tr><tr><td>The Bloody River I</td><td>4</td><td>1,050,000</td><td>1,575,000</td></tr></table><p>Videos: <a href=\"https://www.youtube.com/watch?v=TNWRv6zOVHE\" target=\"_blank\" rel=\"noopener\">The Bloody Village</a> · <a href=\"https://www.youtube.com/watch?v=tDI4ccUYcSU\" target=\"_blank\" rel=\"noopener\">The Bloody River</a></p>"}, "newchars": {"title": "Heisenberg and Lady Dimitrescu: moves", "html": "<h4>Heisenberg (A rank on all six normal stages)</h4><p>Hammer swings build an electric charge that a held slam releases. He throws scrap, sawblades or flash grenades, can summon a Soldat Jet, and a magnetic field powers up his moves and lets him yank enemies. No healing, but a scrap shield on [L1].</p><img data-img=\"s_heis1\" alt=\"Hammer swing\"><img data-img=\"s_heis2\" alt=\"Hammer slam\"><img data-img=\"s_heis3\" alt=\"Projectiles\"><img data-img=\"s_heis4\" alt=\"Magnetic field\"><h4>Lady Dimitrescu (S rank on The Bloody River)</h4><p>Nail slices, a running Slam, a cleaving rush, insect swarms, a thrown vanity and summoned daughters once her Thrill gauge fills. She cannot guard but has lots of health and heals with Sanguis Virginis.</p><img data-img=\"s_dim1\" alt=\"Slicing\"><img data-img=\"s_dim2\" alt=\"Slamming\"><img data-img=\"s_dim3\" alt=\"Cleaving slice\"><img data-img=\"s_dim4\" alt=\"Insect swarm\"><img data-img=\"s_dim5\" alt=\"Thrown vanity\"><img data-img=\"s_dim6\" alt=\"Summoned daughter\"><img data-img=\"s_dim7\" alt=\"Thrill gauge\"><img data-img=\"s_dim8\" alt=\"Lady's Lipstick\">"}};
+
+/* 100% Guide chapters: collectibles and chapter achievements in story order. */
+const COLL = [{"key": "c1", "game": "base", "title": "Prologue: the Winters' house", "obj": "The opening night at home.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "goal", "note": "Push the yellow ball from the bedroom into the study."}]}, {"title": "Collectibles", "items": [{"key": "f1", "k": "file", "title": "File 1: Fridge Memo", "loc": "Kitchen fridge, at the very start"}, {"key": "f2", "k": "file", "title": "File 2: Old News Clipping", "loc": "Upstairs: the cluttered bedroom at the end of the hall behind the stairs"}, {"key": "f3", "k": "file", "title": "File 3: Ethan's Diary", "loc": "Laptop in the upstairs room next to the baby's room"}, {"key": "f4", "k": "file", "title": "File 4: Medical Checkup Report", "loc": "Cupboard to the right of the laptop"}]}]}, {"key": "c2", "game": "base", "title": "Village: first visit", "obj": "From the crash site through the lycan attack to Luiza's house.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "notlycan", "note": "Keep moving until the giant arrives."}, {"k": "ach", "ach": "strategist", "note": "Barrel in the house by the locked red gate."}, {"k": "ach", "ach": "push", "note": "Block, then shove the first lycan."}, {"k": "ach", "ach": "crafter", "note": "Craft from the inventory once you reach the village."}, {"k": "ach", "ach": "cynic", "note": "Goat 1 in the graveyard altar."}]}, {"title": "Collectibles", "items": [{"key": "f5", "k": "file", "title": "File 5: Mission Briefing", "loc": "On the ground by the crashed vehicle when you wake in the snow"}, {"key": "r1", "k": "recipe", "title": "Recipe 1: First Aid Med", "loc": "Automatic on reaching the village"}, {"key": "r2", "k": "recipe", "title": "Recipe 2: Handgun Ammo", "loc": "Automatic on reaching the village"}, {"key": "o1", "k": "outhouse", "title": "Outhouse 1", "loc": "West Old Town: through the house's front door and out its right side into the back yard"}, {"key": "f6", "k": "file", "title": "File 6: Scribbled Note", "loc": "Corner table of the first house on the left after the lycan attack"}, {"key": "f7", "k": "file", "title": "File 7: Goat of Warding placard", "loc": "Graveyard, under the lit altar"}, {"key": "g1", "k": "goat", "title": "Goat 1", "loc": "Graveyard, in the same altar as the placard (knife it)"}, {"key": "g2", "k": "goat", "title": "Goat 2", "loc": "Church roof, visible once you are through the church gate"}, {"key": "g3", "k": "goat", "title": "Goat 3", "loc": "Field area: top of the stairs behind the field, on a wall"}, {"key": "o2", "k": "outhouse", "title": "Outhouse 2", "loc": "Right-hand corner in front of Luiza's house"}, {"key": "f8", "k": "file", "title": "File 8: Dangerous Creatures", "loc": "Chair in the right corner of Luiza's first room"}]}]}, {"key": "c3", "game": "base", "title": "The mines and the Duke", "obj": "Escaping the mines and meeting the merchant before the castle.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "fourlords", "note": "Reach the surface."}, {"k": "ach", "ach": "patron", "note": "Buy anything from the Duke."}, {"k": "ach", "ach": "squawk", "note": "First crows on the path to the castle after the two crests."}]}, {"title": "Collectibles", "items": [{"key": "g4", "k": "goat", "title": "Goat 4", "loc": "Snowy vineyard, in the snow beside the far-right scarecrow"}, {"key": "r3", "k": "recipe", "title": "Recipe 3: Shotgun Ammo", "loc": "Buy from the Duke"}, {"key": "r4", "k": "recipe", "title": "Recipe 4: Sniper Rifle Ammo", "loc": "Buy from the Duke"}, {"key": "r5", "k": "recipe", "title": "Recipe 5: Mines", "loc": "Buy from the Duke"}]}]}, {"key": "c4", "game": "base", "title": "Castle Dimitrescu", "obj": "Every file, two goats, the first weapon part and all 19 windows. Break the windows in one playthrough.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "pettythief", "note": "Lockpick by the kitchen, cupboard a few steps back."}, {"k": "ach", "ach": "getball", "note": "Flower Sword Ball to the Duke's room labyrinth."}, {"k": "ach", "ach": "gunsmith", "note": "Fit the LEMI Recoil Compensator."}, {"k": "ach", "ach": "repairer", "note": "Silver Ring plus Azure Eye."}, {"k": "ach", "ach": "mediumrare", "note": "Brazier in the dungeon Azure Eye room."}, {"k": "ach", "ach": "trick", "note": "Sniper rifle in the attic, Samca on the roof."}, {"k": "ach", "ach": "hooligan", "note": "Ticks itself with the last window here."}, {"k": "story", "ach": "thatsucked", "note": "Aim at the upper body."}]}, {"title": "Files, goats and parts", "items": [{"key": "f9", "k": "file", "title": "File 9: Guest Book", "loc": "Entrance hall, table left of the painting of three women"}, {"key": "f10", "k": "file", "title": "File 10: The Labyrinths", "loc": "Merchant's Room, small table by the castle model"}, {"key": "f11", "k": "file", "title": "File 11: Winemaking History", "loc": "Wine Room (2F), on a table"}, {"key": "f12", "k": "file", "title": "File 12: A Maid's Diary", "loc": "Basement, shelf on the right of the room you drop into"}, {"key": "f13", "k": "file", "title": "File 13: Treatment Candidates", "loc": "Dungeon, right of the bloody torture table"}, {"key": "f14", "k": "file", "title": "File 14: Observation Report", "loc": "Dungeon, the second cell past the torture table"}, {"key": "f15", "k": "file", "title": "File 15: A Cook's Diary", "loc": "Kitchen, shelf on the left"}, {"key": "p1", "k": "part", "title": "Part 1: LEMI Recoil Compensator", "loc": "Metal box in the hallway after the kitchen"}, {"key": "g5", "k": "goat", "title": "Goat 5", "loc": "Basement floor just past the ladder, after the statue puzzle"}, {"key": "f16", "k": "file", "title": "File 16: Alcina Dimitrescu's Diary", "loc": "Dimitrescu's Chambers (2F), couch on your immediate left"}, {"key": "f17", "k": "file", "title": "File 17: Grand Chambermaid's Notice", "loc": "Opera Hall (2F), table by the clock between black curtains"}, {"key": "f18", "k": "file", "title": "File 18: Further Observations", "loc": "Book on the cupboard at the end of the hallway past the previous file"}, {"key": "f19", "k": "file", "title": "File 19: Insect Observation Journal", "loc": "Opera Hall (1F), small round table by the piano"}, {"key": "g6", "k": "goat", "title": "Goat 6", "loc": "Attic: turn round at the top of the ladder"}, {"key": "f20", "k": "file", "title": "File 20: Rumours of a Dagger", "loc": "Attic, table at the far end"}]}, {"title": "Windows (one playthrough)", "items": [{"key": "w1", "k": "window", "title": "Window 1", "loc": "Dining Room (1F)"}, {"key": "w2", "k": "window", "title": "Window 2", "loc": "Dining Room (1F)"}, {"key": "w3", "k": "window", "title": "Window 3", "loc": "Kitchen (1F): the room behind the kitchen where you fought the witch"}, {"key": "w4", "k": "window", "title": "Window 4", "loc": "Dimitrescu's Chambers (1F): stairwell past the silver doors"}, {"key": "w5", "k": "window", "title": "Window 5", "loc": "Same stairwell"}, {"key": "w6", "k": "window", "title": "Window 6", "loc": "Dimitrescu's Chambers (2F): hallway before the statue puzzle room"}, {"key": "w7", "k": "window", "title": "Window 7", "loc": "Same hallway"}, {"key": "w8", "k": "window", "title": "Window 8", "loc": "Same hallway"}, {"key": "w9", "k": "window", "title": "Window 9", "loc": "Inside Dimitrescu's Chambers (2F)"}, {"key": "w10", "k": "window", "title": "Window 10", "loc": "Inside Dimitrescu's Chambers (2F)"}, {"key": "w11", "k": "window", "title": "Window 11", "loc": "Dimitrescu's Chambers (2F), on the balcony"}, {"key": "w12", "k": "window", "title": "Window 12", "loc": "Opera Hall (1F): stairwell from 1F to 2F"}, {"key": "w13", "k": "window", "title": "Window 13", "loc": "Same stairwell"}, {"key": "w14", "k": "window", "title": "Window 14", "loc": "Same stairwell"}, {"key": "w15", "k": "window", "title": "Window 15", "loc": "Opera Hall (2F), south side"}, {"key": "w16", "k": "window", "title": "Window 16", "loc": "Opera Hall (2F), south side"}, {"key": "w17", "k": "window", "title": "Window 17", "loc": "Opera Hall (2F), north side"}, {"key": "w18", "k": "window", "title": "Window 18", "loc": "Hall of Joy (2F): the hallway after the library witch fight"}, {"key": "w19", "k": "window", "title": "Window 19", "loc": "Atelier (2F): ceiling window, broken during the five bells"}]}]}, {"key": "c5", "game": "base", "title": "Village: second visit", "obj": "After the castle. Many outhouses and three goats.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "squawk", "note": "Crows at the graveyard."}, {"k": "ach", "ach": "hunter", "note": "Hunt anything; the Duke's kitchen opens now."}]}, {"title": "Collectibles", "items": [{"key": "f21", "k": "file", "title": "File 21: Craftsman's Note", "loc": "First hut on the right, beside a typewriter"}, {"key": "o3", "k": "outhouse", "title": "Outhouse 3", "loc": "Behind the building with that typewriter"}, {"key": "g7", "k": "goat", "title": "Goat 7", "loc": "Lone Road: under the stairs down to the drawbridge, on the left"}, {"key": "r6", "k": "recipe", "title": "Recipe 6: Pipe Bombs", "loc": "Buy from the Duke at the Altar"}, {"key": "f22", "k": "file", "title": "File 22: Leonardo's Message", "loc": "Upstairs in the house right of the Maiden of War"}, {"key": "o4", "k": "outhouse", "title": "Outhouse 4", "loc": "Back yard of the house with Leonardo's Message"}, {"key": "o5", "k": "outhouse", "title": "Outhouse 5", "loc": "Behind a shelf you push aside, next to a green outhouse with a lycan inside"}, {"key": "o6", "k": "outhouse", "title": "Outhouse 6", "loc": "West Old Town, before the Iron Insignia gate, where the clawed enemy appears"}, {"key": "o7", "k": "outhouse", "title": "Outhouse 7", "loc": "Yard behind the gate with the 'missing owners' note (break the yellow padlock)"}, {"key": "g8", "k": "goat", "title": "Goat 8", "loc": "Same yard, on a wooden hut between the house and the shed"}, {"key": "f23", "k": "file", "title": "File 23: Note on the Luthier's House", "loc": "By the door of the 'missing owners' house"}, {"key": "o8", "k": "outhouse", "title": "Outhouse 8", "loc": "Past the well wheel, up the yellow ladder, in the chicken yard"}, {"key": "f24", "k": "file", "title": "File 24: Eugen's Diary", "loc": "Table in the house with the red chimney"}, {"key": "f25", "k": "file", "title": "File 25: Church Computer", "loc": "Laptop in the church"}, {"key": "g9", "k": "goat", "title": "Goat 9", "loc": "Graveyard, behind the north-east Iron Insignia gate, between the crypt and the wall"}, {"key": "g10", "k": "goat", "title": "Goat 10", "loc": "Suspension bridge: on a wooden walkway visible to the left"}]}]}, {"key": "c6", "game": "base", "title": "House Beneviento", "obj": "The house, its garden and the way back.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "nostrings", "note": "Find the doll three times."}]}, {"title": "Collectibles", "items": [{"key": "g11", "k": "goat", "title": "Goat 11", "loc": "Outside the house: round the porch and down the steps to a fenced area"}, {"key": "o9", "k": "outhouse", "title": "Outhouse 9", "loc": "Left side of the Gardener's House (typewriter)"}, {"key": "f26", "k": "file", "title": "File 26: Gardener's Diary", "loc": "Gardener's House, corner of the typewriter room"}]}]}, {"key": "c7", "game": "base", "title": "Village: third visit", "obj": "Two new recipes and a hidden weapon part.", "sections": [{"title": "Collectibles", "items": [{"key": "r7", "k": "recipe", "title": "Recipe 7: Explosive Rounds", "loc": "Buy from the Duke at the Altar"}, {"key": "r8", "k": "recipe", "title": "Recipe 8: Flashbangs", "loc": "Buy from the Duke at the Altar"}, {"key": "p2", "k": "part", "title": "Part 2: F2 Rifle High-Capacity Mag", "loc": "Locked cupboard in the 'missing owners' house (code on the hallway painting); also part of the Maestro's Collection"}]}]}, {"key": "c8", "game": "base", "title": "Moreau's Reservoir", "obj": "The reservoir, the windmills and the drowned houses.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "outhouse", "note": "The last outhouse is here."}, {"k": "story", "ach": "fishout", "note": "Hide from the green rain."}]}, {"title": "Collectibles", "items": [{"key": "f27", "k": "file", "title": "File 27: Vasile's Final Testament", "loc": "On a body in a house past the gate that needs the Four-Winged Unborn Key"}, {"key": "f28", "k": "file", "title": "File 28: The Reservoir and Giant Fish", "loc": "Hut on the right before you board the boat"}, {"key": "o10", "k": "outhouse", "title": "Outhouse 10", "loc": "Turn right after leaving the sluice gate control building"}, {"key": "f29", "k": "file", "title": "File 29: Changing the Cranks", "loc": "Inside a car on the path from the sluice gate to the windmill"}, {"key": "g12", "k": "goat", "title": "Goat 12", "loc": "First windmill: far end of the top deck, outside"}, {"key": "g13", "k": "goat", "title": "Goat 13", "loc": "Switch platform area: on a pole in the water to the left"}, {"key": "f30", "k": "file", "title": "File 30: Moreau's Diary 1", "loc": "Drawer in a building in the Drowned Houses"}, {"key": "p3", "k": "part", "title": "Part 3: M1911 High-Capacity Mag", "loc": "Silver case in the same building"}, {"key": "f31", "k": "file", "title": "File 31: Moreau's Diary 2", "loc": "In front of the television in Moreau's room"}, {"key": "g14", "k": "goat", "title": "Goat 14", "loc": "After draining: through the broken windmill, then left"}, {"key": "f32", "k": "file", "title": "File 32: Moreau's Diary of Experiments", "loc": "Hidden area behind the crank door, at 'Moreau's Hidden Weapon' on the map (the Wolfsbane is here too)"}]}]}, {"key": "c9", "game": "base", "title": "Village: fourth visit and the stronghold", "obj": "The river by boat, Otto's Mill, the Fallow Plot mini-boss and the lycan stronghold.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "leader", "note": "Fallow Plot, after the reservoir."}, {"k": "ach", "ach": "fastreflex", "note": "Flaming arrows on the stronghold path."}, {"k": "story", "ach": "upurs", "note": "Headshots while he roars."}, {"k": "story", "ach": "tempmeasures", "note": "Four flasks, then the Ceremonial Site."}]}, {"title": "Collectibles", "items": [{"key": "f33", "k": "file", "title": "File 33: Analysis Results", "loc": "Laptop in the cave at the end of the river (by boat)"}, {"key": "p4", "k": "part", "title": "Part 4: W870 TAC Foregrip", "loc": "Silver case right of that laptop"}, {"key": "g15", "k": "goat", "title": "Goat 15", "loc": "Shrine underneath Otto's Mill"}, {"key": "f34", "k": "file", "title": "File 34: Ernest's Diary", "loc": "Otto's Mill, table in the meat room behind the red door"}, {"key": "g16", "k": "goat", "title": "Goat 16", "loc": "Stronghold B1: bottom of the spiral stairs, on the right"}, {"key": "f35", "k": "file", "title": "File 35: Officer's Diary", "loc": "On the floor by a typewriter, past the cracked wall"}, {"key": "f36", "k": "file", "title": "File 36: Experiment Notes", "loc": "Dungeon table, left down the stairs after the boss"}]}]}, {"key": "c10", "game": "base", "title": "The factory", "obj": "Heisenberg's factory, floor by floor.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "quithang", "note": "Shoot a hanging Soldat from the lift."}, {"k": "story", "ach": "irongiant", "note": "Red weak points, then the head."}]}, {"title": "Collectibles", "items": [{"key": "f37", "k": "file", "title": "File 37: Development Note 1", "loc": "Table in the room with the Cog Mold"}, {"key": "f38", "k": "file", "title": "File 38: Development Note 2", "loc": "Desk in the room past the grinder shaft, after the fan is off"}, {"key": "g17", "k": "goat", "title": "Goat 17", "loc": "Balcony by the ventilation duct, on an excavator shovel"}, {"key": "g18", "k": "goat", "title": "Goat 18", "loc": "On a railing in the Duke's lift shaft between B1 and B3; shoot it from the lift or from B3 looking up"}, {"key": "p5", "k": "part", "title": "Part 5: M1851 Wolfsbane Long Barrel", "loc": "Briefcase in the Operating Room, through the door left of the foundry"}, {"key": "f39", "k": "file", "title": "File 39: Sturm", "loc": "Room straight ahead after opening the golden horse door on B1"}, {"key": "f40", "k": "file", "title": "File 40: Heisenberg's Diary", "loc": "Table in the control room before the Cargo Bay"}, {"key": "g19", "k": "goat", "title": "Goat 19", "loc": "Corner of the room next to the Heisenberg's Diary room (crouch through a gap)"}, {"key": "f41", "k": "file", "title": "File 41: ||Chris's Computer||", "loc": "||Laptop in front of you after the cutscene on B5, before the vehicle||"}]}]}, {"key": "c11", "game": "base", "title": "||The final chapter||", "obj": "||After the factory: the underground ruins and Miranda's lab.||", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "rootmatter", "note": "Reach the Megamycete."}, {"k": "ach", "ach": "heretic", "note": "The last goat is here."}, {"k": "ach", "ach": "bookworm", "note": "The last six files are here."}, {"k": "ach", "ach": "mapmatician", "note": "Pops shortly after this chapter starts."}]}, {"title": "Collectibles", "items": [{"key": "g20", "k": "goat", "title": "Goat 20", "loc": "||Underground ruins: dark corner behind spikes, beside a statue of a woman||"}, {"key": "f42", "k": "file", "title": "File 42: ||Moreau's Medical Report||", "loc": "||Miranda's lab: first of four books on the left table||"}, {"key": "f43", "k": "file", "title": "File 43: ||Dimitrescu's Medical Report||", "loc": "||Second book on that table||"}, {"key": "f44", "k": "file", "title": "File 44: ||Heisenberg's Medical Report||", "loc": "||Third book||"}, {"key": "f45", "k": "file", "title": "File 45: ||Donna's Medical Report||", "loc": "||Fourth book||"}, {"key": "f46", "k": "file", "title": "File 46: ||Spencer's Letter||", "loc": "||White table with a microscope, straight ahead as you enter||"}, {"key": "f47", "k": "file", "title": "File 47: ||Miranda's Diary||", "loc": "||Among three photos around the big central table||"}]}]}, {"key": "c12", "game": "base", "title": "After the story: shop and New Game+", "obj": "Recipes and weapon parts that only appear later, mostly from the Duke on New Game+. Buy the guns too (WCX from the Extra Content Shop; V61, SYG-12 and S.T.A.K.E. from the Duke).", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "artisan", "note": "All 11 recipes."}, {"k": "ach", "ach": "tinkerer", "note": "Craft one of everything."}, {"k": "ach", "ach": "vetgunsmith", "note": "All 22 parts fitted."}, {"k": "ach", "ach": "doll", "note": "76 figures."}, {"k": "ach", "ach": "artcol", "note": "120 concept art pieces."}]}, {"title": "Recipes", "items": [{"key": "r9", "k": "recipe", "title": "Recipe 9: Magnum Ammo", "loc": "Duke, once you own a magnum"}, {"key": "r10", "k": "recipe", "title": "Recipe 10: Rifle Ammo", "loc": "Duke, once you own an assault rifle (WCX)"}, {"key": "r11", "k": "recipe", "title": "Recipe 11: Rocket Pistol Ammo", "loc": "Duke, once you own the Rocket Pistol (Village of Shadows reward)"}]}, {"title": "Weapon parts from the Duke", "items": [{"key": "p6", "k": "part", "title": "Part 6: LEMI High-Capacity Mag", "loc": "9,000 Lei"}, {"key": "p7", "k": "part", "title": "Part 7: M1911 Improved Grip", "loc": "12,000 Lei"}, {"key": "p8", "k": "part", "title": "Part 8: V61 Custom Long Barrel", "loc": "56,000 Lei"}, {"key": "p9", "k": "part", "title": "Part 9: V61 Custom Drum Magazine", "loc": "70,000 Lei"}, {"key": "p10", "k": "part", "title": "Part 10: V61 Custom Gunstock", "loc": "35,000 Lei"}, {"key": "p11", "k": "part", "title": "Part 11: M1897 Hair Trigger", "loc": "8,000 Lei"}, {"key": "p12", "k": "part", "title": "Part 12: W870 TAC Improved Gunstock", "loc": "22,000 Lei"}, {"key": "p13", "k": "part", "title": "Part 13: SYG-12 Long Barrel", "loc": "64,000 Lei"}, {"key": "p14", "k": "part", "title": "Part 14: SYG-12 Red Dot Sight", "loc": "42,000 Lei"}, {"key": "p15", "k": "part", "title": "Part 15: SYG-12 Drum Magazine", "loc": "88,000 Lei"}, {"key": "p16", "k": "part", "title": "Part 16: WCX Red Dot Sight", "loc": "140,000 Lei"}, {"key": "p17", "k": "part", "title": "Part 17: WCX Foregrip", "loc": "80,000 Lei"}, {"key": "p18", "k": "part", "title": "Part 18: F2 Rifle High Magnification Scope", "loc": "15,000 Lei"}, {"key": "p19", "k": "part", "title": "Part 19: F2 Rifle Cheek Rest", "loc": "20,000 Lei"}, {"key": "p20", "k": "part", "title": "Part 20: M1851 Wolfsbane Increased Capacity Cylinder", "loc": "100,000 Lei"}, {"key": "p21", "k": "part", "title": "Part 21: S.T.A.K.E. High-Capacity Mag", "loc": "180,000 Lei"}, {"key": "p22", "k": "part", "title": "Part 22: S.T.A.K.E. Improved Grip", "loc": "120,000 Lei"}]}]}, {"key": "c13", "game": "base", "title": "The Mercenaries", "obj": "S rank or better on all eight base stages. Strategies are in Run 6.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "comboking", "note": "30-kill combo."}, {"k": "ach", "ach": "cowboy", "note": "Ticks itself with the eighth S rank."}]}, {"title": "S ranks", "items": [{"key": "m1", "k": "stage", "title": "The Village I", "loc": "S: 630,000 · 3 areas"}, {"key": "m2", "k": "stage", "title": "The Castle I", "loc": "S: 1,470,000 · 4 areas"}, {"key": "m3", "k": "stage", "title": "The Factory I", "loc": "S: 1,080,000 · 2 areas"}, {"key": "m4", "k": "stage", "title": "The Mad Village I", "loc": "S: 1,485,000 · 5 areas"}, {"key": "m5", "k": "stage", "title": "The Village II", "loc": "S: 516,000 · 3 areas"}, {"key": "m6", "k": "stage", "title": "The Castle II", "loc": "S: 851,000 · 4 areas"}, {"key": "m7", "k": "stage", "title": "The Factory II", "loc": "S: 545,000 · 2 areas"}, {"key": "m8", "k": "stage", "title": "The Mad Village II", "loc": "S: 658,000 · 5 areas"}]}]}, {"key": "c14", "game": "base", "title": "Any playthrough", "obj": "Difficulty and challenge achievements, plus a few that fit anywhere.", "sections": [{"title": "", "items": [{"k": "ach", "ach": "greatdad", "note": "Casual or higher."}, {"k": "ach", "ach": "bestdad", "note": "Standard or higher."}, {"k": "ach", "ach": "worldsbest", "note": "Hardcore or higher."}, {"k": "ach", "ach": "universe", "note": "Infinite S.T.A.K.E."}, {"k": "ach", "ach": "dashing", "note": "Under 3 hours."}, {"k": "ach", "ach": "frugal", "note": "10,000 Lei or less."}, {"k": "ach", "ach": "snakeoil", "note": "Four heals or fewer."}, {"k": "ach", "ach": "knivesout", "note": "Knife only."}, {"k": "ach", "ach": "timber", "note": "Infinite ammo at the start of a run."}, {"k": "ach", "ach": "photographer", "note": "Photo Mode."}, {"k": "ach", "ach": "lucky7", "note": "Sell rifle rounds at 7 Lei."}]}]}, {"key": "d1", "game": "wex", "title": "Shadows of Rose", "obj": "||Rose's story, sixteen years on: the castle, House Beneviento and the village at night.|| You cannot go back to earlier areas, so search the castle thoroughly.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "grow", "note": "Comes naturally."}, {"k": "ach", "ach": "craftsmaster", "note": "Ticks itself with the fourth item."}, {"k": "story", "ach": "green", "note": "Casual or higher."}, {"k": "story", "ach": "serene", "note": "Standard or higher."}, {"k": "ach", "ach": "supreme", "note": "Hardcore."}]}, {"title": "Craft one of each", "items": [{"key": "cr1", "k": "craft", "title": "First Aid Med", "loc": "Chem Fluid + Herb"}, {"key": "cr2", "k": "craft", "title": "Handgun Ammo", "loc": "Chem Fluid + Gunpowder"}, {"key": "cr3", "k": "craft", "title": "Shotgun Ammo", "loc": "Gunpowder + Rusted Scrap"}, {"key": "cr4", "k": "craft", "title": "Pipe Bomb", "loc": "Rusted Scrap + Gunpowder + Herb"}]}]}, {"key": "d2", "game": "wex", "title": "Additional Orders", "obj": "The two DLC stages for The Mercenaries.", "sections": [{"title": "", "items": [{"k": "ach", "ach": "villageblood", "note": "Clear it with Chris."}, {"k": "ach", "ach": "riverblood", "note": "Clear it with Chris."}]}]}];
+
+/* Collectible totals that tick an achievement automatically. */
+const AUTO = [{"ach": "heretic", "kind": "goat", "label": "Goats"}, {"ach": "cynic", "kind": "goat", "label": "Goats", "min": 1}, {"ach": "bookworm", "kind": "file", "label": "Files"}, {"ach": "outhouse", "kind": "outhouse", "label": "Outhouses"}, {"ach": "hooligan", "kind": "window", "label": "Windows"}, {"ach": "vetgunsmith", "kind": "part", "label": "Weapon parts"}, {"ach": "gunsmith", "kind": "part", "label": "Weapon parts", "min": 1}, {"ach": "artisan", "kind": "recipe", "label": "Recipes"}, {"ach": "cowboy", "kind": "stage", "label": "S ranks"}, {"ach": "craftsmaster", "kind": "craft", "label": "Items crafted"}];
+
+/* Guide images (WebP files in ../img/guides/re8/). */
+const IMGS = {"m_ccastle1f": "../img/guides/re8/re8-map-castle-1f-lockpick.webp", "m_ccastle2f": "../img/guides/re8/re8-map-castle-2f-labyrinth-ball.webp", "m_village": "../img/guides/re8/re8-map-village-complete.webp", "m_juicy": "../img/guides/re8/re8-map-juicy-game.webp", "m_quality": "../img/guides/re8/re8-map-quality-meat.webp", "m_finest": "../img/guides/re8/re8-map-finest-fish.webp", "s_duke": "../img/guides/re8/re8-duke-shop.webp", "t_crimsonglass": "../img/guides/re8/re8-treasure-crimson-glass.webp", "t_woodenangel": "../img/guides/re8/re8-treasure-wooden-angel.webp", "t_lipstick": "../img/guides/re8/re8-treasure-ladys-lipstick.webp", "t_luiza": "../img/guides/re8/re8-treasure-luizas-heirloom.webp", "t_maestro": "../img/guides/re8/re8-treasure-maestros-collection.webp", "t_beneviento": "../img/guides/re8/re8-treasure-benevientos-treasure.webp", "t_waterwheel": "../img/guides/re8/re8-treasure-waterwheel-weapon.webp", "t_teddy": "../img/guides/re8/re8-treasure-teddy-bear.webp", "t_moreauweapon": "../img/guides/re8/re8-treasure-moreaus-hidden-weapon.webp", "t_riverbank": "../img/guides/re8/re8-treasure-riverbank-house.webp", "t_cesare": "../img/guides/re8/re8-treasure-cesares-goblet.webp", "t_cannibal": "../img/guides/re8/re8-treasure-cannibals-plunder.webp", "t_stronghold": "../img/guides/re8/re8-treasure-under-the-stronghold.webp", "t_coin": "../img/guides/re8/re8-treasure-antique-coin.webp", "t_ingrid": "../img/guides/re8/re8-treasure-ingrids-necklace.webp", "t_silverangel": "../img/guides/re8/re8-treasure-silver-angel.webp", "t_crimsonskull": "../img/guides/re8/re8-treasure-crimson-skull.webp", "t_onyxskull": "../img/guides/re8/re8-treasure-onyx-skull.webp", "t_chartreuse": "../img/guides/re8/re8-treasure-chartreuse-skull.webp", "t_bister": "../img/guides/re8/re8-treasure-bister-skull.webp", "t_cigar": "../img/guides/re8/re8-treasure-cigar.webp", "t_cdimitrescu": "../img/guides/re8/re8-treasure-crystal-dimitrescu.webp", "t_angie": "../img/guides/re8/re8-treasure-angie.webp", "t_cmoreau": "../img/guides/re8/re8-treasure-crystal-moreau.webp", "t_cheisenberg": "../img/guides/re8/re8-treasure-crystal-heisenberg.webp", "c_azurering": "../img/guides/re8/re8-item-azure-eye-ring.webp", "c_silverring": "../img/guides/re8/re8-item-silver-ring.webp", "c_azureeye": "../img/guides/re8/re8-item-azure-eye.webp", "c_goat": "../img/guides/re8/re8-item-wooden-goat.webp", "c_goatbody": "../img/guides/re8/re8-item-wooden-animal-body.webp", "c_goathead": "../img/guides/re8/re8-item-wooden-animal-head.webp", "c_madalina": "../img/guides/re8/re8-item-miss-madalina.webp", "c_madbody": "../img/guides/re8/re8-item-madalina-body.webp", "c_madhead": "../img/guides/re8/re8-item-madalina-head.webp", "c_necklace": "../img/guides/re8/re8-item-dimitrescus-necklace.webp", "c_necktwo": "../img/guides/re8/re8-item-necklace-two-holes.webp", "c_ruby": "../img/guides/re8/re8-item-pigeon-blood-ruby.webp", "c_largeruby": "../img/guides/re8/re8-item-large-pigeon-blood-ruby.webp", "c_hammer": "../img/guides/re8/re8-item-heisenbergs-hammer.webp", "c_cylinder": "../img/guides/re8/re8-item-mechanical-cylinder.webp", "c_shaft": "../img/guides/re8/re8-item-mechanical-shaft.webp", "c_usmai": "../img/guides/re8/re8-weapon-usm-ai.webp", "c_dragoon": "../img/guides/re8/re8-weapon-dragoon.webp", "c_handcannon": "../img/guides/re8/re8-weapon-handcannon-pz.webp", "c_rocket": "../img/guides/re8/re8-weapon-rocket-pistol.webp", "e_moroaica": "../img/guides/re8/re8-enemy-moroaica.webp", "e_alfa": "../img/guides/re8/re8-enemy-varcolac-alfa.webp", "e_urias": "../img/guides/re8/re8-enemy-urias.webp", "c_lemi": "../img/guides/re8/re8-weapon-lemi.webp", "c_m1911": "../img/guides/re8/re8-weapon-m1911.webp", "c_v61": "../img/guides/re8/re8-weapon-v61-custom.webp", "c_m1897": "../img/guides/re8/re8-weapon-m1897.webp", "c_syg12": "../img/guides/re8/re8-weapon-syg-12.webp", "c_w870": "../img/guides/re8/re8-weapon-w870-tac.webp", "c_f2": "../img/guides/re8/re8-weapon-f2-rifle.webp", "c_wcx": "../img/guides/re8/re8-weapon-wcx.webp", "c_wolfsbane": "../img/guides/re8/re8-weapon-m1851-wolfsbane.webp", "c_stake": "../img/guides/re8/re8-weapon-stake.webp", "s_orb": "../img/guides/re8/re8-merc-ability-orb.webp", "s_stvillage": "../img/guides/re8/re8-merc-stage-village.webp", "s_stcastle": "../img/guides/re8/re8-merc-stage-castle.webp", "s_stfactory": "../img/guides/re8/re8-merc-stage-factory.webp", "s_stmad": "../img/guides/re8/re8-merc-stage-mad-village.webp", "s_stvillage2": "../img/guides/re8/re8-merc-stage-village-ii.webp", "s_stcastle2": "../img/guides/re8/re8-merc-stage-castle-ii.webp", "s_stfactory2": "../img/guides/re8/re8-merc-stage-factory-ii.webp", "s_stmad2": "../img/guides/re8/re8-merc-stage-mad-village-ii.webp", "s_hud": "../img/guides/re8/re8-merc-hud.webp", "s_abilities": "../img/guides/re8/re8-merc-ability-choice.webp", "s_chris1": "../img/guides/re8/re8-merc-chris-straight-punch.webp", "s_chris2": "../img/guides/re8/re8-merc-chris-left-hook.webp", "s_chris3": "../img/guides/re8/re8-merc-chris-stomp.webp", "s_chris4": "../img/guides/re8/re8-merc-chris-onslaught.webp", "s_heis1": "../img/guides/re8/re8-merc-heisenberg-swing.webp", "s_heis2": "../img/guides/re8/re8-merc-heisenberg-slam.webp", "s_heis3": "../img/guides/re8/re8-merc-heisenberg-projectiles.webp", "s_heis4": "../img/guides/re8/re8-merc-heisenberg-magnetic-field.webp", "s_dim1": "../img/guides/re8/re8-merc-dimitrescu-slicing.webp", "s_dim2": "../img/guides/re8/re8-merc-dimitrescu-slamming.webp", "s_dim3": "../img/guides/re8/re8-merc-dimitrescu-cleaving.webp", "s_dim4": "../img/guides/re8/re8-merc-dimitrescu-flies.webp", "s_dim5": "../img/guides/re8/re8-merc-dimitrescu-vanity.webp", "s_dim6": "../img/guides/re8/re8-merc-dimitrescu-daughters.webp", "s_dim7": "../img/guides/re8/re8-merc-dimitrescu-thrill.webp", "s_dim8": "../img/guides/re8/re8-merc-dimitrescu-lipstick.webp", "s_stbloodyv": "../img/guides/re8/re8-merc-stage-bloody-village.webp", "s_stbloodyr": "../img/guides/re8/re8-merc-stage-bloody-river.webp", "s_flask": "../img/guides/re8/re8-sor-variant-flask.webp", "s_moldcore": "../img/guides/re8/re8-sor-power-mold-core.webp", "s_freeze": "../img/guides/re8/re8-sor-power-freeze.webp", "s_counter": "../img/guides/re8/re8-sor-power-counter.webp", "s_sormap": "../img/guides/re8/re8-sor-map-colours.webp", "c_chem": "../img/guides/re8/re8-sor-item-chem-fluid.webp", "c_herb": "../img/guides/re8/re8-sor-item-herb.webp", "c_gunpowder": "../img/guides/re8/re8-sor-item-gunpowder.webp", "c_scrap": "../img/guides/re8/re8-sor-item-rusted-scrap.webp"};
+
+const PADS = {
+  ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], ST: ["Options", "sh"] },
+  xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], ST: ["Menu", "sh"] }
+};
+const TAGS = { story: "Story", missable: "Missable", collect: "Collectable", timed: "Time limited" };
+const KIND_LABEL = { ach: "Achievement", story: "Story", goat: "Goat", file: "File", outhouse: "Outhouse", window: "Window", part: "Weapon part", recipe: "Recipe", stage: "S rank", craft: "Crafted" };
+const KIND_PLURAL = { ach: "Achievements", story: "Story", goat: "Goats", file: "Files", outhouse: "Outhouses", window: "Windows", part: "Weapon parts", recipe: "Recipes", stage: "S ranks", craft: "Crafted items" };
+const PART_BY = Object.fromEntries(PARTS.map(p => [p.key, p]));
+const RUN_BY_ID = Object.fromEntries(RUNS.map(r => [r.id, r]));
+const ALL = SECTIONS.flatMap(s => s.items.map(a => Object.assign(a, { game: s.game })));
+const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
+const CITEMS = COLL.flatMap(ch => ch.sections.flatMap(s => s.items.map(it => Object.assign(it, { ch: ch.key }))));
+const CBY = Object.fromEntries(CITEMS.filter(i => i.key).map(i => [i.key, i]));
+
+/* ---------------- state ---------------- */
+function blank() { return { got: {}, open: {}, tasks: {}, coll: {}, pad: "ps", tab: "ach", spoil: false }; }
+function clean(src) {
+  const out = blank();
+  if (!src || typeof src !== "object") return out;
+  for (const k of ["got", "open", "tasks", "coll"]) if (src[k] && typeof src[k] === "object") for (const x in src[k]) if (src[k][x] === true) out[k][x] = true;
+  if (src.pad === "xb") out.pad = "xb";
+  if (src.spoil === true) out.spoil = true;
+  if (["runs", "coll"].includes(src.tab)) out.tab = src.tab;
+  return out;
+}
+let state;
+try { const raw = localStorage.getItem(KEY); state = raw ? clean(JSON.parse(raw)) : blank(); } catch (e) { state = blank(); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let filter = "all", game = "all", runFilter = "all", query = "", kindFilter = "all", hideGot = false;
+
+/* ---------------- helpers ---------------- */
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function targetId(id) {
+  if (BY_ID[id]) return "a-" + id;
+  if (RUN_BY_ID[id]) return "run-" + id;
+  if (id === "coll") return "coll-top";
+  if (id === "runs") return "runs-top";
+  return id;
+}
+function buttons(t) { return t.replace(/\[(X|SQ|O|TR|L1|L2|R1|R2|L3|R3|ST)\]/g, (_, k) => { const [g, c] = PADS[state.pad][k]; return `<kbd class="b ${state.pad}-${k} ${c}">${g}</kbd>`; }); }
+/* spoilers: ||text|| in data strings, <span class="spoil"> in guide HTML, sp: "n" | "d" | "g" on achievements */
+const SP = h => `<span class="spoil" tabindex="0">${h}</span>`;
+const nm = a => a.sp === "n" ? SP(esc(a.name)) : esc(a.name);
+const ds = a => a.sp === "n" || a.sp === "d" ? SP(esc(a.desc)) : esc(a.desc);
+const plain = s => String(s).replace(/\|\|/g, "");
+function fmt(s) {
+  let t = esc(s);
+  t = t.replace(/\|\|(.+?)\|\|/g, (_, x) => SP(x));
+  t = t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\{\{([\w-]+)\|([^}]+)\}\}/g, (_, id, label) => `<a href="#${targetId(id)}" data-jump="${id}">${label}</a>`);
+  return buttons(t);
+}
+function blocks(list) {
+  return list.map(b => typeof b === "string" ? `<p>${fmt(b)}</p>` : b.h ? `<h4>${esc(b.h)}</h4>` : b.ul ? `<ul>${b.ul.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : b.box ? `<details class="more"><summary>${esc(BOXES[b.box].title)}</summary><div class="prose">${rich(BOXES[b.box].html)}</div></details>` : "").join("");
+}
+/* PSN guide HTML: button tokens, trophy lists as jump chips, wide tables scroll inside their box */
+function rich(h) {
+  return buttons(h)
+    .replace(/<div class="achrefs" data-ids="([^"]*)"><\/div>/g, (_, ids) => `<div class="tlinks">${ids.split(",").filter(id => BY_ID[id]).map(id => `<a class="tlink" href="#a-${id}" data-jump="${id}" data-tl="${id}">${nm(BY_ID[id])}</a>`).join("")}</div>`)
+    .replace(/<(span|div) class="spoil">/g, '<$1 class="spoil" tabindex="0">')
+    .replace(/<img data-img="(\w+)" alt="([^"]*)">/g, (_, k, alt) => IMGS[k] ? `<img class="${k[0] === "c" ? "card" : "shot"}" src="${IMGS[k]}" alt="${alt}" loading="lazy" decoding="async">` : "")
+    .replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, "</table></div>");
+}
+/* after inserting guide HTML: tables holding screenshots become labelled cards */
+function enhance(root) {
+  root.querySelectorAll(".tablewrap").forEach(w => {
+    if (w.classList.contains("stack") || !w.querySelector("img.shot")) return;
+    w.classList.add("stack");
+    const rows = [...w.querySelectorAll("tr")];
+    const head = rows.find(r => r.querySelector("th") && !r.querySelector("td"));
+    const labels = head ? [...head.cells].map(c => c.textContent.trim()) : [];
+    rows.forEach(r => [...r.cells].forEach((c, i) => {
+      if (c.tagName === "TD" && labels[i] && !/^image$/i.test(labels[i]) && !c.querySelector("img.shot")) c.dataset.label = labels[i];
+    }));
+  });
+}
+const runBadge = id => { const r = RUN_BY_ID[id]; return `<a class="run-badge" data-p="${r.game}" href="#run-${id}" data-jump="${id}">${esc(r.n)}</a>`; };
+const autoGot = rule => CITEMS.filter(i => i.k === rule.kind && i.ch !== undefined && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part) && state.coll[i.key]).length;
+const autoTotal = rule => CITEMS.filter(i => i.k === rule.kind && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part)).length;
+
+/* ---------------- progress & auto ticks ---------------- */
+function snapshot() { return AUTO.map(autoGot); }
+function applyAuto(before) {
+  AUTO.forEach((r, i) => {
+    const now = autoGot(r), need = r.min || autoTotal(r);
+    if (now >= need && before[i] < need) state.got[r.ach] = true;
+  });
+}
+function change(fn) { const b = snapshot(); fn(); applyAuto(b); save(); update(); }
+
+/* ---------------- render: achievements ---------------- */
+function renderItem(a) {
+  const auto = AUTO.find(r => r.ach === a.id && !r.min);
+  return `<li class="item" id="a-${a.id}"><div class="row">
+    <input type="checkbox" class="check" id="c-${a.id}" data-ach="${a.id}" aria-label="Mark ${a.sp === "n" ? "this achievement" : esc(a.name)} as unlocked">
+    <div>
+      <div class="title-line">
+        <h3><label for="c-${a.id}">${nm(a)}</label></h3>
+        ${a.runs.map(runBadge).join("")}
+        ${(a.tags || []).map(t => `<span class="tag ${t}">${TAGS[t]}</span>`).join("")}
+      </div>
+      <p class="desc">${ds(a)}</p>
+      ${auto ? `<div class="summary-line" data-autoline="${a.id}"></div>` : ""}
+      ${GUIDES[a.id] ? `<button class="guide-btn" aria-expanded="false" aria-controls="g-${a.id}">Show guide</button>
+      <div class="guide" id="g-${a.id}" data-p="${a.game}" hidden></div>` : ""}
+    </div></div></li>`;
+}
+function renderAch() {
+  const runOpts = RUNS.map(r => `<option value="${r.id}">${esc(r.n + ": " + r.title)}</option>`).join("");
+  document.getElementById("view-ach").innerHTML = `
+    <div class="row-tools" style="margin-bottom:.6rem">
+      <span class="seg" role="group" aria-label="Status"><button data-filter="all" aria-pressed="true">All</button><button data-filter="todo" aria-pressed="false">To do</button><button data-filter="done" aria-pressed="false">Unlocked</button><button data-filter="missable" aria-pressed="false">Missable</button></span>
+      <span class="seg" role="group" aria-label="Game or DLC"><button data-game="all" aria-pressed="true">All</button>${PARTS.map(p => `<button data-game="${p.key}" aria-pressed="false">${esc(p.short)}</button>`).join("")}</span>
+      <select class="select" id="run-filter" aria-label="Filter by playthrough"><option value="all">Any playthrough</option>${runOpts}</select>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+    </div>
+    <nav class="jumps" aria-label="Categories">${SECTIONS.map(s => `<a class="jump" data-p="${s.game}" href="#sec-${s.id}">${esc(s.title)} <span data-jcount="${s.id}"></span></a>`).join("")}</nav>
+    ${SECTIONS.map(sec => `<section class="sheet" data-p="${sec.game}" id="sec-${sec.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[sec.game].label)}</small>${esc(sec.title)}</h2><span class="sub" data-sub="${sec.id}"></span></div>
+      <p class="intro">${fmt(sec.intro)}${sec.src ? ` <a href="${sec.src}" target="_blank" rel="noopener">Guide source ↗</a>` : ""}</p>
+      <ul class="items">${sec.items.map(renderItem).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden>Nothing here for this filter.</p>
+    </section>`).join("")}`;
+}
+
+/* ---------------- render: runs ---------------- */
+function renderRuns() {
+  const achFor = id => ALL.filter(a => a.runs.includes(id));
+  document.getElementById("view-runs").innerHTML = `
+    <section class="sheet" id="runs-top"><div class="sheet-head"><h2><small>Your plan</small>Playthroughs</h2><span class="sub" id="runs-count"></span></div>
+      <p class="intro">Six base-game runs on one save chain, starting with a blind first run just to enjoy the game, then New Game+ runs for collectibles, the knife-only speedrun, Village of Shadows, the cleanup and The Mercenaries. The Winters' Expansion follows with Shadows of Rose and Additional Orders. Each run's tasks are tickable, and its chips show which achievements it should unlock.</p>
+      <div class="runmap">${RUNS.map(r => `<a href="#run-${r.id}" data-jump="${r.id}" data-p="${r.game}" data-runcard="${r.id}"><b>${esc(r.n)}</b><span>${esc(r.title)}</span><br><span data-runprog="${r.id}"></span></a>`).join("")}</div>
+    </section>
+    ${RUNS.map(r => `<section class="sheet run" data-p="${r.game}" id="run-${r.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[r.game].label)} · ${esc(r.n)}</small>${esc(r.title)}</h2><span class="sub" data-runsub="${r.id}"></span></div>
+      <div class="mode">${esc(r.mode)}</div>
+      <p class="intro">${fmt(r.summary)}</p>
+      <ul class="tasks">${r.tasks.map((t, i) => `<li data-task="${r.id}:${i}"><input type="checkbox" class="check small" id="t-${r.id}-${i}" data-taskcheck="${r.id}:${i}"><label for="t-${r.id}-${i}"><span class="st-name">${fmt(t[0])}</span>${t[1] ? `<span class="st-desc">${fmt(t[1])}</span>` : ""}</label></li>`).join("")}</ul>
+      ${achFor(r.id).length ? `<div class="tlinks">${achFor(r.id).map(a => `<a class="tlink" href="#a-${a.id}" data-jump="${a.id}" data-tl="${a.id}">${nm(a)}</a>`).join("")}</div>` : ""}
+      ${r.body ? `<div class="prose" style="margin-top:.7rem">${blocks(r.body)}</div>` : ""}
+      <p></p>
+    </section>`).join("")}`;
+  enhance(document.getElementById("view-runs"));
+}
+
+/* ---------------- render: 100% guide ---------------- */
+function renderColl() {
+  const kinds = [...new Set(CITEMS.map(i => i.k))];
+  document.getElementById("view-coll").innerHTML = `
+    <section class="sheet" id="coll-top"><div class="sheet-head"><h2><small>Run 2 and later</small>100% Guide</h2><span class="sub" id="coll-count"></span></div>
+      <p class="intro">All 20 goats, 47 files, 10 outhouses, 19 castle windows, 22 weapon parts and 11 recipes in story order, with the achievements tied to each area, then the shop items, The Mercenaries and Shadows of Rose. Ticking an item here counts towards its achievement, and the last one ticks it for you. For a visual walkthrough see {{heretic|Heretic}}.</p>
+      <div class="row-tools">
+        <span class="seg" role="group" aria-label="Show"><button data-kind="all" aria-pressed="true">All</button>${kinds.map(k => `<button data-kind="${k}" aria-pressed="false">${esc(KIND_PLURAL[k])}</button>`).join("")}</span>
+        <button class="chip" id="hide-got" aria-pressed="false">Hide ticked</button>
+      </div>
+      <div class="summary-line" id="coll-kinds"></div><p></p>
+    </section>
+    ${COLL.map(ch => `<details class="chapter" id="ch-${ch.key}" data-ch="${ch.key}" data-p="${ch.game}">
+      <summary><span class="ch-title">${fmt(ch.title)}</span><span class="ch-count" data-chcount="${ch.key}"></span><span class="ch-meta" data-chmeta="${ch.key}"></span></summary>
+      <div class="ch-body" data-chbody="${ch.key}"></div></details>`).join("")}`;
+  document.querySelector("#coll-top .intro").innerHTML = fmt(document.querySelector("#coll-top .intro").textContent);
+}
+function ciHtml(it) {
+  if (it.k === "ach" || it.k === "story") {
+    const a = BY_ID[it.ach];
+    return `<div class="ci" data-ciach="${a.id}" data-k="${it.k}">
+      <input type="checkbox" class="check small" id="cca-${a.id}-${it.ch}" data-ach="${a.id}" aria-label="Unlocked: ${a.sp === "n" ? "this achievement" : esc(a.name)}">
+      <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cca-${a.id}-${it.ch}">${nm(a)}</label></div>
+      <div class="ci-loc">${ds(a)}</div>
+      ${it.note ? `<div class="ci-desc"><p>${fmt(it.note)}</p></div>` : ""}
+      <a class="maplink" href="#a-${a.id}" data-jump="${a.id}">Open its guide ›</a></div></div>`;
+  }
+  return `<div class="ci" id="ci-${it.key}" data-ci="${it.key}" data-k="${it.k}">
+    <input type="checkbox" class="check small" id="cc-${it.key}" data-coll="${it.key}" aria-label="Collected: ${esc(plain(it.title))}">
+    <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cc-${it.key}">${fmt(it.title)}</label></div>
+    ${it.loc ? `<div class="ci-loc">${fmt(it.loc)}</div>` : ""}
+    ${it.html ? `<div class="ci-desc">${rich(it.html)}</div>` : ""}</div></div>`;
+}
+function renderChapter(key) {
+  const ch = COLL.find(c => c.key === key), body = document.querySelector(`[data-chbody="${key}"]`);
+  if (body.dataset.done) return;
+  body.dataset.done = "1";
+  body.innerHTML = (ch.obj ? `<p class="ch-obj">${fmt(ch.obj)}</p>` : "") +
+    ch.sections.map(s => `${s.title ? `<div class="sec-h">${esc(s.title)}</div>` : ""}${s.items.map(ciHtml).join("")}`).join("");
+  enhance(body);
+  updateColl();
+}
+
+function render() {
+  renderAch(); renderRuns(); renderColl();
+  document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
+  setTab(state.tab, true);
+  syncChips(); syncPad(); syncSpoil();
+  update();
+}
+
+/* ---------------- behaviour ---------------- */
+function toggleGuide(btn, force) {
+  const id = btn.getAttribute("aria-controls").slice(2), panel = document.getElementById("g-" + id);
+  const open = force !== undefined ? force : panel.hidden;
+  if (open && !panel.dataset.done) { panel.innerHTML = BY_ID[id].sp ? `<div class="spoil" tabindex="0">${rich(GUIDES[id])}</div>` : rich(GUIDES[id]); panel.dataset.done = "1"; enhance(panel); update(); }
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
+  if (open) state.open[id] = true; else delete state.open[id];
+}
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
+function setTab(t, quiet) {
+  state.tab = t;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
+  if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
+}
+function jumpTo(id) {
+  const el = document.getElementById(targetId(id));
+  if (!el) return;
+  const view = el.closest("[role=tabpanel]").id.slice(5);
+  if (view !== state.tab) setTab(view, true), save();
+  if (el.classList.contains("hidden") || (el.closest("section.sheet") || {}).hidden) { filter = "all"; game = "all"; runFilter = "all"; query = ""; searchEl.value = ""; clearEl.hidden = true; document.getElementById("run-filter").value = "all"; syncChips(); update(); }
+  const btn = el.querySelector(":scope > .row .guide-btn");
+  if (btn && btn.getAttribute("aria-expanded") !== "true") { toggleGuide(btn, true); save(); }
+  requestAnimationFrame(() => {
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+  });
+}
+
+const mainEl = document.querySelector("main");
+mainEl.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.ach) change(() => { if (t.checked) state.got[t.dataset.ach] = true; else delete state.got[t.dataset.ach]; });
+  else if (t.dataset.taskcheck) { if (t.checked) state.tasks[t.dataset.taskcheck] = true; else delete state.tasks[t.dataset.taskcheck]; save(); update(); }
+  else if (t.dataset.coll) change(() => { if (t.checked) state.coll[t.dataset.coll] = true; else delete state.coll[t.dataset.coll]; });
+  else if (t.id === "run-filter") { runFilter = t.value; update(); }
+});
+const searchEl = document.getElementById("search"), clearEl = document.getElementById("clear-search");
+function runSearch(v) {
+  query = v.trim().toLowerCase();
+  clearEl.hidden = !v;
+  if (query && state.tab !== "ach") setTab("ach", true);
+  if (query) { filter = "all"; game = "all"; runFilter = "all"; const rf = document.getElementById("run-filter"); if (rf) rf.value = "all"; syncChips(); }
+  update();
+  if (query) {
+    const first = document.querySelector("#view-ach li.item:not(.hidden)");
+    const top = (first || document.getElementById("view-ach")).getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 12;
+    window.scrollTo({ top, behavior: "auto" });
+  }
+}
+searchEl.addEventListener("input", () => runSearch(searchEl.value));
+searchEl.addEventListener("keydown", e => { if (e.key === "Enter") searchEl.blur(); if (e.key === "Escape") { searchEl.value = ""; runSearch(""); } });
+clearEl.addEventListener("click", () => { searchEl.value = ""; runSearch(""); searchEl.focus(); });
+const toTop = document.getElementById("totop");
+let ticking = false;
+window.addEventListener("scroll", () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 500); ticking = false; }); }, { passive: true });
+toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+mainEl.addEventListener("toggle", e => { const d = e.target; if (d.matches && d.matches("details.chapter") && d.open) renderChapter(d.dataset.ch); }, true);
+function reveal(e) {
+  const sp = e.target.closest && e.target.closest(".spoil");
+  if (!sp || state.spoil || sp.classList.contains("shown")) return false;
+  e.preventDefault(); e.stopPropagation(); sp.classList.add("shown"); return true;
+}
+mainEl.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("spoil")) reveal(e); });
+mainEl.addEventListener("click", e => {
+  if (reveal(e)) return;
+  if (e.target.matches("img.shot")) { openShot(e.target); return; }
+  const t = e.target.closest("button, a[data-jump]");
+  if (!t) return;
+  if (t.classList.contains("tab")) setTab(t.dataset.tab);
+  else if (t.dataset.filter) { filter = t.dataset.filter; syncChips(); update(); }
+  else if (t.dataset.game) { game = t.dataset.game; syncChips(); update(); }
+  else if (t.dataset.kind) { kindFilter = t.dataset.kind; syncChips(); updateColl(); }
+  else if (t.id === "hide-got") { hideGot = !hideGot; syncChips(); updateColl(); }
+  else if (t.id === "expand") { const open = t.getAttribute("aria-pressed") !== "true"; t.setAttribute("aria-pressed", String(open)); t.textContent = open ? "Hide all guides" : "Show all guides"; document.querySelectorAll("#view-ach .guide-btn").forEach(b => toggleGuide(b, open)); save(); }
+  else if (t.classList.contains("guide-btn")) { toggleGuide(t); save(); }
+  else if (t.id === "spoilers") { state.spoil = !state.spoil; save(); syncSpoil(); }
+  else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); render(); }
+  else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
+});
+
+/* tap a screenshot to see it full size */
+const lb = document.createElement("div");
+lb.className = "lightbox"; lb.hidden = true; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Screenshot, tap to close");
+lb.innerHTML = '<img alt="">';
+document.body.appendChild(lb);
+function openShot(img) { lb.firstChild.src = img.src; lb.firstChild.alt = img.alt; lb.hidden = false; }
+lb.addEventListener("click", () => { lb.hidden = true; lb.firstChild.removeAttribute("src"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) lb.click(); });
+
+function syncChips() {
+  document.querySelectorAll("[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
+  document.querySelectorAll("[data-game]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.game === game)));
+  document.querySelectorAll("[data-kind]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kindFilter)));
+  const h = document.getElementById("hide-got"); if (h) h.setAttribute("aria-pressed", String(hideGot));
+}
+function syncSpoil() {
+  document.body.classList.toggle("spoilers", state.spoil);
+  const b = document.getElementById("spoilers"); if (b) { b.setAttribute("aria-pressed", String(state.spoil)); b.textContent = state.spoil ? "Hide spoilers" : "Show all spoilers"; }
+}
+function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
+
+const flat = h => String(h || "").replace(/<[^>]+>/g, " ");
+function matches(a) {
+  const d = !!state.got[a.id];
+  if (filter === "todo" && d) return false;
+  if (filter === "done" && !d) return false;
+  if (filter === "missable" && !(a.tags || []).some(t => t === "missable" || t === "timed")) return false;
+  if (game !== "all" && a.game !== game) return false;
+  if (runFilter !== "all" && !a.runs.includes(runFilter)) return false;
+  if (query && ![a.name, a.desc, flat(GUIDES[a.id])].join(" ").toLowerCase().includes(query)) return false;
+  return true;
+}
+
+const isGot = it => it.ach ? !!state.got[it.ach] : !!state.coll[it.key];
+function updateColl() {
+  const got = CITEMS.filter(isGot).length;
+  const cc = document.getElementById("coll-count"); if (cc) cc.textContent = `${got} / ${CITEMS.length}`;
+  const totals = {};
+  CITEMS.forEach(i => { (totals[i.k] = totals[i.k] || [0, 0])[1]++; if (isGot(i)) totals[i.k][0]++; });
+  const ck = document.getElementById("coll-kinds");
+  if (ck) ck.innerHTML = Object.keys(KIND_LABEL).filter(k => totals[k]).map(k => `${KIND_PLURAL[k]} <b>${totals[k][0]}/${totals[k][1]}</b>`).join(" · ");
+  COLL.forEach(ch => {
+    const items = ch.sections.flatMap(s => s.items), g = items.filter(isGot).length, kc = {};
+    items.forEach(i => { (kc[i.k] = kc[i.k] || [0, 0])[1]++; if (isGot(i)) kc[i.k][0]++; });
+    document.querySelector(`[data-chcount="${ch.key}"]`).textContent = `${g} / ${items.length}`;
+    document.querySelector(`[data-chmeta="${ch.key}"]`).innerHTML = Object.keys(KIND_LABEL).filter(k => kc[k]).map(k => `<span>${KIND_PLURAL[k]} <span class="kd">${kc[k][0]}/${kc[k][1]}</span></span>`).join("");
+    document.getElementById("ch-" + ch.key).classList.toggle("full", g === items.length);
+  });
+  document.querySelectorAll(".ci").forEach(el => {
+    const on = el.dataset.ci ? !!state.coll[el.dataset.ci] : !!state.got[el.dataset.ciach];
+    el.classList.toggle("got", on);
+    const cb = el.querySelector("input.check"); if (cb) cb.checked = on;
+    el.classList.toggle("hidden", (kindFilter !== "all" && el.dataset.k !== kindFilter) || (hideGot && on));
+  });
+}
+
+function update() {
+  const per = Object.fromEntries(PARTS.map(p => [p.key, [0, 0]]));
+  SECTIONS.forEach(sec => {
+    let sd = 0, vis = 0;
+    sec.items.forEach(a => {
+      const d = !!state.got[a.id];
+      per[a.game][1]++; if (d) { per[a.game][0]++; sd++; }
+      const li = document.getElementById("a-" + a.id);
+      li.classList.toggle("done", d);
+      const cb = document.getElementById("c-" + a.id);
+      cb.checked = d;
+      const rule = AUTO.find(r => r.ach === a.id && !r.min);
+      cb.indeterminate = !d && !!rule && autoGot(rule) > 0;
+      const al = li.querySelector("[data-autoline]");
+      if (al && rule) al.innerHTML = `${esc(rule.label)} ticked in the <a href="#coll-top" data-jump="coll">100% Guide</a>: <b>${autoGot(rule)} / ${autoTotal(rule)}</b>`;
+      const show = matches(a); li.classList.toggle("hidden", !show); if (show) vis++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sd} / ${sec.items.length}`;
+    document.querySelector(`[data-jcount="${sec.id}"]`).textContent = `${sd}/${sec.items.length}`;
+    document.querySelector(`[data-empty="${sec.id}"]`).hidden = vis > 0;
+    document.getElementById("sec-" + sec.id).hidden = vis === 0 && (game !== "all" || runFilter !== "all" || !!query);
+  });
+  const sc = document.getElementById("search-count");
+  if (sc) { const n = ALL.filter(matches).length; sc.textContent = query ? `${n} found` : ""; let nm = document.getElementById("no-match"); if (!nm) { nm = document.createElement("p"); nm.id = "no-match"; nm.className = "empty"; document.getElementById("view-ach").appendChild(nm); } nm.hidden = !(query && n === 0); nm.textContent = "No achievements match that search."; }
+  let runsDone = 0;
+  RUNS.forEach(r => {
+    let g = 0;
+    r.tasks.forEach((_, i) => { const on = !!state.tasks[`${r.id}:${i}`]; if (on) g++; document.getElementById(`t-${r.id}-${i}`).checked = on; document.querySelector(`[data-task="${r.id}:${i}"]`).classList.toggle("got", on); });
+    const ach = ALL.filter(a => a.runs.includes(r.id)), ag = ach.filter(a => state.got[a.id]).length;
+    const full = g === r.tasks.length; if (full) runsDone++;
+    document.querySelector(`[data-runsub="${r.id}"]`).textContent = `${g} / ${r.tasks.length} tasks`;
+    document.querySelector(`[data-runprog="${r.id}"]`).textContent = `${g}/${r.tasks.length} tasks · ${ag}/${ach.length} achievements`;
+    document.querySelector(`[data-runcard="${r.id}"]`).classList.toggle("full", full);
+  });
+  document.getElementById("runs-count").textContent = `${runsDone} / ${RUNS.length} done`;
+  document.querySelectorAll("[data-tl]").forEach(l => l.classList.toggle("done", !!state.got[l.dataset.tl]));
+  updateColl();
+  const done = Object.values(per).reduce((s, v) => s + v[0], 0), total = Object.values(per).reduce((s, v) => s + v[1], 0), pct = Math.round(done / total * 100);
+  document.getElementById("count").innerHTML = `${done} / ${total} <small>unlocked · ${pct}%</small>`;
+  document.getElementById("bar").innerHTML = PARTS.map(p => `<span data-p="${p.key}" style="width:${per[p.key][0] / total * 100}%"></span>`).join("");
+  document.getElementById("legend").innerHTML = PARTS.map(p => `<span data-p="${p.key}"><i></i>${esc(p.label)} ${per[p.key][0]}/${per[p.key][1]}</span>`).join("");
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+/* ---------------- panel ---------------- */
+let statusTimer = null;
+function status(msg) { const el = document.getElementById("save-status"), d = el.dataset.d || (el.dataset.d = el.textContent); el.textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { el.textContent = d; }, 4500); }
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "re8-progress.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Backup saved as re8-progress.json.");
+});
+const fileInput = document.getElementById("import-file");
+document.getElementById("import").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const f = fileInput.files[0]; if (!f) return;
+  f.text().then(txt => { const d = JSON.parse(txt); if (!d || typeof d !== "object" || !d.got || typeof d.got !== "object") throw new Error(); state = clean(d); save(); render(); status("Backup restored."); })
+    .catch(() => status("That file isn't a checklist backup. Choose a re8-progress.json file."));
+  fileInput.value = "";
+});
+
+render();
+})();
+
+</script>
+<!-- hub:body -->
+<script src="../sync.js" defer></script>
+<script src="../steam-sync.js" defer></script>
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

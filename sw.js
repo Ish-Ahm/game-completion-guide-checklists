@@ -1,5 +1,5 @@
 // Bump CACHE (a version like 1.3.0) whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v1.4.10";
+const CACHE = "checklists-v1.4.11";
 const FILES = [
   "./",
   "manifest.json",
@@ -22,7 +22,40 @@ const FILES = [
   "img/cards/ac-syndicate.webp",
   "img/cards/metal-gear-solid.webp",
   "img/cards/mgs2.webp",
-  "img/cards/re8.webp"
+  "img/cards/re8.webp",
+  "img/cards/re2.webp",
+  "checklists/re2.html",
+  "img/guides/re2/re2-gs-forgotten-soldier-loadout-no-training.webp",
+  "img/guides/re2/re2-gs-forgotten-soldier-loadout-training.webp",
+  "img/guides/re2/re2-gs-forgotten-soldier-menu.webp",
+  "img/guides/re2/re2-gs-forgotten-soldier-raccoon-1-map.webp",
+  "img/guides/re2/re2-gs-forgotten-soldier-raccoon-1.webp",
+  "img/guides/re2/re2-gs-forgotten-soldier-raccoon-2-map.webp",
+  "img/guides/re2/re2-gs-forgotten-soldier-raccoon-2.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-loadout-no-training.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-loadout-training.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-menu.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-1-map.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-1.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-2-map.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-2.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-3-map.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-3.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-4-map.webp",
+  "img/guides/re2/re2-gs-no-time-to-mourn-raccoon-4.webp",
+  "img/guides/re2/re2-gs-no-way-out-loadout-no-training.webp",
+  "img/guides/re2/re2-gs-no-way-out-loadout-training.webp",
+  "img/guides/re2/re2-gs-no-way-out-menu.webp",
+  "img/guides/re2/re2-gs-no-way-out-raccoon-1.webp",
+  "img/guides/re2/re2-gs-runaway-loadout-no-training.webp",
+  "img/guides/re2/re2-gs-runaway-loadout-training.webp",
+  "img/guides/re2/re2-gs-runaway-menu.webp",
+  "img/guides/re2/re2-gs-runaway-raccoon-1-map.webp",
+  "img/guides/re2/re2-gs-runaway-raccoon-1.webp",
+  "img/guides/re2/re2-gs-runaway-raccoon-2-map.webp",
+  "img/guides/re2/re2-gs-runaway-raccoon-2.webp",
+  "img/guides/re2/re2-gs-runaway-raccoon-3-map.webp",
+  "img/guides/re2/re2-gs-runaway-raccoon-3.webp"
 ];
 
 self.addEventListener("install", e => {

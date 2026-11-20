@@ -38,6 +38,7 @@ GAMES = {
     "metal-gear-solid.html": {"appid": 2131630, "kind": "sections", "name": "Metal Gear Solid"},
     "mgs2.html": {"appid": 2131640, "kind": "sections", "name": "Metal Gear Solid 2: Sons of Liberty"},
     "re8.html": {"appid": 1196590, "kind": "sections", "name": "Resident Evil Village"},
+    "re2.html": {"appid": 883710, "kind": "sections", "name": "Resident Evil 2"},
 }
 FLAT = {"sot-missables.html"}  # these store { id: true } instead of { got: { id: true } }
 

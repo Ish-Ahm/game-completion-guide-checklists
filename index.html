@@ -8,15 +8,18 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-  :root { --bg: #0f1115; --panel: #181b22; --line: #2a2f3a; --text: #eef1f6; --soft: #a3abb9; --accent: #7cc4ff; --ok: #6fdc9b; --bad: #ff7a70; color-scheme: dark; }
+  :root { --bg: #0f1115; --panel: #181b22; --line: #2a2f3a; --text: #eef1f6; --soft: #a3abb9; --accent: #7cc4ff; --ok: #6fdc9b; --bad: #ff7a70; --title: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif; color-scheme: dark; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.45 "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
   .wrap { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
   header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1.25rem; }
-  h1 { margin: 0; font-size: 1.6rem; letter-spacing: -.01em; display: flex; align-items: center; gap: .6rem; }
+  h1 { margin: 0; font-family: var(--title); font-weight: 700; font-size: 1.95rem; letter-spacing: .01em; display: flex; align-items: center; gap: .6rem; }
   h1 img { width: 34px; height: 34px; border-radius: 9px; }
   .tools { display: flex; gap: .5rem; flex-wrap: wrap; }
   .btn { font: inherit; font-weight: 650; font-size: .95rem; min-height: 44px; padding: 0 1rem; border-radius: 12px; cursor: pointer;
@@ -40,7 +43,7 @@
   .card .art { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, center); }
   .card::before { content: ""; position: absolute; inset: 0; z-index: -1;
     background: linear-gradient(180deg, rgba(8,9,12,.25) 0%, rgba(8,9,12,.55) 45%, rgba(8,9,12,.92) 100%); }
-  .card h2 { margin: 0 0 .5rem; font-size: 1.3rem; line-height: 1.15; text-shadow: 0 2px 6px rgba(0,0,0,.8); }
+  .card h2 { margin: 0 0 .5rem; font-family: var(--title); font-weight: 700; font-size: 1.55rem; line-height: 1.1; text-shadow: 0 2px 6px rgba(0,0,0,.8); }
   .card .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .prog { display: grid; gap: .45rem; }
   .trophy { position: absolute; top: .7rem; right: .7rem; z-index: 1; line-height: 0; }
@@ -96,7 +99,7 @@
   .grid.list .card .art { position: static; z-index: auto; flex: none; width: clamp(104px, 36%, 180px); height: auto; aspect-ratio: 920 / 430; border-radius: 9px; }
   .grid.list .info { display: block; flex: 1; min-width: 0; }
   .grid.list .card h2, .grid.list .card .vh { position: static; width: auto; height: auto; clip: auto; overflow: visible; margin: 0 0 .4rem;
-    font-weight: 700; font-size: 1.05rem; line-height: 1.2; letter-spacing: 0; text-transform: none; font-style: normal; color: #fff; text-shadow: none; }
+    font-weight: 700; font-size: 1.3rem; line-height: 1.1; letter-spacing: .01em; text-transform: none; font-style: normal; color: #fff; text-shadow: none; }
   .grid.list .prog { position: relative; }
   .grid.list .prog:has(.trophy) { padding-right: 40px; }
   .grid.list .trophy { top: 50%; right: 0; transform: translateY(-50%); }
@@ -116,7 +119,7 @@
   /* Phones: smaller buttons, all in one row */
   @media (max-width: 600px) {
     .wrap { padding-top: 1rem; }
-    h1 { font-size: 1.4rem; }
+    h1 { font-size: 1.7rem; }
     header { margin-bottom: 1rem; }
     .tools { display: flex; flex-wrap: nowrap; gap: .4rem; width: 100%; }
     .tools .btn { flex: 1 1 0; min-width: 0; min-height: 40px; padding: 0 .4rem; font-size: .8rem;
@@ -125,7 +128,7 @@
     .grid { grid-template-columns: minmax(0, 1fr); gap: .7rem; }
     .grid.list { gap: .5rem; }
     .grid.list .card, .grid.list .card.has-art { padding: .4rem; gap: .65rem; border-radius: 12px; }
-    .grid.list .card h2, .grid.list .card .vh { font-size: .95rem; margin-bottom: .3rem; }
+    .grid.list .card h2, .grid.list .card .vh { font-size: 1.15rem; margin-bottom: .3rem; }
     .grid.list .trophy img { height: 32px; }
     .grid.list .prog:has(.trophy) { padding-right: 34px; }
     .sortrow { gap: .35rem; }

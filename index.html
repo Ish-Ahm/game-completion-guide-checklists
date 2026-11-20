@@ -101,6 +101,9 @@
   .grid.list .prog:has(.trophy) { padding-right: 40px; }
   .grid.list .trophy { top: 50%; right: 0; transform: translateY(-50%); }
   .grid.list .trophy img { height: 38px; }
+  /* List view only: red until the game is 100%, then green (grid view keeps each game's own colour) */
+  .grid.list .meter i { background: #e5484d; }
+  .grid.list .meter.full i { background: #3fcf7a; }
 
   /* Desktop: smaller buttons and status text */
   @media (min-width: 601px) {
@@ -216,11 +219,11 @@ function readProgress() { try { return JSON.parse(localStorage.getItem(PROGRESS)
 function has(key) { try { return localStorage.getItem(key) !== null; } catch (e) { return false; } }
 
 function rowHTML(label, p, key) {
-  let right, pct = 0;
-  if (p && p.total > 0) { pct = Math.round(p.done / p.total * 100); right = `${p.done} / ${p.total} · ${pct}%`; }
+  let right, pct = 0, full = false;
+  if (p && p.total > 0) { pct = Math.round(p.done / p.total * 100); right = `${p.done} / ${p.total} · ${pct}%`; full = p.done >= p.total; }
   else right = "Open";
   return `<div class="row"><div class="label"><span>${esc(label)}</span><span>${right}</span></div>` +
-         `<div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div></div>`;
+         `<div class="meter${full ? " full" : ""}" aria-hidden="true"><i style="width:${pct}%"></i></div></div>`;
 }
 
 let sortBy = "added", sortAsc = true;

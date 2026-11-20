@@ -1,15 +1,17 @@
 # New guides: spec and how to add them to the site
- 
-Two parts. **Part 1** is for the Claude project that builds the guide (upload this file to it as a knowledge file). **Part 2** is for you: what to do with the file once Claude has made it.
- 
+
+Two parts. **Part 1** is for the Claude project that builds the guide (upload this file to it as a knowledge file). **Part 2** is for you: what to do with the files once Claude has made them.
+
 ---
- 
+
 ## Part 1: spec for the Claude project
- 
-The site is static. A guide is **one self-contained HTML file** (inline CSS and JS, images as base64). **Follow `GUIDE-STYLE.md` exactly**: it is the RE4 design (header with centred logo, sticky search and tabs, completion panel, Achievements / Playthroughs / 100% Guide tabs) with the full CSS and page engine. Only the colour palette, part colours and content change per game, and the colours must match the game, not RE4.
- 
+
+The site is static. A guide is **one HTML file** (inline CSS and JS) plus **a folder of image files**. **Follow `GUIDE-STYLE.md` exactly**: it is the RE4 design (header with centred logo, sticky search and tabs, completion panel, Achievements / Playthroughs / 100% Guide tabs) with the full CSS and page engine. Only the colour palette, part colours and content change per game, and the colours must match the game, not RE4.
+
+**Images are separate files, not base64.** Where `GUIDE-STYLE.md` says images are embedded as base64 (section 2 header, section 6 "How they appear", the `IMGS` comment in Appendix C), this file overrides it. See rules 10 and 12 and "Images" below.
+
 ### Must have
-1. **File name**: lowercase slug with letters, numbers and hyphens, e.g. `newgame.html`. One file, no external local files (Google Fonts links are fine).
+1. **File names**: the guide is a lowercase slug with letters, numbers and hyphens, e.g. `newgame.html`, saved in `checklists/`. Its images go in `img/guides/<slug>/` (rule 12). No other local files (Google Fonts links are fine).
 2. **Storage key**: one line in the script, exactly in this form:
    `const KEY = "<slug>-checklist-v1";`
    The key must end in `-v1`, or cross-device sync ignores the guide. Progress is saved to `localStorage[KEY]` as `{ "got": { "<achievement-id>": true }, ... }` plus any other fields you need. Anything already unlocked in the Steam/PSN PDF is pre-ticked by default.
@@ -25,45 +27,66 @@ The site is static. A guide is **one self-contained HTML file** (inline CSS and 
 7. **Filter row** (Achievements tab), as in GUIDE-STYLE.md: a status segment (All, To do, Unlocked, Missable), a game segment if the game has DLC, a playthrough dropdown and "Show all guides". The buttons stretch to fill the row (`flex: 1 1 auto`), with the text centred and equal padding left and right. The search box sits in the sticky top bar above the tabs.
 8. **Settings toggle**: put the save and backup controls in a collapsed toggle, as in RE4:
    `<details class="settings"><summary>Save, back up and settings</summary> ... </details>`
-   containing the save status text, Back up, Restore (with its hidden file input), the PlayStation / Xbox prompt toggle and the reset button. Keep filters and search outside it.
+   containing the save status text, Back up, Restore (with its hidden file input), "Show all spoilers" if the guide has spoilers (see "Spoilers" below), the PlayStation / Xbox prompt toggle and the reset button. Keep filters and search outside it.
 9. **Reset button** (game is on Steam): exactly
    `<button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>`
    The site's `steam-sync.js` takes over this button, so the guide needs no reset code of its own. Do not write any Steam API code in the guide.
-10. **Header with banner and logo**: a darkened banner as the header background and the logo centred on top, embedded as base64 (banner about 1600 px wide, logo about 800 px wide, WebP). The game title stays in the page for screen readers. If the images come later, leave `src=""` on `img.hero` and `img.logo`; the title then shows as text.
+10. **Header with banner and logo**: a darkened banner as the header background and the logo centred on top. Reference the site's own header images by relative path, not base64:
+    `<img class="hero" src="../img/banners/<slug>.webp" alt="" width="1600" height="516" onerror="this.onerror=null;this.setAttribute('src','')">`
+    `<img class="logo" src="../img/logos/<slug>.webp" alt="Game Title" width="800" height="300" onerror="this.onerror=null;this.setAttribute('src','')">`
+    The `onerror` empties a missing image, and the game title (kept in the page as `h1.title`) then shows as text until the files are added.
 11. **Playthroughs**: run 1 is always a blind, standard first playthrough to enjoy the game; missables and challenges go in later runs. The 100% Guide lists collectibles and every chapter-specific achievement chapter by chapter, for the base game and each DLC.
-12. **Guide images are required.** Include every image from the source guides that matters for playing: collectible locations, maps, enemy and boss pictures, puzzle solutions, item and card art, route screenshots. Leave out only decoration (trophy and achievement icons, site logos, avatars). **File size is not a concern**: never drop or shrink useful images to save space. Take them from both the saved HTML pages and the PDFs of the same guides, since HTML saves often miss lazy-loaded pictures. Details are in GUIDE-STYLE.md, section 6.
+12. **Guide images are required, as separate WebP files.** Include every image from the source guides that matters for playing: collectible locations, maps, enemy and boss pictures, puzzle solutions, item and card art, route screenshots. Leave out only decoration (trophy and achievement icons, site logos, avatars). **File size is not a concern**: never drop or shrink useful images to save space. Take them from both the saved HTML pages and the PDFs of the same guides, since HTML saves often miss lazy-loaded pictures. Extraction details are in GUIDE-STYLE.md, section 6.
+    - **Folder:** all of a guide's images in one folder, `img/guides/<slug>/`.
+    - **File names:** `<slug>-<group>-<subject>.webp`, lowercase, hyphens only, no spaces, e.g. `mgs2-boss-olga-gap.webp`, `mgs2-weapon-m9.webp`, `mgs2-box-3.webp`. Groups used so far: `menu`, `boss`, `story`, `ach`, `weapon`, `box`, `tag`, `map`, `item`. Keep file names spoiler-free (`boss-final-ledge`, not the final boss's name).
+    - **Format:** WebP, quality 85. Screenshots at source resolution up to 1920 px wide; small card or item art at about 2x display size (128 px wide for 64 px art).
+    - **In the page:** the `IMGS` map holds relative paths, e.g. `s_olga: "../img/guides/mgs2/mgs2-boss-olga-gap.webp"`, and guide HTML references them as `<img data-img="s_olga" alt="...">` exactly as before. Keys starting with `c` render as 64 px art (`img.card`), all others as screenshots (`img.shot`). Every key must point at a file that exists.
+    - **Delivery:** a zip laid out like the repo: `checklists/<slug>.html` and `img/guides/<slug>/*.webp`.
+
+### Spoilers (optional, when asked)
+Add a spoiler toggle when the owner says the game is new to them or asks for one. Story text sits behind a bar until tapped; "Show all spoilers" in the settings reveals everything and is saved in the state (`spoil: true`). The engine changes and CSS are in `mgs2.html` (functions `SP`, `nm`, `ds`, `reveal`, `syncSpoil`; CSS block starting `/* spoilers:`). Markup:
+- **Data strings** (intros, run summaries and tasks, chapter titles and objectives, notes, collectible titles and locations): wrap spoiler text in `||double bars||`.
+- **Guide and box HTML:** `<span class="spoil">...</span>` inline, `<div class="spoil">...</div>` for a whole block (it collapses to a "Story spoiler · tap to reveal" bar).
+- **Achievements:** add `sp: "n"` (name, description and guide hidden), `sp: "d"` (description and guide) or `sp: "g"` (guide only) after `runs`. Never change `name` itself: Steam sync needs it exact.
+- Hide plot reveals, character twists, late-game locations and final bosses. Do not hide anything run 1 needs to play blind (controls, early bosses already introduced, settings).
+
 ### Must not have
 - Your own `<link rel="icon">` or favicon. The shared tab icon (`../icon-192.png`) is added by the injected hub block.
 - The `<!-- hub:head -->` / `<!-- hub:body -->` blocks, a manifest link, a service worker, or a "back to home" button. They are injected afterwards by script.
 - Any fixed element in the bottom-left corner (the "← All games" pill sits there). A fixed bottom bar is fine, the pill lifts above it.
-- Absolute links to other pages of the site.
+- Absolute links to other pages of the site. Image paths are relative (`../img/...`).
+- Base64 images.
 - Displayed unlock rates (Steam or PSN percentages).
 - Decorative images such as trophy icons.
+
 ### Images
-See `img/README.md`. Provide `cards/<slug>.webp` (920 x 430, the home page card with the title in the picture), and optionally `logos/<slug>.webp` and `banners/<slug>.webp` (3840 x 1240) for the header.
- 
+See `img/README.md`. Provide `cards/<slug>.webp` (920 x 430, the home page card with the title in the picture), and optionally `logos/<slug>.webp` and `banners/<slug>.webp` (3840 x 1240) for the header (rule 10). Guide images go in `img/guides/<slug>/` (rule 12).
+
 ### Hand-over note (Claude should end with this)
 - File name: `<slug>.html`
 - KEY: `<slug>-checklist-v1`
 - Steam appid and the number of achievements (and how many pre-ticked)
-- Number of guide images included, and any the sources did not capture (which section, how many), with a request for a PDF or re-save to fill them
+- Number of guide image files in `img/guides/<slug>/`, and any the sources did not capture (which section, how many), with a request for a PDF or re-save to fill them
 - Card image: `img/cards/<slug>.webp`, suggested `pos` value for the crop
 - Suggested `bar` colour (hex) for the home-page progress bar (usually the guide's `--accent`)
+- Whether the guide has a spoiler toggle
 - Anything that breaks the rules above, and why
+
 ---
- 
+
 ## Part 2: what you do after Claude makes the guide
- 
-**Quick way:** put the files in place (steps 1 and 2), then tell Claude Code in this project: *"Add the new guide `<slug>.html`, Steam appid `<number>`, title `<name>`, bar colour `<hex>`."* It follows steps 3 to 6 and asks you for the version number. The manual steps are below.
- 
-1. **Save the guide** as `checklists/<slug>.html`.
-2. **Save the images**: card at `img/cards/<slug>.webp` (required), and optionally `img/logos/<slug>.webp` and `img/banners/<slug>.webp`.
+
+**Quick way:** unzip into the project (step 1) and add the card image (step 2), then tell Claude Code in this project: *"Add the new guide `<slug>.html`, Steam appid `<number>`, title `<name>`, bar colour `<hex>`. Its images are in `img/guides/<slug>/`."* It follows steps 3 to 6 and asks you for the version number. The manual steps are below.
+
+1. **Unzip the guide** at the project root, so the files land in `checklists/<slug>.html` and `img/guides/<slug>/`.
+2. **Save the site images**: card at `img/cards/<slug>.webp` (required), and optionally `img/logos/<slug>.webp` and `img/banners/<slug>.webp`. The guide picks up the logo and banner by itself.
 3. **Add it to the site** (from the project folder). Use `--dry-run` first to see the report and any warnings:
    ```
    python3 -I tools/add_guide.py checklists/<slug>.html --title "Game Title" --bar "#ff8800" --pos "center 30%" --dry-run
    python3 -I tools/add_guide.py checklists/<slug>.html --title "Game Title" --bar "#ff8800" --pos "center 30%"
    ```
    This injects the shared header and footer blocks (tab icon, "All games" pill, progress readout, sync scripts), adds the home page card, and adds the card image to the offline cache list. It is safe to re-run, for example after you add the card image later. Guides with two parts, like Stick of Truth, must be added by hand.
+   **Offline images:** the guide's `img/guides/<slug>/` files, logo and banner also need to be cached by `sw.js` (added to `FILES`, or cached the first time they load), or screenshots will be missing offline. Claude Code handles this.
 4. **Link it to Steam** (so achievements tick automatically):
    - Open `tools/build_steam_map.py` and add one line to `GAMES`:
      `"<slug>.html": {"appid": 123456, "kind": "sections", "name": "Game Title"},`
@@ -72,7 +95,7 @@ See `img/README.md`. Provide `cards/<slug>.webp` (920 x 430, the home page card 
    - Read the short report. It should say "matched N / checklist N". For any unmatched name, add a fix to `tools/steam-map-overrides.json`, for example `{ "<slug>.html": { "STEAM_APINAME": "itemId" } }`, and run the command again.
    - Needs `.dev.vars` (your Steam key and ID) and your Steam profile's Game details set to Public.
 5. **Version number**: every change needs a new cache version in `sw.js`. Claude Code will ask you, quoting the previous number. You decide the new one (minor for a new guide, patch for a fix).
-6. **Check it locally (optional)**: `npx wrangler pages dev .` and open the guide and the home page. The card should show, the guide should open, "← All games" should return, and ticking an item should move the home progress bar.
+6. **Check it locally (optional)**: `npx wrangler pages dev .` and open the guide and the home page. The card should show, the guide should open with its screenshots, "← All games" should return, and ticking an item should move the home progress bar.
 7. **Publish**:
    ```
    git add -A
@@ -80,11 +103,12 @@ See `img/README.md`. Provide `cards/<slug>.webp` (920 x 430, the home page card 
    git push
    ```
    Wait for the green tick on Cloudflare, then reload the site with Ctrl+Shift+R.
+
 ### If something looks wrong
 - **Card says "Open" or has no art**: the card image is missing or misnamed. Fix it, then re-run step 3.
+- **Header shows the title as text**: the logo or banner is not in `img/logos/` or `img/banners/` under `<slug>.webp`.
+- **Screenshots missing**: the `img/guides/<slug>/` folder was not unzipped to the right place, or (offline only) `sw.js` does not cache it. If the source guide never had them, give Claude a PDF of the same guide page.
 - **Progress bar never moves**: the guide has no visible `x / N unlocked` readout.
 - **Not syncing between devices**: the storage key does not end in `-v1`.
 - **Steam ticks nothing**: the appid is wrong, the map has unmatched names, or the Steam profile is private.
 - **Looks different from the other guides**: Claude did not follow `GUIDE-STYLE.md`. Ask it to.
-- **Screenshots missing**: the saved page did not capture them. Give Claude a PDF of the same guide page.
- 

@@ -5,18 +5,25 @@ A static site of interactive game achievement checklists, hosted on **Cloudflare
 
 ## Files
 - `index.html`: home page. A `GAMES` array at the top of its script defines one card per game (file, title, localStorage key, optional `art`/`logo`/`pos`/`bar`/`cls`). Cards show progress, and the page has **Back up all** / **Restore all** (JSON with `{ app: "my-checklists", version: 1, exported, data: { key: string } }`).
-- Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc1.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`.
+- Checklists: `re4.html`, `gta4.html`, `p4g.html`, `halo-mcc.html`, `vanquish.html`, `dmc1.html`, `sunset-overdrive.html`, `sot-missables.html`, `sot-collection.html`, `mgs2.html` (first guide with external images and a spoiler toggle).
 - `stick-of-truth.html`: a small hand-written wrapper with two tabs (Missables, Collection) that loads `sot-missables.html` and `sot-collection.html` in iframes. Last tab is remembered in localStorage `sot-hub-tab`.
 - `MD files/`: the other documentation (`CHECKLIST-SPEC.md`, `GUIDE-STYLE.md`, `NEW-GUIDE-TLDR.md`, `SYNC-SETUP.md`). This file (`CLAUDE.md`, which must stay in the project root to be loaded automatically) and `README.md` stay in the root.
-- `manifest.json`, `sw.js`, `sync.js`, `steam-sync.js`, `steam-map.json`, `functions/api/` (sync.js, steam.js), `tools/` (add_guide.py, build_steam_map.py), `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
+- `manifest.json`, `sw.js`, `sync.js`, `steam-sync.js`, `steam-map.json`, `functions/api/` (sync.js, steam.js), `tools/` (add_guide.py, build_steam_map.py), `icon-192.png`, `icon-512.png`, `img/` (WebP images in `cards/`, `logos/`, `banners/`, `guides/<slug>/`, plus `icons/steam-trophy.svg` shown on cards at 100%; see `img/README.md`).
 
 ## Phone scale
 Every page (home and all guides) has `<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">`. The `0.85` is the site-wide phone scale (lower = everything smaller, 1 = normal). To change it, replace that number in `index.html` and every file in `checklists/` by script, and update `MD files/CHECKLIST-SPEC.md`. Desktop ignores it.
 
 ## Rules for the checklist files
-- **Treat each checklist as an opaque, finished file.** They are large single-file pages (inline CSS/JS, base64 images; `re4.html` is about 5 MB). Do not read them in full, reformat or rewrite them.
+- **Treat each checklist as an opaque, finished file.** Older guides are huge single files with base64 images (`re4.html` is about 5 MB). Newer ones are small (`mgs2.html` is about 160 KB) because their images are separate files (see "Guide images" below). Both kinds are still edited by script only. Do not read them in full, reformat or rewrite them.
 - Make any change to them with a script (Python with `-I`, or sed) or a targeted grep. Never load their whole contents into the conversation.
 - Each checklist has two injected blocks, marked `<!-- hub:head -->…<!-- /hub:head -->` before `</head>` and `<!-- hub:body -->…<!-- /hub:body -->` before `</body>`. They add the manifest link, the tab icon (`<link rel="icon" href="../icon-192.png">` plus `apple-touch-icon`, so every guide shows the same favicon as the home page), a theme-color meta (if missing), service worker registration, the fixed "← All games" pill (bottom-left, auto-lifted above fixed bottom bars such as RE4's phone tab bar; only shown when not inside an iframe), and a script that copies the page's own "x / N unlocked|done|collectibles" readout into localStorage `hub-progress-v1` for the home page. To change these, edit the blocks in every file by script so they stay identical.
+
+## Guide images (newer guides)
+- Each guide's pictures live in `img/guides/<slug>/`, named `<slug>-<group>-<subject>.webp` (e.g. `mgs2-boss-olga-gap.webp`). The guide's `IMGS` map holds relative paths such as `"../img/guides/mgs2/mgs2-boss-olga-gap.webp"`. Every key must point at an existing file.
+- Header images are paths too: `img.hero` is `../img/banners/<slug>.webp` and `img.logo` is `../img/logos/<slug>.webp`, each with an `onerror` that empties the `src` so the text title shows if the file is missing. Older guides embed these as base64. **Never rewrite the `src` of `img.hero` or `img.logo`** (`tools/add_guide.py` checks it does not).
+- Offline: `sw.js` is cache-first and keeps a copy of every same-origin file the first time it loads, so these images need no entry in `FILES` (only the card does). They work offline once seen, so a chapter's screenshots are cached after it has been opened online.
+- Optional spoiler toggle (when the owner asks): story text sits behind a bar until tapped, and "Show all spoilers" in the settings reveals everything and is saved as `spoil` in the guide's state. Engine and CSS: `mgs2.html` (functions `SP`, `nm`, `ds`, `reveal`, `syncSpoil`; CSS block starting `/* spoilers:`). Markup rules are in `MD files/CHECKLIST-SPEC.md`.
+- New guides arrive as a zip laid out like the repo (`checklists/<slug>.html` plus `img/guides/<slug>/`), unzipped at the project root. `add_guide.py` warns about base64 images, missing IMGS files, unused files and a missing logo or banner.
 
 ## localStorage keys
 | File | Key |
@@ -30,6 +37,7 @@ Every page (home and all guides) has `<meta name="viewport" content="width=devic
 | sunset-overdrive.html | `so-checklist-v1` |
 | sot-missables.html | `sot-missables-v1` (flat `{ id: true }`) |
 | sot-collection.html | `sot-collection-v1` (+ `sot-collection-v1-tab`) |
+| mgs2.html | `mgs2-checklist-v1` (state also holds `spoil: true` when "Show all spoilers" is on) |
 | hub (home page cache) | `hub-progress-v1`, `sot-hub-tab` |
 
 Most checklists store `{ got: { id: true }, ... }`. GTA IV, RE4 and Halo seed some unlocks by default, so the home page relies on `hub-progress-v1` rather than counting `got`.
@@ -54,7 +62,7 @@ Unlocked Steam achievements are ticked automatically (adds only, never removes; 
 The full requirements for a guide, and the owner's step-by-step for adding one, are in `MD files/CHECKLIST-SPEC.md` (Part 1 is uploaded to the Claude project that builds the guides; Part 2 is the owner's steps). Keep that file in step with any change to how guides must be built. `MD files/NEW-GUIDE-TLDR.md` is the owner's six-line quick version (not uploaded to the Claude project); keep it in step with Part 2.
 Preferred: put the file in `checklists/` (short lowercase name, e.g. `newgame.html`), add its card image at `img/cards/newgame.webp` (920x430), then run from the project root:
 `python3 -I tools/add_guide.py checklists/newgame.html --title "New Game" --bar "#ff8800" [--pos "center 30%"] [--dry-run]`
-It checks the storage key and readout, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` (the `CACHE` version is left for you to set, see below). Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.
+It checks the storage key, readout and images, injects or refreshes the hub blocks (copied from `vanquish.html`), adds the `GAMES` entry, adds the card to `FILES` in `sw.js` (the `CACHE` version is left for you to set, see below). Safe to re-run (for example after adding the card image later). Use `--dry-run` first to see the report. Multi-part guides like Stick of Truth are not supported by the script; add those by hand.
 Then link the game to Steam: add it to `GAMES` in `tools/build_steam_map.py` (file, appid, kind), run `python3 -I tools/build_steam_map.py --only newgame.html`, and fix any unmatched names in `tools/steam-map-overrides.json`. Finally ask the owner for the new `CACHE` version.
 Manual route (if the script cannot be used):
 1. Copy the file into `checklists/`.

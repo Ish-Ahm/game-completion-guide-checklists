@@ -9,6 +9,11 @@ Does, in order:
   2. injects (or refreshes) the shared hub:head / hub:body blocks, copied from vanquish.html
   3. adds a GAMES entry to index.html (uses img/cards/<slug>.webp if it exists)
   4. adds the card image to FILES in sw.js (the CACHE version is left alone: ask the owner for the new number)
+  5. checks the guide's images: warns about base64 images, IMGS paths missing on disk (img/guides/<slug>/),
+     files in that folder nothing uses, and a missing logo or banner. It never edits the guide's own images
+     or the src of img.hero / img.logo (old guides embed them, new guides use paths).
+Guide, logo, banner and img/guides/<slug>/ files need no entry in sw.js: its fetch handler keeps a copy of
+every same-origin file the first time it loads, so only the card goes in FILES.
 Re-running on the same guide refreshes the blocks and does not add a second card.
 """
 import argparse, json, re, sys
@@ -19,6 +24,47 @@ REF = ROOT / "checklists" / "vanquish.html"
 HEAD = ("<!-- hub:head -->", "<!-- /hub:head -->")
 BODY = ("<!-- hub:body -->", "<!-- /hub:body -->")
 READOUT = re.compile(r"(\d[\d,]*)\s*(?:/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)")
+
+
+def image_checks(text, slug):
+    """Return warnings about the guide's images. Read-only: never changes the guide."""
+    out = []
+    n64 = len(re.findall(r"data:image/[a-z0-9.+-]+;base64,", text))
+    if n64:
+        out.append(f"the guide embeds {n64} base64 image(s). Fine for older guides; new guides should use files in img/guides/{slug}/")
+    folder = ROOT / "img" / "guides" / slug
+    im = re.search(r"\bconst IMGS\s*=\s*\{(.*?)\n?\};", text, re.S)
+    if im:
+        entries = re.findall(r"[\"']?([A-Za-z0-9_$-]+)[\"']?\s*:\s*[\"']([^\"']*)[\"']", im.group(1))
+        paths = [(k, v) for k, v in entries if not v.startswith("data:")]
+        missing = [k + " -> " + v for k, v in paths if not (ROOT / "checklists" / v).resolve().is_file()]
+        if missing:
+            out.append(f"{len(missing)} IMGS path(s) missing on disk: " + "; ".join(missing[:8]) + (" ..." if len(missing) > 8 else ""))
+        if paths and folder.is_dir():
+            used = {Path(v).name for _, v in paths if Path(v).parent.name == slug}
+            unused = sorted(f.name for f in folder.iterdir() if f.is_file() and f.name not in used)
+            if unused:
+                out.append(f"{len(unused)} file(s) in img/guides/{slug}/ not used by IMGS: " + ", ".join(unused[:8]) + (" ..." if len(unused) > 8 else ""))
+        if paths:
+            print(f"- images: {len(paths)} IMGS path(s) checked against img/guides/{slug}/ ({len(paths) - len(missing)} found)")
+    elif folder.is_dir():
+        out.append(f"img/guides/{slug}/ exists but the guide has no IMGS map")
+    for cls, sub in (("hero", "banners"), ("logo", "logos")):
+        tag = re.search(r'<img[^>]*class="%s"[^>]*>' % cls, text)
+        if not tag:
+            continue
+        src = re.search(r'\bsrc="([^"]*)"', tag.group(0))
+        src = src.group(1) if src else ""
+        if src.startswith("data:"):
+            continue  # embedded (older guides): nothing to check
+        target = (ROOT / "checklists" / src).resolve() if src else ROOT / "img" / sub / f"{slug}.webp"
+        if not target.is_file():
+            out.append(f"img.{cls} file missing: {target.relative_to(ROOT)} (the title shows as text until it is added)")
+    return out
+
+
+def hero_logo_tags(text):
+    return re.findall(r'<img[^>]*class="(?:hero|logo)"[^>]*>', text)
 
 
 def block(text, marks):
@@ -74,9 +120,14 @@ def main():
     if re.search(r'<link[^>]*rel="[^"]*icon', body_only):
         problems.append("the guide has its own favicon link; remove it so the shared tab icon is used")
 
+    problems += image_checks(text, slug)
+
     # 2. hub blocks
     new = replace_or_insert(text, HEAD, block(ref, HEAD), "</head>")
     new = replace_or_insert(new, BODY, block(ref, BODY), "</body>")
+
+    if hero_logo_tags(new) != hero_logo_tags(text):
+        sys.exit("error: internal check failed: img.hero / img.logo would change. Nothing written.")
 
     # 3. home page entry
     index_p, sw_p = ROOT / "index.html", ROOT / "sw.js"

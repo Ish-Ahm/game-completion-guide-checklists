@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d0e">
+<title>Metal Gear Solid 2: Sons of Liberty 100%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    /* ---- game palette: the only block that changes per game ---- */
+    --bg: #0b0d0e; --bg-2: #121618; --card: #171c1e; --card-2: #20272a; --ink: #e6e8e3; --ink-soft: #9ea9a8;
+    --accent: #9fbac3; --accent-ink: #0b1215; --gold: #cdb07a; --green: #9db88a; --blue: #86a9d6; --violet: #b9a0d6; --orange: #e0a05a; --warn: #ec8b74;
+    --line: rgba(158, 169, 168, .2); --done-bg: rgba(157, 184, 138, .08);
+    --check-line: #4a5558; --task-line: #313a3d; --kbd-bg: #1f2629; --kbd-line: #3c474b; --header-ink: #dfe3de; --desc-ink: #d2d8d3; --totop-bg: rgba(32, 39, 42, .92);
+    /* one colour per part of the game; used by sheets, badges, meter, chapters */
+    --c-tanker: #c0694c; --c-plant: var(--accent); --c-both: #a49e8a; --c-extra: var(--gold);
+    /* ---- layout (do not change) ---- */
+    --nav-h: 0px; --sm: 116px;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.55;
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px)); -webkit-tap-highlight-color: transparent; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+  .cond, h2, .tab, .count, .tag, .run-badge { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; }
+  h3 { font-weight: 700; font-size: 1.07rem; line-height: 1.3; }
+  a { color: var(--gold); }
+  button { font: inherit; }
+
+  /* header */
+  header { position: relative; overflow: hidden; padding: calc(1.6rem + env(safe-area-inset-top, 0px)) 1rem 2.6rem; text-align: center; background: #000; }
+  .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: brightness(.38) saturate(.8); }
+  header::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.45), transparent 75%), linear-gradient(180deg, rgba(0,0,0,.2), transparent 40%, rgba(11,10,9,.7) 80%, var(--bg)); }
+  header > :not(.hero) { position: relative; z-index: 1; }
+  .logo { display: block; width: min(560px, 88vw); height: auto; margin: 0 auto; filter: drop-shadow(0 4px 14px #000); }
+  .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .eyebrow { margin-top: .9rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-size: .85rem; }
+  header p { max-width: 38rem; margin: .5rem auto 0; color: var(--header-ink); text-shadow: 0 1px 3px #000; font-size: .97rem; }
+
+  main { max-width: 56rem; margin: 0 auto; padding: 0 .75rem 3rem; }
+
+  /* tabs: top on wide screens, fixed bottom bar on phones */
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -.75rem; padding: 0 .75rem; border-bottom: 1px solid var(--line); }
+  .searchrow { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; }
+  .searchbox { position: relative; flex: 1; min-width: 0; }
+  .searchbox svg { position: absolute; left: .65rem; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+  .topsearch { width: 100%; min-height: 42px; font: inherit; font-size: 16px; padding: .3rem 2.4rem .3rem 2.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); color: var(--ink); }
+  .topsearch::-webkit-search-cancel-button { display: none; }
+  .topsearch:focus { border-color: var(--accent); outline: none; }
+  .clear-search { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--ink-soft); font-size: 1.2rem; cursor: pointer; }
+  .search-count { flex: none; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 0; border-top: 1px solid var(--line); }
+  .totop { position: fixed; right: max(1rem, env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 19; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--totop-bg); color: var(--ink); display: grid; place-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .totop.show { opacity: 1; transform: none; pointer-events: auto; }
+  .totop svg { width: 20px; height: 20px; }
+  .tab { flex: 1; min-height: 48px; font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: .45rem; padding: 0 .4rem; }
+  .tab svg { width: 20px; height: 20px; flex: none; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .panel { margin: 1rem 0; padding: .85rem .9rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
+  .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
+  .panel-top h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .count { font-weight: 700; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+  .count small { font-family: "Source Sans 3", sans-serif; font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  .meter { margin-top: .45rem; height: 10px; background: #000; border: 1px solid var(--line); display: flex; overflow: hidden; }
+  .meter span { display: block; height: 100%; transition: width .4s ease; }
+  .legend { display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin-top: .35rem; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .legend i { display: inline-block; width: .65rem; height: .65rem; margin-right: .3rem; vertical-align: -.05rem; }
+  .row-tools { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; }
+  .chip { min-height: 38px; font-weight: 600; font-size: .9rem; cursor: pointer; padding: .2rem .75rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip.reset { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .chip.reset.armed { background: var(--warn); color: var(--accent-ink); }
+  .select, .search { min-height: 38px; font: inherit; font-size: 16px; padding: .2rem .6rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .search { flex: 1 1 12rem; min-width: 0; }
+  .select { flex: 1 1 12rem; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+  .seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; flex-wrap: wrap; }
+  .seg button { min-height: 36px; font-size: .88rem; font-weight: 600; padding: .2rem .65rem; border: 0; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  details.settings { margin-top: .7rem; border-top: 1px solid var(--line); padding-top: .55rem; }
+  details.settings > summary { cursor: pointer; font-weight: 600; color: var(--ink-soft); font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+  .save-status { color: var(--ink-soft); font-size: .88rem; flex: 1 1 100%; }
+  button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, .spoil:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .jumps { display: flex; gap: .35rem; overflow-x: auto; margin: 0 -.75rem 1rem; padding: 0 .75rem .3rem; scrollbar-width: thin; }
+  .jump { flex: none; font-size: .88rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .35rem .65rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .jump span { color: var(--ink-soft); }
+
+  section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .9rem .85rem .4rem; margin-bottom: 1.3rem; scroll-margin-top: var(--sm); }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; line-height: 1.05; }
+  .sheet-head h2 small { display: block; font-size: .55em; letter-spacing: .16em; color: var(--accent); }
+  .sheet-head .sub { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .3rem 0 .5rem; color: var(--ink-soft); font-size: .96rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 1px solid var(--line); padding: .55rem 0; scroll-margin-top: var(--sm); }
+  li.item.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: start; padding: .35rem .3rem; }
+  .row > div { min-width: 0; }
+  li.item.done > .row { background: var(--done-bg); }
+  .flash { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .check { appearance: none; -webkit-appearance: none; margin: 0; width: 30px; height: 30px; cursor: pointer; border: 2px solid var(--check-line); background: var(--bg-2); border-radius: 3px; display: grid; place-content: center; flex: none; }
+  .check.small { width: 24px; height: 24px; }
+  .check::before { content: ""; width: 17px; height: 17px; clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 22%, 85% 8%, 39% 69%); background: #08130a; transform: scale(0); transition: transform .12s; }
+  .check.small::before { width: 13px; height: 13px; }
+  .check:checked { background: var(--green); border-color: var(--green); }
+  .check:checked::before { transform: scale(1); }
+  .check:indeterminate { border-color: var(--gold); }
+  .check:indeterminate::before { clip-path: none; height: 3px; width: 13px; background: var(--gold); transform: scale(1); }
+
+  .title-line { display: flex; align-items: center; gap: .25rem .45rem; flex-wrap: wrap; }
+  .title-line h3 { flex: 1 1 100%; }
+  .title-line h3 label { cursor: pointer; }
+  li.item.done .title-line h3 { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 0 .4rem; letter-spacing: .06em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.5; }
+  .tag.story { color: var(--blue); } .tag.missable { color: var(--warn); } .tag.collect { color: var(--green); } .tag.timed { color: var(--orange); }
+  .run-badge { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; padding: 0 .45rem; line-height: 1.55; background: var(--pc, var(--accent)); color: var(--accent-ink); text-decoration: none; }
+  .desc { margin: .15rem 0 0; color: var(--desc-ink); }
+
+  .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .35rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); font-size: .94rem; min-height: 44px; }
+  .steps li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .steps li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .steps label { cursor: pointer; min-width: 0; }
+  .st-name { font-weight: 600; }
+  .st-desc { display: block; color: var(--ink-soft); font-size: .84rem; }
+  details.steps-wrap { margin-top: .5rem; }
+  details.steps-wrap > summary { cursor: pointer; font-weight: 600; color: var(--gold); font-size: .95rem; min-height: 36px; display: flex; align-items: center; }
+  .mini { min-height: 34px; font-size: .85rem; font-weight: 600; cursor: pointer; padding: .1rem .6rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); }
+  .step-tools { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
+
+  .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .step-btn { font-weight: 700; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+  .count-input { font: inherit; font-size: 16px; font-weight: 700; width: 4.2rem; height: 42px; text-align: center; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .counter .of { color: var(--ink-soft); }
+  .summary-line { margin-top: .45rem; font-size: .93rem; font-weight: 600; color: var(--ink-soft); }
+  .summary-line b { color: var(--ink); }
+
+  .guide-btn { min-height: 36px; font-weight: 600; font-size: .93rem; margin-top: .25rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .guide { margin: .4rem 0 0; padding: .7rem .8rem; border-left: 2px solid var(--accent); background: var(--bg-2); font-size: .97rem; }
+  .guide > * + *, .prose > * + * { margin-top: .5rem; }
+  .guide p, .prose p { margin: 0; }
+  .guide h4, .prose h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-top: .8rem; }
+  .guide ul, .prose ul { margin: 0; padding-left: 1.1rem; }
+  .guide li + li, .prose li + li { margin-top: .3rem; }
+  .note { color: var(--ink-soft); font-style: italic; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .spoil { background: var(--kbd-line); color: transparent; border-radius: 2px; cursor: pointer; user-select: none; }
+  .spoil.shown, body.spoilers .spoil { background: transparent; color: inherit; user-select: auto; cursor: auto; }
+
+  kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.45em; height: 1.45em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px; font: 700 .78em/1 "Source Sans 3", sans-serif; vertical-align: .08em; background: var(--kbd-bg); color: var(--ink); border: 1px solid var(--kbd-line); }
+  kbd.b.sh { border-radius: 3px; }
+  kbd.ps-X { color: #8ab8ff; } kbd.ps-SQ { color: #f29ac8; } kbd.ps-O { color: #ff7676; } kbd.ps-TR { color: #5fd6aa; }
+  kbd.xb-X { color: #7bd67b; } kbd.xb-SQ { color: #6aa8ff; } kbd.xb-O { color: #ff7676; } kbd.xb-TR { color: #f4cf55; }
+
+  .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+  .tlink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .15rem .5rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
+  .tlink.done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
+
+  /* runs */
+  .runmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr)); gap: .4rem; margin-bottom: 1rem; }
+  .runmap a { display: block; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .45rem .55rem; }
+  .runmap a.full { background: var(--done-bg); }
+  .runmap b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.05rem; letter-spacing: .03em; }
+  .runmap span { font-size: .82rem; color: var(--ink-soft); }
+  .run { scroll-margin-top: var(--sm); }
+  .run .mode { font-family: "Barlow Condensed", sans-serif; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-size: .95rem; }
+  .run .tasks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .3rem; }
+  .run .tasks li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: center; padding: .4rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); min-height: 48px; }
+  .run .tasks li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .run .tasks li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .box { margin-top: .7rem; padding: .7rem .8rem; background: var(--bg-2); border: 1px solid var(--line); }
+  .box h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-size: 1rem; margin-bottom: .3rem; }
+  .box ul, .box ol { margin: .2rem 0 0; padding-left: 1.2rem; }
+  .box li + li { margin-top: .25rem; }
+  .ok { color: var(--green); font-weight: 700; } .no { color: var(--warn); font-weight: 700; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+
+  /* 100% guide */
+  .kinds { display: flex; gap: .35rem; flex-wrap: wrap; }
+  details.chapter { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); margin-bottom: .55rem; scroll-margin-top: var(--sm); }
+  details.chapter.full { border-left-color: var(--green); }
+  details.chapter > summary { list-style: none; cursor: pointer; padding: .7rem .8rem; display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; min-height: 56px; }
+  details.chapter > summary::-webkit-details-marker { display: none; }
+  .ch-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: .04em; text-transform: uppercase; }
+  .ch-count { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .15rem .7rem; font-size: .84rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta .kd { color: var(--ink); font-weight: 600; }
+  .ch-body { padding: 0 .6rem .6rem; }
+  .ch-obj { font-size: .9rem; color: var(--ink-soft); margin: 0 0 .4rem; }
+  .sec-h { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin: .9rem 0 .35rem; padding-bottom: .2rem; border-bottom: 1px solid var(--line); }
+  .sec-note { font-size: .9rem; color: var(--ink-soft); font-style: italic; }
+  .ci { display: grid; grid-template-columns: auto 1fr; gap: .6rem; padding: .55rem .35rem; border-top: 1px solid var(--line); scroll-margin-top: var(--sm); }
+  .ci.got { background: var(--done-bg); }
+  .ci.got .ci-title { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .ci.hidden { display: none; }
+  .ci > div { min-width: 0; }
+  .ci-head { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; }
+  .kind { font-family: "Barlow Condensed", sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 0 .4rem; border: 1px solid currentColor; line-height: 1.5; color: var(--ink-soft); }
+  .ci-title { font-weight: 700; flex: 1 1 100%; }
+  .shot { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-top: .45rem; background: #000; border: 1px solid var(--line); cursor: zoom-in; }
+  .shot.zoom { max-width: none; cursor: zoom-out; }
+  .maplink { display: inline-block; margin-top: .3rem; font-size: .88rem; font-weight: 600; min-height: 30px; }
+  .ci ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
+  .ci li + li { margin-top: .2rem; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .87rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
+
+
+  /* ---- parts: every element with data-p takes its part colour ---- */
+  [data-p="tanker"] { --pc: var(--c-tanker); } [data-p="plant"] { --pc: var(--c-plant); } [data-p="both"] { --pc: var(--c-both); } [data-p="extra"] { --pc: var(--c-extra); }
+  section.sheet, .runmap a { border-top-color: var(--pc, var(--accent)); }
+  .sheet-head h2 small { color: var(--pc, var(--accent)); }
+  .jump, details.chapter { border-left-color: var(--pc, var(--accent)); }
+  .guide { border-left-color: var(--pc, var(--accent)); }
+  .meter span { background: var(--pc, var(--accent)); }
+  .legend i { background: var(--pc, var(--accent)); }
+
+  /* header: title text shown only until a logo image is embedded */
+  .logo[src=""], .hero[src=""] { display: none; }
+  .logo:not([src=""]) ~ h1.title { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  h1.title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(2.2rem, 9vw, 3.6rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1; text-shadow: 0 3px 16px #000; }
+
+  /* 100% Guide item kinds and helpers */
+  .kind.k-ach { color: var(--accent); } .kind.k-story { color: var(--blue); } .kind.k-weapon { color: var(--orange); } .kind.k-box { color: var(--gold); } .kind.k-tag { color: var(--green); }
+  .ci-loc { font-size: .85rem; color: var(--ink-soft); }
+  .ci-desc { margin-top: .3rem; font-size: .95rem; color: var(--desc-ink); }
+  .ci-desc > * + * { margin-top: .4rem; } .ci-desc p { margin: 0; }
+  .tablewrap { overflow-x: auto; margin-top: .4rem; }
+  .tablewrap table { min-width: 34rem; }
+  .guide table, .box table { font-size: .9rem; }
+  .guide .tablewrap table td:first-child { white-space: nowrap; }
+  details.more { margin-top: .7rem; background: var(--bg-2); border: 1px solid var(--line); }
+  details.more > summary { cursor: pointer; padding: .55rem .8rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); min-height: 44px; display: flex; align-items: center; }
+  details.more > .prose { padding: 0 .8rem .8rem; }
+  .prose h4 { margin-top: .8rem; }
+  .prose table td, .guide table td { overflow-wrap: anywhere; }
+
+  @media (max-width: 699px) {
+    :root { --nav-h: 62px; --sm: 70px; }
+    .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 20; margin: 0; padding: 0 0 env(safe-area-inset-bottom, 0px); background: var(--bg); }
+    .totop { width: 38px; height: 38px; right: .75rem; bottom: calc(var(--nav-h) + .7rem + env(safe-area-inset-bottom, 0px)); }
+    .totop svg { width: 17px; height: 17px; }
+    .tab { flex-direction: column; gap: .1rem; font-size: .8rem; min-height: var(--nav-h); border-bottom: 0; border-top: 3px solid transparent; }
+    .tab[aria-selected="true"] { border-top-color: var(--accent); }
+  }
+  @media (min-width: 700px) {
+    main { padding: 0 1.2rem 3rem; }
+    .topbar { margin: 0 -1.2rem; padding: 0 1.2rem; }
+    section.sheet { padding: 1.1rem 1.2rem .5rem; }
+    .title-line h3 { flex: 0 1 auto; }
+    .ci-title { flex: 0 1 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+#view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
+#view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
+#view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
+
+/* guide screenshots: full width, tap to enlarge; tables that hold screenshots stack as cards */
+img.shot { display: block; width: 100%; max-width: 560px; height: auto; aspect-ratio: auto; object-fit: contain; margin-top: .5rem; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
+.tablewrap.stack { overflow: visible; }
+.tablewrap.stack table, .tablewrap.stack tbody, .tablewrap.stack tr, .tablewrap.stack td { display: block; min-width: 0 !important; width: auto; }
+.tablewrap.stack thead { display: none; }
+.tablewrap.stack tr { border: 1px solid var(--line); background: var(--card); padding: .5rem .6rem; margin-bottom: .5rem; }
+.tablewrap.stack tr:has(th):not(:has(td)) { display: none; }
+.tablewrap.stack td { border: 0; padding: .2rem 0; white-space: normal !important; }
+.tablewrap.stack td:empty { display: none; }
+.tablewrap.stack td[data-label]::before { content: attr(data-label); display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.tablewrap.stack td img.shot { margin-top: .2rem; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .92); display: grid; place-items: center; padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
+
+/* spoilers: story text sits behind a bar until tapped; "Show all spoilers" in the settings reveals everything */
+.spoil { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body:not(.spoilers) .spoil:not(.shown) * { visibility: hidden; }
+div.spoil { display: block; border-radius: 4px; }
+body:not(.spoilers) div.spoil:not(.shown) { position: relative; max-height: 3rem; overflow: hidden; }
+body:not(.spoilers) div.spoil:not(.shown)::before { content: "Story spoiler · tap to reveal"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); font-size: .9rem; font-weight: 600; }
+
+</style>
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <img class="hero" src="../img/banners/mgs2.webp" alt="" width="1600" height="516" onerror="this.onerror=null;this.setAttribute('src','')">
+  <img class="logo" src="../img/logos/mgs2.webp" alt="Metal Gear Solid 2: Sons of Liberty" width="800" height="300" onerror="this.onerror=null;this.setAttribute('src','')">
+  <h1 class="title">Metal Gear Solid 2: Sons of Liberty</h1>
+  <div class="eyebrow">Steam · 100% checklist</div>
+  <p>All 51 achievements for the Master Collection version, a seven-run plan from a blind first playthrough to the Big Boss rank, and a 100% guide with every weapon, box and dog tag on Very Easy, Easy and Normal. Progress saves in this browser.</p>
+</header>
+
+<main>
+  <div class="topbar">
+  <div class="searchrow" role="search">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" class="topsearch" id="search" placeholder="Search achievements" aria-label="Search achievements" autocomplete="off" enterkeyhint="search">
+      <button class="clear-search" id="clear-search" aria-label="Clear search" hidden>×</button>
+    </div>
+    <span class="search-count" id="search-count" aria-live="polite"></span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
+    <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
+    <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
+    <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
+  </nav>
+  </div>
+
+  <div class="panel" role="region" aria-label="Progress">
+    <div class="panel-top"><h2>Completion</h2><span class="count" id="count"></span></div>
+    <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="row-tools">
+        <span class="save-status" id="save-status">Saved in this browser automatically. To move progress to your phone, Back up here and Restore there.</span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip" id="spoilers" aria-pressed="false">Show all spoilers</button>
+        <span class="seg" role="group" aria-label="Button prompts"><button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button></span>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="view-ach" role="tabpanel" aria-labelledby="tab-ach"></div>
+  <div id="view-runs" role="tabpanel" aria-labelledby="tab-runs" hidden></div>
+  <div id="view-coll" role="tabpanel" aria-labelledby="tab-coll" hidden></div>
+</main>
+
+<footer>
+  Achievement names and descriptions from Steam (METAL GEAR SOLID 2: Sons of Liberty - Master Collection Version, app 2131640, 0 of 51 unlocked when this was made). Strategies, weapon and box locations and the dog tag lists come from the PSNProfiles trophy guide by OmarCominYo23, linked in every section; dog tag routes follow PerfectStealth's videos.
+</footer>
+<button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function () {
+"use strict";
+const KEY = "mgs2-checklist-v1";
+
+/* Game parts, in display order. Colours come from --c-<key> in the CSS. */
+const PARTS = [
+  { key: "tanker", label: "Tanker chapter", short: "Tanker" },
+  { key: "plant", label: "Plant chapter", short: "Plant" },
+  { key: "both", label: "Tanker-Plant", short: "Both" },
+  { key: "extra", label: "Missions and extras", short: "Extras" }
+];
+
+/* Achievement categories. Each achievement object starts id, name, desc, pct (Steam sync reads these). */
+const SECTIONS = [
+{ id: "tstory", game: "tanker", title: "Tanker story", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "Snake's chapter on the tanker. Both unlock just by playing through it.",
+  items: [
+  { id: "lightsout", name: "Lights Out", desc: "Defeat Olga Gurlukovich", pct: 67.1, tags: ["story"], runs: ["r1"] },
+  { id: "spaghetti", name: "Spaghetti Cinema", desc: "Meet Revolver Ocelot", pct: 58.4, tags: ["story"], runs: ["r1"], sp: "d" }
+  ] },
+{ id: "tmom", game: "tanker", title: "Tanker moments", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "One-off actions that can only be done on the tanker. Once the Gurlukovich Mercenaries fight is over you cannot go back to the upper decks, so do these early.",
+  items: [
+  { id: "kissing", name: "Kissing Booth", desc: "Kiss a poster in a locker", pct: 19.1, tags: ["missable"], runs: ["r3"] },
+  { id: "snakebeater", name: "Snake Beater", desc: "Get caught by Otacon stimulating yourself", pct: 9.5, tags: ["missable"], runs: ["r3"] },
+  { id: "smoke", name: "Down in Smoke", desc: "Disorient an enemy with a cloud of smoke from a fire extinguisher", pct: 10.9, tags: ["missable"], runs: ["r3"] },
+  { id: "hot", name: "Caution: Hot", desc: "Down an enemy with steam from a pipe", pct: 4.3, tags: ["missable"], runs: ["r3"] },
+  { id: "ghost", name: "Who Ya Gonna Call?", desc: "Take a clear photograph of the ghost image in Hold No. 2", pct: 4.9, tags: ["missable"], runs: ["r3"] },
+  { id: "sexting", name: "Sexting", desc: "Send Otacon a picture of the marine with no pants", pct: 5.2, tags: ["missable"], runs: ["r3"] }
+  ] },
+{ id: "pstory", game: "plant", title: "Plant story", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "Raiden's chapter on the Big Shell, boss by boss. All unlock on any difficulty, and A Cut Above pops after the credits.",
+  items: [
+  { id: "bombsquad", name: "Bomb Squad", desc: "Learn how to defuse C4 bombs from Peter Stillman", pct: 53.7, tags: ["story"], runs: ["r1"] },
+  { id: "fortune", name: "Lady Fortune", desc: "Survive Fortune's attack", pct: 47.1, tags: ["story"], runs: ["r1"] },
+  { id: "partyover", name: "Party's Over", desc: "Defeat Fatman", pct: 46.3, tags: ["story"], runs: ["r1"] },
+  { id: "ames", name: "Thanks, Ames", desc: "Learn the location of the president", pct: 44.1, tags: ["story"], runs: ["r1"] },
+  { id: "nofly", name: "No-Fly Zone", desc: "Destroy the AV-88 Harrier II", pct: 43.0, tags: ["story"], runs: ["r1"] },
+  { id: "bohemian", name: "Bohemian Candidate", desc: "Meet President James Johnson", pct: 42.0, tags: ["story"], runs: ["r1"] },
+  { id: "vampslayer", name: "Vampire Slayer", desc: "Defeat Vamp", pct: 41.2, tags: ["story"], runs: ["r1"] },
+  { id: "hug", name: "I Think You Need a Hug, E", desc: "Find Emma Emmerich", pct: 41.1, tags: ["story"], runs: ["r1"], sp: "d" },
+  { id: "sharing", name: "Sharing Is Caring", desc: "Befriend Olga Gurlukovich", pct: 39.9, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "noray", name: "No Ray, José", desc: "Defeat Metal Gear RAY", pct: 38.8, tags: ["story"], runs: ["r1"], sp: "d" },
+  { id: "solidus", name: "Another Snake Bites the Dust", desc: "Defeat Solidus Snake", pct: 38.5, tags: ["story"], runs: ["r1"], sp: "n" },
+  { id: "cutabove", name: "A Cut Above", desc: "Beat the Tanker and Plant chapters on any difficulty", pct: 35.6, tags: ["story"], runs: ["r1"] }
+  ] },
+{ id: "pmom", game: "plant", title: "Plant moments", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "Things to do as Raiden along the way. Most have a point of no return, so read the guide before you reach it.",
+  items: [
+  { id: "rations", name: "My Rations...", desc: "Get sea lice all over your rations", pct: 11.0, tags: ["missable"], runs: ["r3"] },
+  { id: "predator", name: "To Catch a Predator", desc: "Lure a guard with a girlie magazine", pct: 13.0, tags: ["missable"], runs: ["r3"] },
+  { id: "johnny", name: "Johnny on the Spot", desc: "Hear Johnny's bowel noises in two locations", pct: 3.4, tags: ["missable"], runs: ["r3"] },
+  { id: "vampeyer", name: "Vamp Eyer", desc: "Catch a glimpse of Vamp standing in the streets of New York during the end cinematic", pct: 6.2, tags: ["missable"], runs: ["r3"], sp: "d" },
+  { id: "camera", name: "Photo Finish", desc: "Acquire the digital camera", pct: 41.4, tags: [], runs: ["r1"] }
+  ] },
+{ id: "skills", game: "both", title: "Stealth and combat", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "Counters and actions you can do in either chapter. The counters add up across playthroughs on the same save.",
+  items: [
+  { id: "radio", name: "Silence is Golden", desc: "Shoot an enemy radio", pct: 58.2, tags: ["missable"], runs: ["r3"] },
+  { id: "locker", name: "Hurt Locker", desc: "Put an enemy in a locker", pct: 47.0, tags: ["missable"], runs: ["r3"] },
+  { id: "cameras", name: "Bye Bye Big Brother", desc: "Destroy 5 cameras", pct: 10.6, tags: [], runs: ["r3"] },
+  { id: "holdup", name: "Hold Up-aholic", desc: "Hold up 30 enemies", pct: 9.1, tags: ["missable"], runs: ["r3"] },
+  { id: "tranq", name: "Don't Taze Me, Bro", desc: "Tranquilize 100 enemies", pct: 5.2, tags: [], runs: ["r4"] },
+  { id: "necks", name: "Nothing Personal", desc: "Break the neck of 30 enemies", pct: 3.6, tags: ["missable"], runs: ["r3"] },
+  { id: "rent", name: "Rent Money", desc: "Beat 30 enemies unconscious", pct: 3.6, tags: ["missable"], runs: ["r3"] },
+  { id: "grip", name: "Steel Grip", desc: "Attain grip level 3", pct: 8.0, tags: ["missable"], runs: ["r3"] }
+  ] },
+{ id: "collect", game: "both", title: "Collectables", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "Weapons, boxes and dog tags. Weapons and boxes fit in one run; dog tags carry over through New Game+ and need Very Easy, Easy and Normal. The four dog tag rewards only unlock after the credits of the run that reaches the total.",
+  items: [
+  { id: "wctanker", name: "Weapon Completionist: Tanker", desc: "Collect every type of weapon on the Tanker", pct: 29.4, tags: ["missable", "collect"], runs: ["r3"] },
+  { id: "wcplant", name: "Weapon Completionist: Plant", desc: "Collect every type of weapon in the Plant", pct: 25.0, tags: ["missable", "collect"], runs: ["r3"] },
+  { id: "boxes", name: "Moving Day", desc: "Collect all boxes", pct: 26.0, tags: ["missable", "collect"], runs: ["r3"] },
+  { id: "dogtag", name: "Animal Control", desc: "Collect a dog tag", pct: 58.6, tags: ["collect"], runs: ["r3"] },
+  { id: "yorkie", name: "Yorkie", desc: "Get the bandana", pct: 3.9, tags: ["missable", "collect"], runs: ["r4"] },
+  { id: "poodle", name: "Poodle", desc: "Get the Tanker stealth suit", pct: 3.4, tags: ["missable", "collect"], runs: ["r5"] },
+  { id: "beagle", name: "Beagle", desc: "Get the infinity wig", pct: 3.3, tags: ["missable", "collect"], runs: ["r4"] },
+  { id: "shiba", name: "Shiba Inu", desc: "Get the Plant stealth suit", pct: 2.8, tags: ["missable", "collect"], runs: ["r5"] }
+  ] },
+{ id: "rank", game: "both", title: "Big Boss rank", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "The hardest part of the list: one Tanker-Plant run on Extreme with strict rules. Complete Stealth and Pacifist Run come with it.",
+  items: [
+  { id: "bigboss", name: "Big Boss", desc: "Earn the title of Big Boss", pct: 1.7, tags: ["missable", "timed"], runs: ["r6"] },
+  { id: "stealth", name: "Complete Stealth", desc: "Clear the game without entering Alert Mode (not including events where Alert Mode is mandatory)", pct: 3.0, tags: ["missable"], runs: ["r6"] },
+  { id: "pacifist", name: "Pacifist Run", desc: "Clear the game without killing anyone", pct: 5.6, tags: ["missable"], runs: ["r6"] }
+  ] },
+{ id: "extras", game: "extra", title: "Missions and extras", src: "https://psnprofiles.com/guide/25510-metal-gear-solid-2-sons-of-liberty-trophy-guide",
+  intro: "Everything outside the main story: VR and Alternative missions, Boss Survival, Snake Tales, the Casting Theater and the Screenplay Book.",
+  items: [
+  { id: "cake", name: "Piece of Cake", desc: "Complete a VR or Alternative mission", pct: 15.1, tags: [], runs: ["r2"] },
+  { id: "vr50", name: "In It to Win It", desc: "Place first in 50 different VR/Alternative missions", pct: 2.9, tags: [], runs: ["r2"] },
+  { id: "casting", name: "Casting Theater", desc: "Watch something in the Casting Theater", pct: 7.2, tags: [], runs: ["r2"] },
+  { id: "lovehurts", name: "Love Hurts", desc: "Watch Rose kill Raiden on a rooftop", pct: 5.1, tags: [], runs: ["r2"], sp: "d" },
+  { id: "screenplay", name: "Cover-to-Cover Solid 2: Books of the Patriots", desc: "Read all the pages in the Screenplay Book", pct: 8.2, tags: [], runs: ["r2"] },
+  { id: "bosssurv", name: "No Boss of Mine", desc: "Complete Boss Survival", pct: 3.0, tags: [], runs: ["r7"], sp: "g" },
+  { id: "tale", name: "Tell Me a Tale", desc: "Complete at least one of the Snake Tales", pct: 4.7, tags: [], runs: ["r7"] }
+  ] }
+];
+
+/* Guide text per achievement (HTML; [X] style tokens become button glyphs). */
+const GUIDES = {
+lightsout: "<p>Olga is the first boss, fought on the Navigational Deck at the top of the tanker. You only have the M9, and she has to be tranquilised: she cannot be killed. Each hit gives her a couple of seconds of invincibility.</p><h4>Her tricks</h4><ul><li>Shoots her USP whenever Snake is in sight, moving between covers.</li><li>Throws a grenade if you sit still behind cover for too long (listen for the pin).</li><li>At lower health she pulls a green tarp off the crate beside her, then turns the big searchlight on you.</li></ul><h4>Reliable method (use it on Extreme)</h4><ul><li>As the fight starts, crouch (do not go prone) in front of the large gap between the crates, slightly right of centre.</li><li>Olga paces between covers and pauses beside hers. When her leg shows through the gap, shoot it once.</li><li>After the hit she runs right and comes back to the same spot. Repeat. Landing hits regularly also stops her using the tarp and the light.</li><li>If she throws a grenade, run clear and return to the gap.</li></ul><img data-img=\"s_olga\" alt=\"Olga's ankle visible through the gap between the crates\"><p>She also drops a dog tag on every difficulty: pick up her sleeping body and drop it after the fight.</p>",
+spaghetti: "<p>The Tanker ends in Hold No. 3, where you photograph Metal Gear RAY and upload the shots to Otacon from the computer. Cutscenes follow, Ocelot appears and this unlocks.</p><h4>The four photos</h4><ul><li>The front.</li><li>Front left, from the south-west corner.</li><li>The Marines logo on the Metal Gear, seen from the north-east corner.</li><li>Front right, from beside the upload computer.</li></ul><p>Before uploading, take the extra photos for <div class=\"achrefs\" data-ids=\"sexting,ghost\"></div></p>",
+bombsquad: "<p>Unlocks after Peter Stillman's long bomb-disposal tutorial in the northern room of the Strut C Dining Hall (north of the Strut B Transformer Room, where you meet Pliskin). The tutorial cannot be skipped on a first save, but can on New Game+.</p><h4>Defusing a C4</h4><ul><li>Equip the Coolant from the weapon menu [R2].</li><li>Aim at the bomb and hold fire until it freezes and is defused.</li></ul>",
+fortune: "<p>Raiden's first boss, on the Strut A deep sea dock. You cannot hurt Fortune: just survive until the elevator comes down and you get a call. Her railgun breaks crates after a few hits, and barrels explode, so keep away from them.</p><h4>Extreme method (about 80 seconds)</h4><ul><li>She kills in one shot on Extreme. Equip a <b>Box</b> before the fight (pick one up earlier: <b>Box 1</b> in the Strut A Pump Room is on the way).</li><li>Crouch-walk steadily in one direction. She fires two shots and both miss while you keep moving.</li><li>After her second shot, turn and walk the other way. Repeat until it ends.</li><li>Do not hide behind the crates in front: they break at once and the fire around them burns the box.</li></ul>",
+partyover: "<p>Fatman, on the Strut E Heliport soon after Fortune. The fight loops: he guards a bomb and shoots at you, then skates around planting more bombs (2 to 5 depending on difficulty) before the timer starts again.</p><h4>Knocking him down</h4><p>Hit him with an uninterrupted string of shots (SOCOM works, or the M9 on his ankle joint) to make him fall. Only while he is down do headshots do real damage. Miss one shot or pause and you start the string again.</p><img data-img=\"s_fat1\" alt=\"Aiming at Fatman's ankle at the start of the fight\"><h4>Extreme method</h4><ul><li>At the start, look right and tranquilise his ankle joint; shoot when the laser dot is on him.</li><li>Land a headshot before the stars appear over his head, then a second once they do.</li><li>Defuse the bomb nearest you (south-west). He returns to his first spot: repeat the ankle shot and two headshots.</li><li>At the second bomb, place a Claymore between the two containers next to his starting spot. Spray the bomb only until its light turns orange (about 10 to 12 seconds left), do not finish it.</li><li>He comes back to his spot: from the right he trips the Claymore; from the left, shoot his ankles. Finish the bomb while he is down, then headshot.</li><li>Defusing his last bomb makes him do a leg gesture with invincibility; shoot his lower legs just before the left leg swings forward the second time, then headshot twice again.</li><li>The second half is guesswork: chase him by sound, knock him down with about six SOCOM rounds, tranquilise once. Keep the Sensor equipped to find bombs. If he arms only four bombs you get about 20 seconds, which is usually a reload.</li></ul><img data-img=\"s_fat2\" alt=\"Fatman down beside the containers\"><img data-img=\"s_fat3\" alt=\"Claymore placed between the containers\"><p>Pick up and drop Fatman afterwards for <span class=\"spoil\">Peter Stillman's</span> dog tag.</p>",
+ames: "<p>Unlocks after the cutscenes with Ames in the Shell 1 Core B1 hostage room.</p><h4>What you need first</h4><ul><li>The B.D.U. uniform, given by Mr. X after Fatman.</li><li>The AKS-74u from the northern room on the lower floor of the Strut F Warehouse.</li><li>The Directional Mic from the Shell 1 Core B2 Computer Room. With the uniform and the AKS-74u equipped, guards treat you as one of them.</li></ul><h4>Finding Ames</h4><p>Do not bump into anyone or the disguise fails. Ames has neck-length light brown hair and a slightly receding hairline, and he is the only hostage who looks like that. Wait until no guard is watching, point the mic at him and press the action button. Raiden asks if he is Ames; the wrong hostage just grumbles.</p><img data-img=\"s_ames\" alt=\"Ames among the hostages\"><img data-img=\"s_amesmic\" alt=\"Pointing the mic at Ames\"><p>After the first cutscenes you have 10 seconds while <span class=\"spoil\">Ocelot</span> walks over: equip the AKS-74u again. Do not skip the cutscenes here if you still need <div class=\"achrefs\" data-ids=\"johnny\"></div></p>",
+nofly: "<p>The Harrier fight on the Strut E/F roof area. Pick up the Stinger <span class=\"spoil\">Snake</span> drops, lock on and keep the jet inside the outer square until the missile hits; if the jet leaves the square the missile detonates early.</p><h4>Its attacks</h4><ul><li>Circles the platform, or flies far out to one side, then comes in with homing missiles (a jet roar means it is switching sides).</li><li>Around half health: flares or a hover bombing run over the upper deck.</li><li>Rises from below the platform on your right and fires a missile barrage.</li><li>Comes in close with no roar: machine gun sweep from right to left.</li></ul><h4>Extreme pattern</h4><ul><li>Grab the Stinger and land up to three hits while it hovers in front.</li><li>It flies far right and attacks: from the stairs, fire once, then run down.</li><li>It circles once (two hits), crosses over, circles again (one hit).</li><li>It shouts and bombs the upper deck: go to the lower level, not the stairs.</li><li>Homing attack from the left: prone behind the railing right of the stairs and do not move. From the right: fire once from the stairs and run down.</li><li>Missile barrage (it came from below the platform): lean on a wall with the SOCOM and tap fire so Raiden leans out and fires exactly one bullet; the lean-out animation is invincible. Keep chaining it until the missiles stop. Two bullets in one lean means no invincibility.</li><li>After the barrage it hangs in front: three free hits. Machine gun attack: hide behind the black box on the lower deck and move round it as the sweep passes.</li></ul>",
+bohemian: "<p>Unlocks once you meet President Johnson. To get to him you need the Nikita from the flooded Shell 2 Core B1 Filtration Chamber No. 1 (deeper in on Normal and up, a little earlier on Easy and Very Easy).</p><ul><li>Back in the Air Purification Room, stand on the crate and fire the Nikita into the vent ahead.</li><li>Steer it left and right through the ducts into the President's room. The route changes by difficulty.</li><li>Hit the control panel in the north-west of the room to switch off the electrified floor.</li><li>Then take the rightmost corridor, turn left at the end and cross into the room.</li></ul><img data-img=\"s_nik1\" alt=\"Standing on the crate with the Nikita\"><img data-img=\"s_nik2\" alt=\"Firing the Nikita into the vent\"><img data-img=\"s_nik3\" alt=\"The control panel in the President's room\">",
+vampslayer: "<p>Vamp, after the first flooded section on the way to Emma. With the method below it is the easiest boss, just slow, and it is safe enough that you do not need a save before it on the Big Boss run.</p><ul><li>Go to the small area in front of the north-east door and lie prone, facing the middle of the arena, able to aim freely in first person.</li><li>Aim up towards the ceiling and wait.</li><li>Vamp swims, climbs out and walks slowly to you, then crouches to attack. Shoot him in the head with the M9 as he crouches.</li><li>He retreats to the water and repeats. Keep going until his stamina is gone.</li></ul><img data-img=\"s_vamp1\" alt=\"Prone in the north-east corner\"><img data-img=\"s_vamp2\" alt=\"Aiming at the ceiling\"><img data-img=\"s_vamp3\" alt=\"Shooting Vamp as he crouches\">",
+hug: "<p>After Vamp, go through the north-east door and swim the second flooded section. In the room beyond, open the middle locker to find Emma. Take the Pentazemin to the left of the small stairs first: it steadies your aim in the sniping section.</p>",
+sharing: "<p>Unlocks after the cutscenes in which Olga reveals her real intentions. After the sniping section, head to the Shell 1 Core 1F elevator (the one you used in the B.D.U. disguise); the scene plays once you step in.</p>",
+noray: "<p>The penultimate fight on top of Arsenal Gear, with the Stinger. Easy has 3 RAYs; Extreme has around 20.</p><h4>RAY's attacks</h4><ul><li>Three homing missiles with a warning sound: run to another side.</li><li>Two small missiles from its knees.</li><li>An arcing machine gun: walk backwards or dodge-roll at the right moment.</li><li>A straight water-cutter beam if it stands right in front of you: sprint left or right.</li></ul><p>Hit the knee first to stagger it, then the head straight away: head shots without the stagger do little damage. The Extreme loop strategy is in the Big Boss run.</p>",
+solidus: "<p>The final fight on the rooftop with only the HF Blade (lethal red or non-lethal blue). Before it starts Solidus takes about half your health.</p><img data-img=\"s_solidus\" alt=\"Hanging from the ledge as Solidus raises his foot\"><h4>Phase 1</h4><ul><li>Run to the right side of the roof and hang from the ledge.</li><li>With Solidus straight in front of you, he always does a two-sword vertical slash, raising his left foot first. Press [TR] as the foot rises: climbing up is invincible.</li><li>Then punch with [O], pause, [O], [O] (or [O], [O], pause, [O]). Mashing adds a kick that sends him away and he answers with missiles.</li><li>Hang again and repeat. If he attacks diagonally he follows up, so reposition.</li></ul><h4>Phase 2 (half stamina)</h4><ul><li>He sheds his tentacles and rushes three times, leaving flames, then attacks: hold [L1] facing him to block three blows.</li><li>Hang again, but climb as late as you can: his slash now ends in a round kick, and you need the invincible climb to cover it.</li></ul>",
+cutabove: "<p>Unlocks after Solidus, the cutscenes, the unskippable credits, the stats screen and your rank. Do not skip the post-Solidus scenes if you still need <div class=\"achrefs\" data-ids=\"vampeyer\"></div></p>",
+kissing: "<p>Hide inside a locker that has a poster, hold [R1] for first person and look at the woman's lips. The view zooms in and Snake makes a kissing sound.</p><p>Earliest spot: at the start of the Tanker take the left door. That area has one guard and a locker room; the locker in the far left corner has the poster. Do <div class=\"achrefs\" data-ids=\"snakebeater,locker\"></div> there too. <a href=\"https://www.youtube.com/watch?v=UXjNzhcKcHQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable: after the Gurlukovich Mercenaries fight (Tanker) or the Harrier (Plant), the poster lockers are out of reach.</p>",
+snakebeater: "<p>Use the same poster locker at the start of the Tanker (left door, far left locker). Open the locker, stand outside it close to the poster, hold [R1] for first person, then call Otacon on 141.12. He tells Snake off and this unlocks. You must be outside the locker, looking at the poster in first person. <a href=\"https://www.youtube.com/watch?v=eZQKenfEiRs\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable after the Gurlukovich Mercenaries fight.</p>",
+smoke: "<p>Best spot: Deck D, Crew's Quarters, the room under the Bridge. A guard patrols past a fire extinguisher on the far side of the room; when he is next to it, shoot the extinguisher (the M9 works). <a href=\"https://www.youtube.com/watch?v=nB4PYfjdjWc\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable: the Tanker locks after the mercenaries fight, and after the sniping section there is little left to roam in the Plant.</p>",
+hot: "<p>Easiest in the Gurlukovich Mercenaries fight on the Tanker. There are steam pipes on the left: when a mercenary walks close, keep shooting the pipe beside him until the steam downs him. Do it on the last one (the 11th).</p><p>Second chance: the corridor with metal grating on the left side of the Strut B Transformer Room. After you get the Coolant, two guards patrol there; shoot the pipes as one passes. <a href=\"https://www.youtube.com/watch?v=-FDZnegcJio\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable: after the mercenaries fight and after the Harrier you cannot return to either spot.</p>",
+ghost: "<p>In Hold No. 2 (the room with two projectors, after the mercenaries fight), photograph the right-hand projector screen while it plays. A ghostly face appears in the photo. Keep taking photos if it does not show at first. <a href=\"https://www.youtube.com/watch?v=MKFKT7mZZZU\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><img data-img=\"s_ghost\" alt=\"Master Book entry on the ghost photo\"><p class=\"warn\">Missable once the RAY photos are uploaded.</p>",
+sexting: "<p>In the first hall of marines listening to the Commandant (after the mercenaries fight), one marine is in his boxers. Photograph him until Snake says \"Good\", then upload that photo with the RAY photos. Otacon laughs and this unlocks. On New Game+ more marines are in boxers.</p><img data-img=\"s_sexting\" alt=\"The photo viewer with the marine in boxers\"><p class=\"warn\">Missable once the RAY photos are uploaded.</p>",
+rations: "<p>Equip a Ration with [L2] and crawl [X] over the sea lice. One climbs on the ration. <a href=\"https://www.youtube.com/watch?v=_1EcXfaQ_fQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><h4>Four chances in the Plant</h4><ul><li>The start: take the Ration from the middle locker, then crawl through the bugs on the west side.</li><li>The same place when you come back for the last bomb before Fortune.</li><li>In front of the elevator while escorting Emma (she refuses to walk over them).</li><li>In front of the Shell 1 Core elevator after the sniping section.</li></ul>",
+predator: "<p>In the Shell 1 Core B2 Computer Room (where you get the Directional Mic, wearing the B.D.U. and carrying the AKS-74u), three guards stand in the computer room. Open the first locker on the west side with a quick [O] [O] [O] combo; magazines fall out. Pick one up, sneak behind a guard, equip it with [R2] and put it on the floor. When the guard turns and sees it, he crouches to read it. <a href=\"https://www.youtube.com/watch?v=L_McSTKkdJw\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable once you have met Ames.</p>",
+johnny: "<p>Listen to Johnny with the Directional Mic in two places in one playthrough. <a href=\"https://www.youtube.com/watch?v=VkwtTGYPBxA\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><ul><li><b>After finding Ames:</b> do not skip the cutscenes. In the one where Raiden listens to <span class=\"spoil\">Ocelot and Solidus</span> through the wall, turn the mic left towards the toilet instead and keep listening until Johnny's last line, about there being no paper (no subtitle appears).</li><li><b>Sniping section:</b> when Emma reaches the second silo and goes round the back, Johnny holds her up. Keep the mic on them for the whole conversation.</li></ul><img data-img=\"s_johnny1\" alt=\"Pointing the mic at the toilet\"><img data-img=\"s_johnny2\" alt=\"Listening to Emma and Johnny at the silo\">",
+vampeyer: "<p>After Solidus, do not skip anything. In the scene where Snake hands Raiden the dog tags and they face the camera (Raiden says he will pick his own name and his own life), hold [R1] and nudge the view with the right stick to spot Vamp far behind, next to a car. <a href=\"https://www.youtube.com/watch?v=9EJa55uN9Eo\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable: that scene can be skipped.</p>",
+camera: "<p>You get the Digital Camera for finishing the game once, so this comes naturally. It can also be found earlier in the lower floor of the Strut E Parcel Room after the sniping section (or ride the south conveyor wearing Box 4 to get there).</p><img data-img=\"s_camera\" alt=\"Master Book entry on the Digital Camera\">",
+radio: "<p>The radio is the black box on a guard's right hip. Shoot it with anything. Simplest: hold up the first guard at the start of the Tanker and shoot the radio with the M9.</p><img data-img=\"s_radio\" alt=\"A guard's radio on his hip\"><p><a href=\"https://www.youtube.com/watch?v=sP0MGL8tXLE\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>",
+locker: "<p>Knock out a guard, drag him and put him in a locker. Easiest at the start of the Tanker: take the left door, tranquilise the single guard, then grab and carry him into a locker in the next room. <a href=\"https://www.youtube.com/watch?v=qN5TV8aAfN8\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><p class=\"warn\">Missable: no lockers on the Tanker after the mercenaries fight, and none in the Plant after Emma.</p>",
+cameras: "<p>Destroy 5 surveillance cameras with lethal ammo (the green light turns red). Do it before they spot you. The Big Boss route naturally destroys at least five, and the Snake First Person View VR missions (levels 3 and 4) also have cameras that count.</p>",
+holdup: "<p>Sneak up behind a guard unseen and aim at him (hold [SQ], or aim with [L3]). Your character shouts \"Freeze!\" and the guard raises his hands. 30 in total, which comes naturally while collecting dog tags (each tag needs a hold-up).</p><img data-img=\"s_holdup\" alt=\"A guard held up\"><p>Guards you knocked out are awake again when you come back after bosses and cutscenes. The cut-off is the same as for <div class=\"achrefs\" data-ids=\"necks,rent\"></div></p>",
+tranq: "<p>Tranquilise 100 enemies with the M9 (both characters have it). A headshot (or a shot to the backside) knocks them out at once; body shots take a while. It should come naturally by the end of the Easy dog tag run if you use the M9 instead of lethal weapons. M9 ammo is limited, so aim carefully.</p>",
+necks: "<p>Sneak up behind a guard, hold [O] to grab him in a chokehold, then press [O] about ten times to break his neck. Combine with <div class=\"achrefs\" data-ids=\"holdup\"></div>: hold up, grab, break.</p><img data-img=\"s_choke\" alt=\"Chokehold on a guard\"><p class=\"warn\">Each one counts as a kill: never do this on the Big Boss run. Last chances: before uploading the RAY photos (Tanker) and before <span class=\"spoil\">the Tengu fights</span> (Plant).</p>",
+rent: "<p>Get close and press [O] three times: punch, punch, kick. The guard falls with stars over his head. This is not a kill; he wakes up later.</p><img data-img=\"s_stars\" alt=\"A guard knocked out with stars over his head\"><p class=\"warn\">Last chances: before uploading the RAY photos (Tanker) and before <span class=\"spoil\">the Tengu fights</span> (Plant).</p>",
+grip: "<p>Grip level rises by one for every 100 pull-ups (hang with [TR], climb up with [TR]). Level 3 needs 200.</p><h4>Fast method</h4><ul><li>Go to the Engine Room, Starboard (after Olga) and tranquilise the three guards near the railings. Save first.</li><li>Hang from a railing that is above another railing, press [X] to drop and spam [TR] to catch the one below. Each catch counts as 10 pull-ups.</li><li>10 catches: Otacon calls to say your grip went up. 20 catches: level 3 and the achievement.</li><li>If you fall, reload.</li></ul><img data-img=\"s_grip1\" alt=\"Hanging from the upper railing\"><img data-img=\"s_grip2\" alt=\"Catching the railing below\"><p><a href=\"https://www.youtube.com/watch?v=BQJ_svVfcLY\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>",
+wctanker: "<p>Five weapons as Snake: M9, Chaff Grenade, USP, Stun Grenade and Hand Grenade. All are listed with locations in the 100% Guide (Tanker chapters). <a href=\"https://youtu.be/QdnTj-nzbgA\" target=\"_blank\" rel=\"noopener\">Video by DUKEHQ273 ↗</a></p><p class=\"warn\">Missable: the grenades are easy to walk past. Without a save from before, you need a new playthrough.</p>",
+wcplant: "<p>Nineteen weapon types as Raiden, listed in story order in the 100% Guide. Most of the risky ones are in the Strut F Warehouse, which closes after the Harrier, and the Computer Room magazines, which close after Ames. The achievement should pop when you get the HF Blade, or after its short practice. <a href=\"https://youtube.com/playlist?list=PLqY1SUio0ha1y5CgWuHxcVGSmrA0vOUme\" target=\"_blank\" rel=\"noopener\">Video playlist by DUKEHQ273 ↗</a></p><p class=\"note\">Sources disagree on whether the Book on the Warehouse crates counts; pick it up as well to be safe.</p>",
+boxes: "<p>Seven cardboard boxes: two on the Tanker (Orange Box, Wet Box) and five in the Plant (Box 1 to 5). They do not carry over to New Game+, so get all seven in one run. Locations with screenshots are in the 100% Guide. <a href=\"https://www.youtube.com/watch?v=tyjaIHy2M-E\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>",
+dogtag: "<p>Hold up a guard who has a tag, walk round to his front and aim at his face. A timid guard shakes and drops it. A stubborn one stares at you: fire a lethal round at the wall near him (or aim a Nikita or Stinger at him) and he drops it. Do not lower your weapon in front of him.</p><p>Look for the intermittent shine in first person, or use the Thermal Goggles to see the tag.</p><img data-img=\"s_tagshine\" alt=\"A dog tag shining in first person\"><img data-img=\"s_tagthermal\" alt=\"A dog tag through the Thermal Goggles\"><h4>Thermal Goggles early</h4><ul><li>Tanker: after Olga, take the stairs on the right and climb the ladders to the top of the mast.</li><li>Plant: dive in the Strut A Deep Sea Dock at the start; they are in the south-west corner underwater.</li></ul><img data-img=\"s_goggt\" alt=\"Thermal Goggles on the tanker mast\"><img data-img=\"s_goggp\" alt=\"Thermal Goggles underwater in the Deep Sea Dock\">",
+yorkie: "<p>The Bandana (infinite ammo) needs <b>46 dog tags as Snake</b> (Tanker). Very Easy has 24 and Easy 26, so it unlocks after the credits of the Easy run if you got every tag on both.</p><p>Tags carry over only when you finish, save and start New Game+ from that save. Snake's tags never count for Raiden and vice versa.</p>",
+poodle: "<p>The Tanker Stealth Suit needs <b>76 dog tags as Snake</b>. Very Easy 24 + Easy 26 + Normal 33 = 83, so it unlocks after the credits of the Normal run. Bumping into a guard still breaks the stealth.</p>",
+beagle: "<p>The Infinity Wig (infinite ammo) needs <b>73 dog tags as Raiden</b>. Very Easy has 43 and Easy 44, so it unlocks after the credits of the Easy run if you got every tag on both.</p>",
+shiba: "<p>The Plant Stealth Suit (Stealth Camo) needs <b>121 dog tags as Raiden</b>. Very Easy 43 + Easy 44 + Normal 49 = 136, so it unlocks after the credits of the Normal run.</p><h4>Points of no return for tags</h4><ul><li>The Gurlukovich Mercenaries fight (Tanker).</li><li>The Harrier fight and the Emma sniping section (Plant).</li></ul><p>Some guards only appear after certain events or vanish after others; the notes in each tag list say when. A missed tag means replaying that difficulty to the end.</p>",
+bigboss: "<p>Finish a Tanker-Plant run on Extreme (or European Extreme) and meet every rule below. The full plan, save points and videos are in Run 6 on the Playthroughs tab.</p><ul><li>Tanker-Plant chosen at the start (Tanker or Plant alone gives Night Owl).</li><li>No special items equipped (holding them is fine).</li><li>0 kills, Radar off, 3 or fewer alerts (all three are scripted).</li><li>No rations, no continues, 8 or fewer saves.</li><li>Under 3 hours and under 700 shots.</li></ul>",
+stealth: "<p>Comes with <div class=\"achrefs\" data-ids=\"bigboss\"></div> Caution is fine; only Alert breaks it. The mandatory alerts are the Tengu fights (and possibly the mercenaries fight and the sniping section). Playing with Game Over if Discovered tells you at once if you slip.</p>",
+pacifist: "<p>Comes with <div class=\"achrefs\" data-ids=\"bigboss\"></div> Only non-lethal weapons on guards and bosses. Neck breaks count as kills.</p>",
+cake: "<p>Finish any VR or Alternative mission from Missions on the main menu. Comes with <div class=\"achrefs\" data-ids=\"vr50\"></div></p>",
+vr50: "<p>Place first in 50 of the 511 missions. When you create the Missions save, enter the name <b>UUDDLRLRBA</b> to unlock every mission at once.</p><p>The Sneaking missions are the most predictable: reach the goal fast without being seen and beat the score. Ten levels for each of Raiden, Raiden (Ninja), Snake, Pliskin and Snake (Tuxedo) makes exactly 50. Swap in Photograph or other missions if any feel too hard. <a href=\"https://www.youtube.com/watch?v=YXamJ1O7vmY\" target=\"_blank\" rel=\"noopener\">All 50 by optinooby ↗</a></p>",
+casting: "<p>Watch any scene in the Casting Theater (Special on the main menu). Do it with <div class=\"achrefs\" data-ids=\"lovehurts\"></div> and both unlock together.</p>",
+lovehurts: "<p>In the Casting Theater choose <b>Demo 8: Solidus Vs Raiden: The Final Battle</b>, swap Raiden for Rose and Solidus for Raiden, then Play. Watch or skip; it unlocks at the end. <a href=\"https://www.youtube.com/watch?v=39N8JXvm82M\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>",
+screenplay: "<p>Open the Screenplay Book from the title menu and turn all of its roughly 833 pages with [R1].</p>",
+bosssurv: "<p>Boss Survival is a boss rush (Special, then Boss Survival). Easy is enough. <a href=\"https://www.youtube.com/watch?v=UtkQ1l-JgPQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><table><tr><th>Boss</th><th>Tip</th></tr><tr><td>Olga</td><td>The Extreme gap method: crouch at the gap and tranquilise her ankles.</td></tr><tr><td>Soldiers</td><td>One M9 hit to the upper body each.</td></tr><tr><td>Fatman</td><td>SOCOM headshots; he is much less aggressive here.</td></tr><tr><td>Harrier</td><td>Same pattern as Extreme, but slower.</td></tr><tr><td>Vamp</td><td>Prone in the north-east corner, SOCOM headshots.</td></tr><tr><td>Tengu</td><td>M9; spray Coolant at any that get close to stagger them.</td></tr><tr><td>Metal Gear RAY</td><td>Stinger: knee, then head. Three RAYs.</td></tr><tr><td>Solidus</td><td>Keep attacking his left side: the eyepatch means he cannot see it.</td></tr></table>",
+tale: "<p>Complete the first Snake Tale, <b>The Wrongdoing</b> (Special, then Snake Tales). Start on the roof as Snake, go to the Warehouse and find Ames in the upper-left room of the square corridor; he gives you a USP. Then go north through the Parcel Room to the Heliport, beat Fatman and defuse his bombs. An unskippable credits roll follows. <a href=\"https://www.youtube.com/watch?v=2r0HnjABXdQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"
+};
+
+/* Playthroughs. */
+const RUNS = [
+{ id: "r1", game: "both", n: "Run 1", title: "Blind first playthrough", mode: "New Game · Tanker-Plant · Normal",
+  summary: "Play the whole game your own way, no guide and no collectible hunting. Every story achievement comes from this run, plus the Digital Camera for finishing. If you want a refresher on the controls, Special then Basic Actions on the main menu has a video for each move.",
+  tasks: [["Tanker: beat Olga", "On the Navigational Deck"], ["Tanker: upload the RAY photos", "||Ocelot appears||"], ["Plant: learn bomb disposal from Stillman", "Strut C Dining Hall"], ["Plant: survive Fortune and beat Fatman", ""], ["Plant: find Ames and down the Harrier", ""], ["Plant: meet the President, beat Vamp, find Emma", ""], ["Plant: beat ||the RAYs and Solidus||", "Watch the credits through to your rank"], ["Save the clear data", "Needed later for New Game+"]],
+  body: [{ h: "Before you start" }, "In Options, Screen, set the resolution to Adjusted Mode for the highest resolution your setup allows.", { box: "controls" }] },
+{ id: "r2", game: "extra", n: "Run 2", title: "Missions and menu extras", mode: "Main menu · any time",
+  summary: "Everything you can do from the menus. Fine to do whenever you need a break from the story runs.",
+  tasks: [["Create a Missions save named UUDDLRLRBA", "Unlocks every VR and Alternative mission"], ["Place first in 50 missions", "Sneaking levels 1 to 10 for five characters"], ["Casting Theater: Demo 8 ||with Rose and Raiden swapped||", "Unlocks two achievements"], ["Read the whole Screenplay Book", "Title menu, turn pages with [R1]"]],
+  body: [{ box: "vrlist" }] },
+{ id: "r3", game: "both", n: "Run 3", title: "Very Easy cleanup", mode: "New Game · Tanker-Plant · Very Easy",
+  summary: "The big cleanup: every missable, every weapon and box, the counters, and every Very Easy dog tag. Follow the 100% Guide chapter by chapter, and save often so you can reload a mistake. Learn the Extreme boss methods here too.",
+  tasks: [["Tanker: poster locker at the start", "Kissing Booth, Snake Beater, Hurt Locker, Silence is Golden"], ["Tanker: fire extinguisher on Deck D", "Down in Smoke"], ["Tanker: Grip level 3 in the Engine Room", "Steel Grip"], ["Tanker: all five weapons and both boxes", ""], ["Tanker: steam pipe in the mercenaries fight", "Caution: Hot"], ["Tanker: ghost photo and the marine in boxers", "Before uploading the RAY photos"], ["Plant: sea lice on a Ration", "My Rations..."], ["Plant: girlie magazine in the Computer Room", "To Catch a Predator"], ["Plant: Johnny at the toilet and at the silo", "Do not skip the Ames cutscenes"], ["Plant: all 19 weapons and five boxes", "Warehouse closes after the Harrier"], ["Destroy 5 cameras", ""], ["30 hold-ups, 30 neck breaks, 30 beat-downs", "Holds and beat-downs come with the tags"], ["Every Very Easy dog tag", "24 Tanker, 43 Plant"], ["Do not skip the last cutscenes", "Vamp Eyer"], ["Save the clear data", ""]],
+  body: ["Neck breaks count as kills, which is fine here but never on the Big Boss run.", { box: "tagvideos" }] },
+{ id: "r4", game: "both", n: "Run 4", title: "Easy New Game+", mode: "New Game+ · Tanker-Plant · Easy",
+  summary: "Load the Very Easy clear save, start New Game+ on Easy and collect every Easy dog tag. Your tags carry over. Tranquilise everyone you can on the way. After the credits the Bandana and the Infinity Wig unlock.",
+  tasks: [["Every Easy Tanker dog tag", "26 more, 50 in total"], ["Every Easy Plant dog tag", "44 more, 87 in total"], ["Tranquilise 100 enemies in total", "Use the M9 on everyone"], ["Pick up anything missed in Run 3", ""], ["Finish and save the clear data", "Yorkie and Beagle after the credits"]] },
+{ id: "r5", game: "both", n: "Run 5", title: "Normal New Game++", mode: "New Game+ · Tanker-Plant · Normal",
+  summary: "Load the Easy clear save, start New Game+ on Normal and finish the dog tags. Both stealth suits unlock after the credits. Keep practising the Extreme boss methods.",
+  tasks: [["Every Normal Tanker dog tag", "33 more, 83 in total (76 needed)"], ["Every Normal Plant dog tag", "49 more, 136 in total (121 needed)"], ["Finish and save the clear data", "Poodle and Shiba Inu after the credits"]] },
+{ id: "r6", game: "both", n: "Run 6", title: "Big Boss on Extreme", mode: "New Game+ · Tanker-Plant · Extreme · Radar off",
+  summary: "The hardest run. Start it as New Game+ so you can skip Stillman's two-minute tutorial. Choose Tanker-Plant, Extreme, Game Over if Discovered and Radar Off. Tranquilise from a distance, skip every cutscene and codec call, and do not collect dog tags. Complete Stealth and Pacifist Run unlock with Big Boss.",
+  tasks: [["Tanker to Olga, then Olga with the gap method", "No save until the Plant"], ["Mercenaries fight: tranquilise 8, then the last 3", "Jiggle-peek from cover"], ["Avoid the marines, upload the RAY photos", "Only four guards need to sleep"], ["Plant start to the last bomb, with a Box", "Save 1 in the elevator room; about 40 minutes with no save"], ["Fortune with the Box method", "Save 2"], ["Reach the Heliport in 200 seconds, beat Fatman", "Save 3"], ["Disguise, Ames, PSG1 and the Harrier", "Save 4 and 5"], ["Nikita, President, Vamp, Emma (take the Pentazemin)", "No save needed for Vamp"], ["Sniping section, ||Tengu fights||", "Save 6 at the ||Tengu|| fight"], ["||Metal Gear RAYs||", "Save 7"], ["||Solidus||", "Save 8"], ["Big Boss code name on the results", ""]],
+  body: [{ box: "bbrules" }, { box: "bbsaves" }, { box: "bbroute" }, { box: "bbvideos" }] },
+{ id: "r7", game: "extra", n: "Run 7", title: "Boss Survival and a Snake Tale", mode: "Special menu · Easy",
+  summary: "With the Big Boss run behind you, these are quick. Boss Survival on Easy with the same methods, then The Wrongdoing Snake Tale.",
+  tasks: [["Boss Survival on Easy", "Olga to ||Solidus||"], ["Snake Tale: The Wrongdoing", "Ames in the Warehouse, then Fatman"]] }
+];
+
+/* Reference boxes (HTML) shown inside runs. */
+const BOXES = {
+controls: { title: "Controls and basic actions", html: "<p>MGS2 uses an overhead camera most of the time with a first-person view on [R1]. The Basic Actions videos are under Special on the main menu.</p><img data-img=\"s_controls\" alt=\"Controller layout\"><img data-img=\"s_basic1\" alt=\"Basic Actions menu, beginner\"><img data-img=\"s_basic2\" alt=\"Basic Actions menu, intermediate\"><img data-img=\"s_basic3\" alt=\"Basic Actions menu, advanced\">" },
+vrlist: { title: "50 sneaking missions and scores to beat", html: "<p>Sneaking Mode, Sneaking, levels 1 to 10. The number is the score needed for first place. <a href=\"https://www.youtube.com/watch?v=YXamJ1O7vmY\" target=\"_blank\" rel=\"noopener\">Video of all 50 by optinooby ↗</a></p><table><tr><th>Level</th><th>Raiden</th><th>Raiden (Ninja)</th><th>Snake</th><th>Pliskin</th><th>Snake (Tuxedo)</th></tr><tr><td>1</td><td>15500</td><td>14500</td><td>15500</td><td>15500</td><td>15500</td></tr><tr><td>2</td><td>15000</td><td>14500</td><td>15000</td><td>15000</td><td>15000</td></tr><tr><td>3</td><td>16500</td><td>16000</td><td>16500</td><td>17000</td><td>17000</td></tr><tr><td>4</td><td>17000</td><td>17000</td><td>16000</td><td>17000</td><td>16000</td></tr><tr><td>5</td><td>18000</td><td>18000</td><td>18000</td><td>18000</td><td>18000</td></tr><tr><td>6</td><td>19000</td><td>19000</td><td>18500</td><td>19000</td><td>18500</td></tr><tr><td>7</td><td>15500</td><td>17000</td><td>14000</td><td>17000</td><td>14000</td></tr><tr><td>8</td><td>18000</td><td>18000</td><td>17000</td><td>18000</td><td>17000</td></tr><tr><td>9</td><td>35500</td><td>36000</td><td>34000</td><td>35000</td><td>35000</td></tr><tr><td>10</td><td>27000</td><td>27000</td><td>27000</td><td>27000</td><td>25000</td></tr></table>" },
+tagvideos: { title: "Dog tag videos (PerfectStealth)", html: "<p>Each difficulty's tag list is in the 100% Guide. These videos follow the same order.</p><ul><li>Tanker: <a href=\"https://www.youtube.com/watch?v=umlYDaKAaeg\" target=\"_blank\" rel=\"noopener\">Very Easy ↗</a> · <a href=\"https://www.youtube.com/watch?v=8rWHUS0f3s8\" target=\"_blank\" rel=\"noopener\">Easy ↗</a> · <a href=\"https://www.youtube.com/watch?v=ty_TGicOB8A\" target=\"_blank\" rel=\"noopener\">Normal ↗</a></li><li>Plant: <a href=\"https://www.youtube.com/watch?v=jYzjxbXto9g\" target=\"_blank\" rel=\"noopener\">Very Easy ↗</a> · <a href=\"https://www.youtube.com/watch?v=ZEA3AWmzV_M\" target=\"_blank\" rel=\"noopener\">Easy ↗</a> · <a href=\"https://www.youtube.com/watch?v=XhtU_ZhDBdI\" target=\"_blank\" rel=\"noopener\">Normal ↗</a></li></ul><p>Points of no return: the Gurlukovich Mercenaries fight (Tanker), the Harrier and the Emma sniping section (Plant).</p>" },
+bbrules: { title: "The Big Boss rules", html: "<img data-img=\"s_bbreq\" alt=\"Master Book page with the code name requirements\"><table><tr><th>Rule</th><th>What it means</th></tr><tr><td>Tanker-Plant on Extreme</td><td>Pick Tanker-Plant at the start. Tanker or Plant alone, even back to back on one save, gives Night Owl. European Extreme also works but is harsher.</td></tr><tr><td>No special items</td><td>Bandana, wigs and stealth suits may sit in the inventory, but equipping one even by accident changes your title.</td></tr><tr><td>0 kills</td><td>No lethal ammo on anyone: no USP as Snake, no SOCOM on people as Raiden, no neck breaks. M9 only.</td></tr><tr><td>Radar off</td><td>Choose Radar Off at the start. Listen for the alert buzzer.</td></tr><tr><td>3 or fewer alerts</td><td>The scripted alerts use them up, so you can afford none. Game Over if Discovered does not trigger on scripted alerts, so if you never see a Game Over, you are fine.</td></tr><tr><td>No rations</td><td>Crouch to recover a little health when it is safe.</td></tr><tr><td>No continues</td><td>On a Game Over, quit and load your save.</td></tr><tr><td>8 or fewer saves</td><td>Save only at the points in the next box.</td></tr><tr><td>Under 3 hours</td><td>Skip cutscenes and codec calls. Pausing does not count.</td></tr><tr><td>Under 700 shots</td><td>Coolant, grenades, magazines and the HF Blade do not count.</td></tr></table><p class=\"note\">Two unconfirmed extra limits are often quoted: 10 health bars of damage or less, and fewer than 60 cameras, Cyphers and RAYs destroyed.</p><h4>Alert or Caution?</h4><p>Alert means a guard saw you and radioed it in (harsh buzzer). Caution means they know someone is there but not where: it does not count. A guard who sees a sleeping comrade, or whose radio you shot, causes Caution. Night-vision guards (before the mercenaries fight) cause an instant Alert if they see you.</p><h4>Checking your stats</h4><p>Right after saving, you can die on purpose: the Mission Failed screen lists your stats in code.</p><img data-img=\"s_bbstats\" alt=\"The coded stats on the Mission Failed screen\">" },
+bbsaves: { title: "Where to save (8 saves)", html: "<ol><li>Start of the Plant, in the elevator room (the only save point before the guards wake).</li><li>Start of the Fortune fight.</li><li>Start of the Fatman fight.</li><li>Start of the Harrier fight.</li><li>Start of the Emma sniping section.</li><li>Start of the <span class=\"spoil\">Tengu fights</span>.</li><li>Start of the <span class=\"spoil\">Metal Gear RAY fight</span>.</li><li>Start of the <span class=\"spoil\">Solidus fight</span>.</li></ol>" },
+bbroute: { title: "Route notes", html: "<h4>Tanker</h4><ul><li>Tranquilise from range; knocked-out guards are awake again after Olga.</li><li>Mercenaries fight: lean out from the two crates, let them fire at your cover, then lean out and headshot. Eight go down, then three run in a line: tranquilise the first and the other two stop.</li><li>Holds: tranquilise only the four guards who can see you, take the four photos and upload.</li></ul><h4>Plant to Fortune</h4><p>No M9 at first: sneak past or choke out. Meet Pliskin (SOCOM), then Stillman (Coolant), defuse every bomb, come back down for the last one. Pick up a Box on the way for Fortune.</p><div class=\"spoil\"><h4>Tengu fights</h4><ul><li>Tengu 1: tranquilise the first few, stun-grenade the rest to the north door. Lean on the door, hold [R1], press [O] three times and let go of [R1] during the kick: Raiden passes through the locked door.</li><li>Tengu 2: tranquilise Snake at once, keep spraying Coolant on the Tengus to stagger them for about a minute, then rush forward when the music cues it.</li></ul><h4>Metal Gear RAY</h4><p>About 20 RAYs. Destroy the first three in order, reposition, and when the 4th and 5th appear hit only the 4th; ignore RAY A05E. Then loop: knee, head, knee, head, then the knee of the RAY waiting outside the arena. Done right, only one RAY is active and the others stay passive. <a href=\"https://www.youtube.com/watch?v=vm9dRwHdIzo\" target=\"_blank\" rel=\"noopener\">RAY method by JaguarKing ↗</a></p><h4>Solidus</h4><p>His grab leaves you at about a third of your health, so you can take one or two hits. Use the ledge method from the Another Snake Bites the Dust guide.</p></div><img data-img=\"s_bbresult\" alt=\"Results screen\"><img data-img=\"s_bbtitle\" alt=\"Code name screen\">" },
+bbvideos: { title: "Full video walkthroughs", html: "<ul><li><a href=\"https://youtu.be/_-pYNxNd_iE\" target=\"_blank\" rel=\"noopener\">Optinoob: Big Boss rank on Extreme, with dog tags ↗</a></li><li><a href=\"https://youtu.be/Jn8AUsea_GM\" target=\"_blank\" rel=\"noopener\">Perfect Stealth: Big Boss rank guide ↗</a></li><li><a href=\"https://youtu.be/_D9pSBnEX-g\" target=\"_blank\" rel=\"noopener\">Masked Matador: how to earn Big Boss ↗</a></li><li><a href=\"https://youtu.be/RkzZ4MRgGMs\" target=\"_blank\" rel=\"noopener\">DaWinkler: Big Boss rank guide ↗</a></li><li><a href=\"https://www.youtube.com/watch?v=_pb8DCigy0Q\" target=\"_blank\" rel=\"noopener\">PSNProfiles guide's own walkthrough, part 1 ↗</a> (parts 2 to 19 are linked in the trophy guide)</li></ul>" }
+};
+
+/* 100% Guide chapters: collectibles and chapter achievements in story order. */
+const COLL = [
+{ key: "t1", game: "tanker", title: "Tanker: Aft Deck to the Bridge", obj: "From the Aft Deck down through the crew decks and up to Olga on the Navigational Deck.",
+  sections: [
+  { title: "Achievements here", items: [
+    { k: "ach", ach: "radio", note: "Hold up the first guard you meet and shoot the radio on his hip." },
+    { k: "ach", ach: "locker", note: "Left door at the start: tranquilise the lone guard and carry him into a locker next door." },
+    { k: "ach", ach: "kissing", note: "Same room: hide in the far left locker with the poster and look at her lips." },
+    { k: "ach", ach: "snakebeater", note: "Open that locker, stand outside it in first person and call Otacon on 141.12." },
+    { k: "ach", ach: "smoke", note: "Deck D Crew's Quarters: shoot the fire extinguisher as the guard walks past." },
+    { k: "story", ach: "lightsout", note: "Crouch at the gap in the crates and shoot her ankle." } ] },
+  { title: "Weapons and boxes", items: [
+    { key: "tw-m9", k: "weapon", title: "M9", loc: "In your inventory from the start", html: "<img data-img=\"c_m9\" alt=\"M9\">" },
+    { key: "tw-chaff", k: "weapon", title: "Chaff Grenade", loc: "Aft Deck, right side", html: "<img data-img=\"c_chaff\" alt=\"Chaff Grenade\"><p>When you gain control, head to the right side of the ship and up the first short stairs; the box is behind the rectangular crate. Another is in a locker beside the stairs in Deck C, Crew's Quarters, Port (the first camera room).</p><p class=\"warn\">Missable.</p>" },
+    { key: "tb-orange", k: "box", title: "Orange Box", loc: "Deck D, Pantry", html: "<p>The food storage room under the Bridge, entered by the north-east door. The box is in the bottom part of the room.</p><img data-img=\"s_boxorange\" alt=\"Orange Box in the pantry\">" } ] } ] },
+{ key: "t2", game: "tanker", title: "Tanker: Engine Room to Hold No. 3", obj: "After Olga: the mast, the Engine Room, the mercenaries fight and the holds with Metal Gear RAY.",
+  sections: [
+  { title: "Weapons and boxes", items: [
+    { key: "tw-usp", k: "weapon", title: "USP", loc: "Automatic after Olga", html: "<img data-img=\"c_usp\" alt=\"USP\">" },
+    { key: "tb-wet", k: "box", title: "Wet Box", loc: "Navigational Deck, east side", html: "<p>After Olga head east; a guard opens a door and starts patrolling. Tranquilise him, go up the short stairs and turn right.</p><img data-img=\"s_boxwet\" alt=\"Wet Box\">" },
+    { key: "tw-stun", k: "weapon", title: "Stun Grenade", loc: "Beside the Engine Room, Starboard door", html: "<img data-img=\"c_stun\" alt=\"Stun Grenade\"><p>Visible as soon as you go down the stairs into the small room. May be absent on higher difficulties.</p><p class=\"warn\">Missable.</p>" },
+    { key: "tw-gren", k: "weapon", title: "Hand Grenade", loc: "Engine Room, Starboard, south-west lower level", html: "<img data-img=\"c_gren\" alt=\"Hand Grenade\"><p>The story goes up the ladders to the north-west door. Instead take the stairs down and go south-west: the box is in the left corner.</p><p class=\"warn\">Missable.</p>" } ] },
+  { title: "Achievements here", items: [
+    { k: "ach", ach: "grip", note: "Engine Room, Starboard railings: drop and catch 20 times." },
+    { k: "ach", ach: "wctanker", note: "Pops with the fifth weapon." },
+    { k: "ach", ach: "hot", note: "Mercenaries fight: shoot the pipe next to the last mercenary." },
+    { k: "ach", ach: "ghost", note: "Hold No. 2: photograph the right projector screen." },
+    { k: "ach", ach: "sexting", note: "Photograph the marine in boxers and upload it with the RAY photos." },
+    { k: "story", ach: "spaghetti", note: "Upload the four RAY photos." } ] } ] },
+{ key: "p1", game: "plant", title: "Plant: Strut A to Stillman", obj: "Raiden arrives at the Strut A Deep Sea Dock, meets Pliskin in Strut B and Stillman in Strut C.",
+  sections: [
+  { title: "Achievements here", items: [
+    { k: "ach", ach: "rations", note: "Take the Ration from the middle locker, equip it and crawl over the bugs to the west." } ] },
+  { title: "Weapons and boxes", items: [
+    { key: "pw-m9", k: "weapon", title: "M9", loc: "Very Easy/Easy: Strut A Deep Sea Dock · Normal and up: Strut F Warehouse", html: "<img data-img=\"c_m9\" alt=\"M9\"><p>On Very Easy and Easy it is in the starting room. On Normal, Hard and Extreme take the south-east door on the Warehouse upper floor (no keycard needed).</p><p class=\"warn\">Missable: the Deep Sea Dock closes after Fortune and the Warehouse after the Harrier.</p>" },
+    { key: "pw-mag", k: "weapon", title: "Gun Magazine", loc: "Any time", html: "<img data-img=\"c_mag\" alt=\"Empty magazine\"><p>Empty a full clip so Raiden reloads; the spent magazine is added.</p>" },
+    { key: "pw-socom", k: "weapon", title: "SOCOM", loc: "Strut B Transformer Room", html: "<img data-img=\"c_socom\" alt=\"SOCOM\"><p>Given by Pliskin.</p>" },
+    { key: "pw-cool", k: "weapon", title: "Coolant", loc: "Strut C Dining Hall", html: "<img data-img=\"c_cool\" alt=\"Coolant\"><p>Given by Stillman.</p>" },
+    { key: "pw-chaff", k: "weapon", title: "Chaff Grenade", loc: "BC Connecting Bridge", html: "<img data-img=\"c_chaff\" alt=\"Chaff Grenade\"><p>At the broken edge of the bridge after Fortune's cutscene. More behind the north-east gate after the Fortune fight, and beside the lockers between crates in the far south of Shell 1 Core 1F (in disguise).</p><p class=\"warn\">Missable.</p>" },
+    { key: "pb-1", k: "box", title: "Box 1", loc: "Strut A Pump Room", html: "<p>After getting the Coolant, go to the south-east room of Strut A with a bomb in the middle. Take the short stairs, crawl under the pipes and cross the crates to the south-west corner.</p><img data-img=\"s_box1\" alt=\"Box 1\">" } ] },
+  { title: "Story", items: [
+    { k: "ach", ach: "hot", note: "Second chance: the grated corridor on the left of Strut B, after you have the Coolant." },
+    { k: "story", ach: "bombsquad", note: "Stillman's tutorial; skippable on New Game+." } ] } ] },
+{ key: "p2", game: "plant", title: "Plant: Fortune and Fatman", obj: "The bomb hunt ends at the bottom of Strut A with Fortune, then a 200-second dash to the Heliport for Fatman.",
+  sections: [
+  { title: "", items: [
+    { k: "story", ach: "fortune", note: "Wear a Box and walk left and right; she misses every shot." },
+    { key: "pw-clay", k: "weapon", title: "Claymore", loc: "Behind the north-east gate after Fortune", html: "<img data-img=\"c_clay\" alt=\"Claymore\"><p>Crawl over planted Claymores to pick them up (two here). Four more on the pylons of the bridge between the Warehouse and the Parcel Room, and a box in the Level 2 room on the right of the Warehouse upper floor.</p><p class=\"warn\">Missable: running over them sets them off.</p>" },
+    { key: "pb-3", k: "box", title: "Box 3", loc: "Strut E Heliport", html: "<p>Just left of the stairs as you reach the Heliport, beside the metal shelf under a grey tarp.</p><img data-img=\"s_box3\" alt=\"Box 3\">" },
+    { key: "pw-stun", k: "weapon", title: "Stun Grenade", loc: "Strut E Heliport, or Strut F Warehouse lower floor", html: "<img data-img=\"c_stun\" alt=\"Stun Grenade\"><p>During Fatman: between two green containers on the left of the Heliport. Also between three crates in the north of the Warehouse lower floor.</p><p class=\"warn\">Missable.</p>" },
+    { k: "story", ach: "partyover", note: "||Pick him up and drop him for Stillman's dog tag.||" } ] } ] },
+{ key: "p3", game: "plant", title: "Plant: Warehouse and Shell 1 Core", obj: "With Mr. X's keycard: the Warehouse, the B.D.U. disguise and the search for Ames.",
+  sections: [
+  { title: "Strut F Warehouse", items: [
+    { key: "pb-2", k: "box", title: "Box 2", loc: "Strut F Warehouse, lower floor", html: "<p>Take the left door at the far south; the box is in the south-west room beside the lockers.</p><img data-img=\"s_box2\" alt=\"Box 2\">" },
+    { key: "pw-aks", k: "weapon", title: "AKS-74u", loc: "Warehouse lower floor, north room", html: "<img data-img=\"c_aks\" alt=\"AKS-74u\"><p>Opened with the keycard from Mr. X after Fatman.</p>" },
+    { key: "pw-m4", k: "weapon", title: "M4", loc: "Warehouse upper floor, west Level 2 room", html: "<img data-img=\"c_m4\" alt=\"M4\"><p>Shoot the control panels of the bombs inside before walking in.</p><p class=\"warn\">Missable after the Harrier.</p>" },
+    { key: "pw-c4", k: "weapon", title: "C4", loc: "Warehouse upper floor, right Level 2 room", html: "<img data-img=\"c_c4\" alt=\"C4\"><p>A Claymore box is here too.</p><p class=\"warn\">Missable after the Harrier.</p>" } ] },
+  { title: "Shell 1 Core", items: [
+    { key: "pw-dmic", k: "weapon", title: "Directional Mic", loc: "Shell 1 Core, B2 Computer Room", html: "<img data-img=\"c_dmic\" alt=\"Directional Mic\"><p>North-west of the room with three guards and the computers, wearing the B.D.U. with the AKS-74u. Emma's parrot is here too.</p>" },
+    { key: "pw-book", k: "weapon", title: "Book (girlie magazine)", loc: "Shell 1 Core, B2 Computer Room", html: "<img data-img=\"c_book\" alt=\"Book\"><p>In a locker on the east side; open it with the punch-punch-kick combo. Another Book lies on the crates in the middle of the Warehouse lower floor.</p><p class=\"warn\">Missable once you find Ames.</p>" },
+    { key: "pb-4", k: "box", title: "Box 4", loc: "Shell 1 Core, B2 Computer Room", html: "<p>When you come for the mic, go right into the small chamber; the box is at its south end.</p><img data-img=\"s_box4\" alt=\"Box 4\">" },
+    { k: "ach", ach: "predator", note: "Put a magazine down behind one of the three guards." },
+    { k: "story", ach: "ames", note: "Neck-length light brown hair, receding hairline." },
+    { k: "ach", ach: "johnny", note: "First location: during the cutscene, point the mic at the toilet." } ] } ] },
+{ key: "p4", game: "plant", title: "Plant: Warehouse return and the Harrier", obj: "With the Level 3 card from Ames, sweep the Warehouse before the Harrier: you cannot return afterwards.",
+  sections: [
+  { title: "", items: [
+    { key: "pw-psg1", k: "weapon", title: "PSG1", loc: "Warehouse upper floor, east Level 3 room", html: "<img data-img=\"c_psg1\" alt=\"PSG1\"><p class=\"warn\">Missable after the Harrier.</p>" },
+    { key: "pw-psg1t", k: "weapon", title: "PSG1-T", loc: "Same room, through the vent on the right", html: "<img data-img=\"c_psg1t\" alt=\"PSG1-T\"><p>Crawl to the end of the vent.</p><p class=\"warn\">Missable after the Harrier.</p>" },
+    { key: "pw-rgb6", k: "weapon", title: "RGB6", loc: "Warehouse upper floor, north-west room", html: "<img data-img=\"c_rgb6\" alt=\"RGB6\"><p>The door in the left corner of the square corridor.</p><p class=\"warn\">Missable after the Harrier.</p>" },
+    { key: "pw-gren", k: "weapon", title: "Hand Grenade", loc: "Warehouse upper floor, bottom-left Level 3 room", html: "<img data-img=\"c_gren\" alt=\"Hand Grenade\"><p>The door left of the Normal-and-up M9 room.</p><p class=\"warn\">Missable after the Harrier.</p>" },
+    { key: "pw-stinger", k: "weapon", title: "Stinger", loc: "Harrier fight", html: "<img data-img=\"c_stinger\" alt=\"Stinger\">" },
+    { k: "story", ach: "nofly", note: "Keep the jet inside the outer square until the missile hits." } ] } ] },
+{ key: "p5", game: "plant", title: "Plant: Shell 2 Core", obj: "The President, the flooded chambers, Vamp and Emma.",
+  sections: [
+  { title: "", items: [
+    { key: "pw-nikita", k: "weapon", title: "Nikita", loc: "Shell 2 Core, B1 Filtration Chamber No. 1", html: "<img data-img=\"c_nikita\" alt=\"Nikita\"><p>Underwater: further in on Normal and up, earlier on Easy and Very Easy.</p>" },
+    { k: "story", ach: "bohemian", note: "Fly the Nikita through the vent to the north-west panel." },
+    { k: "story", ach: "vampslayer", note: "Prone in the north-east corner, shoot as he crouches." },
+    { k: "story", ach: "hug", note: "Middle locker; take the Pentazemin first." },
+    { k: "ach", ach: "rations", note: "Third chance: the sea lice in front of the elevator while escorting Emma." } ] } ] },
+{ key: "p6", game: "plant", title: "Plant: Sniping to ||Arsenal Gear||", obj: "Cover Emma across the silos, then the Parcel Room, ||Olga's reveal, the Tengu and Snake's HF Blade||.",
+  sections: [
+  { title: "", items: [
+    { k: "ach", ach: "johnny", note: "Second location: mic on Emma and Johnny at the second silo." },
+    { key: "pb-5", k: "box", title: "Box 5", loc: "Strut E Parcel Room", html: "<p>Where the conveyor belt ends, around the north-east of the room.</p><img data-img=\"s_box5\" alt=\"Box 5\">" },
+    { k: "ach", ach: "camera", note: "Lower floor of the Parcel Room (or automatic for finishing)." },
+    { k: "ach", ach: "boxes", note: "Pops with the seventh box." },
+    { k: "story", ach: "sharing", note: "Shell 1 Core 1F elevator." },
+    { key: "pw-hf", k: "weapon", title: "HF Blade", loc: "||Arsenal Gear||", html: "<img data-img=\"c_hf\" alt=\"HF Blade\"><p><span class=\"spoil\">Snake hands it over before the Tengu fights.</span></p>" },
+    { k: "ach", ach: "wcplant", note: "Should pop with the HF Blade or after its practice." } ] } ] },
+{ key: "p7", game: "plant", title: "Plant: ||Arsenal Gear|| finale", obj: "||Metal Gear RAY, Solidus|| and the ending.",
+  sections: [
+  { title: "", items: [
+    { k: "story", ach: "noray", note: "Knee first, then the head." },
+    { k: "story", ach: "solidus", note: "Hang from the right ledge and climb as he slashes." },
+    { k: "ach", ach: "vampeyer", note: "Do not skip; ||look for Vamp by the car||." },
+    { k: "story", ach: "cutabove", note: "After the credits and your rank." } ] } ] },
+{"key": "tag-tve", "game": "tanker", "title": "Dog tags: Tanker, Very Easy (24)", "obj": "24 tags for Snake on this difficulty, in route order. Hold each guard up, aim at his face, and fire near a stubborn one. The PerfectStealth video for this list is linked in Run 3.", "sections": [{"title": "", "items": [{"key": "tve-0", "k": "tag", "title": "#0 Olga Gurlukovich", "loc": "Navigational Deck, Wing", "html": "<p>Obtainable by picking up and dropping Olga after defeating her</p>"}, {"key": "tve-1", "k": "tag", "title": "#1 Josh Spires", "loc": "Aft Deck"}, {"key": "tve-2", "k": "tag", "title": "#2 Tomomi Nasu", "loc": "Aft Deck"}, {"key": "tve-3", "k": "tag", "title": "#3 Stephen M Driver", "loc": "Aft Deck"}, {"key": "tve-4", "k": "tag", "title": "#4 Brendan Mcleod", "loc": "Navigational Deck, Wing"}, {"key": "tve-5", "k": "tag", "title": "#5 Hajime Tusima", "loc": "Deck-A Crew's Quarters", "html": "<p>Stubborn soldier</p>"}, {"key": "tve-6", "k": "tag", "title": "#6 Yuki Hongoh", "loc": "Deck-B, Crew's Quarters", "html": "<p>Stubborn soldier</p>"}, {"key": "tve-7", "k": "tag", "title": "#7 Takahiro Yura", "loc": "Deck-A, Crew's Lounge"}, {"key": "tve-8", "k": "tag", "title": "#8 David P LaFrenier", "loc": "Deck-A, Crew's Lounge"}, {"key": "tve-9", "k": "tag", "title": "#9 Eric Bravo", "loc": "Deck-A, Crew's Lounge"}, {"key": "tve-10", "k": "tag", "title": "#10 Miguel Luis Cunha", "loc": "Deck-D, Crew's Quarters"}, {"key": "tve-11", "k": "tag", "title": "#11 Eiji Senke", "loc": "Deck-D, Crew's Quarters", "html": "<p>Stubborn soldier, appears after entering the pantry</p>"}, {"key": "tve-12", "k": "tag", "title": "#12 Yohsuke Sakaguchi", "loc": "Deck 2, Port"}, {"key": "tve-13", "k": "tag", "title": "#13 Jan Friese", "loc": "Deck 2, Port"}, {"key": "tve-14", "k": "tag", "title": "#14 Marius Torsund", "loc": "Deck 2, Port"}, {"key": "tve-15", "k": "tag", "title": "#15 Andrej Pedercina Mimica", "loc": "Engine Room"}, {"key": "tve-16", "k": "tag", "title": "#16 Mike J Corbitt", "loc": "Engine Room"}, {"key": "tve-17", "k": "tag", "title": "#17 Aaron T Powell", "loc": "Engine Room"}, {"key": "tve-18", "k": "tag", "title": "#18 Jeff A Saylor Jr", "loc": "Engine Room", "html": "<p>Only appears directly after Raven event</p>"}, {"key": "tve-19", "k": "tag", "title": "#19 Kazuki Tokunaga", "loc": "Engine Room", "html": "<p>Only appears directly after door repair event</p>"}, {"key": "tve-20", "k": "tag", "title": "#20 Kamil Mania", "loc": "Hold No. 1", "html": "<p>Hang from 2F right-side and move to the back</p>"}, {"key": "tve-21", "k": "tag", "title": "#21 Ismael Miranda de Andrade", "loc": "Hold No. 1", "html": "<p>Marine standing to the left of the projector</p>"}, {"key": "tve-22", "k": "tag", "title": "#22 Darryl F Kemp", "loc": "Hold No. 3", "html": "<p>Use the hanging in Hold No. 1 to reach the passageway at the back of 2F</p>"}, {"key": "tve-23", "k": "tag", "title": "#23 Yoshitoshi Toyoda", "loc": "Hold No. 3", "html": "<p>Marine napping in the back-right</p>"}]}]},
+{"key": "tag-te", "game": "tanker", "title": "Dog tags: Tanker, Easy (26)", "obj": "26 tags for Snake on this difficulty, in route order. Hold each guard up, aim at his face, and fire near a stubborn one. The PerfectStealth video for this list is linked in Run 3.", "sections": [{"title": "", "items": [{"key": "te-0", "k": "tag", "title": "#0 Olga Gurlukovich", "loc": "Navigational Deck, Wing", "html": "<p>Obtainable by picking up and dropping Olga after defeating her</p>"}, {"key": "te-1", "k": "tag", "title": "#1 Justin P Verrier", "loc": "Aft Deck"}, {"key": "te-2", "k": "tag", "title": "#2 Ryouichi Matsumoto", "loc": "Aft Deck"}, {"key": "te-3", "k": "tag", "title": "#3 Michael S Futter", "loc": "Aft Deck"}, {"key": "te-4", "k": "tag", "title": "#4 Michael Vogt", "loc": "Navigational Deck, Wing", "html": "<p>Appears on the opposite side of the deck after Olga battle</p>"}, {"key": "te-5", "k": "tag", "title": "#5 Kei Kudou Mon", "loc": "Deck-A Crew's Quarters"}, {"key": "te-6", "k": "tag", "title": "#6 Eetu Holmqvist", "loc": "Deck-B, Crew's Quarters", "html": "<p>Stubborn soldier</p>"}, {"key": "te-7", "k": "tag", "title": "#7 Matthew W Hunt", "loc": "Deck-A Crew's Quarters", "html": "<p>Stubborn soldier</p>"}, {"key": "te-8", "k": "tag", "title": "#8 David W Pelster", "loc": "Deck-A, Crew's Lounge"}, {"key": "te-9", "k": "tag", "title": "#9 Takumi Shimada", "loc": "Deck-A Crew's Quarters"}, {"key": "te-10", "k": "tag", "title": "#10 Cary J Schwartzman", "loc": "Deck-D, Crew's Quarters"}, {"key": "te-11", "k": "tag", "title": "#11 Danilo NE Carbone", "loc": "Deck-D, Crew's Quarters", "html": "<p>Stubborn soldier, appears after entering the pantry</p>"}, {"key": "te-12", "k": "tag", "title": "#12 Adam Lloyd", "loc": "Deck 2, Port"}, {"key": "te-13", "k": "tag", "title": "#13 David E Palm", "loc": "Deck 2, Port"}, {"key": "te-14", "k": "tag", "title": "#14 Yuki Aoki", "loc": "Deck 2, Port"}, {"key": "te-15", "k": "tag", "title": "#15 William N Bruce", "loc": "Engine Room"}, {"key": "te-16", "k": "tag", "title": "#16 Chien Jen Liang", "loc": "Engine Room"}, {"key": "te-17", "k": "tag", "title": "#17 Luke Boulerice", "loc": "Engine Room"}, {"key": "te-18", "k": "tag", "title": "#18 Yusuke Sasaki", "loc": "Engine Room"}, {"key": "te-19", "k": "tag", "title": "#19 Travis J long", "loc": "Engine Room"}, {"key": "te-20", "k": "tag", "title": "#20 Steven A Weekes", "loc": "Engine Room"}, {"key": "te-21", "k": "tag", "title": "#21 Marco Silvano", "loc": "Hold No. 1", "html": "<p>Hang from 2F right-side and move to the back</p>"}, {"key": "te-22", "k": "tag", "title": "#22 Xesk Malone", "loc": "Hold No. 1", "html": "<p>Marine in boxers</p>"}, {"key": "te-23", "k": "tag", "title": "#23 Michalis Taubert", "loc": "Hold No. 3", "html": "<p>Use hanging in Hold No. 1 to reach the passageway at the back of 2F</p>"}, {"key": "te-24", "k": "tag", "title": "#24 Lee A Myers", "loc": "Hold No. 3", "html": "<p>Marine napping in the back-right</p>"}, {"key": "te-25", "k": "tag", "title": "#25 Rock Young", "loc": "Hold No. 3", "html": "<p>Marine in the front row, fourth from the left</p>"}]}]},
+{"key": "tag-tn", "game": "tanker", "title": "Dog tags: Tanker, Normal (33)", "obj": "33 tags for Snake on this difficulty, in route order. Hold each guard up, aim at his face, and fire near a stubborn one. The PerfectStealth video for this list is linked in Run 3.", "sections": [{"title": "", "items": [{"key": "tn-0", "k": "tag", "title": "#0 Olga Gurlukovich", "loc": "Navigational Deck, Wing", "html": "<p>Obtainable by picking up and dropping Olga after defeating her</p>"}, {"key": "tn-1", "k": "tag", "title": "#1 Garret L Peters", "loc": "Aft Deck"}, {"key": "tn-2", "k": "tag", "title": "#2 Sunny Hsu", "loc": "Aft Deck"}, {"key": "tn-3", "k": "tag", "title": "#3 Pablo Maisuls", "loc": "Aft Deck"}, {"key": "tn-4", "k": "tag", "title": "#4 Samuel B Sandoval", "loc": "Navigational Deck, Wing", "html": "<p>Appears on the opposite deck after Olga battle</p>"}, {"key": "tn-5", "k": "tag", "title": "#5 James I Bartelle", "loc": "Deck-C Crew's Quarters"}, {"key": "tn-6", "k": "tag", "title": "#6 Daniel Kucan", "loc": "Deck-A, Crew's Quarters", "html": "<p>Stubborn soldier</p>"}, {"key": "tn-7", "k": "tag", "title": "#7 Ronan Khim", "loc": "Deck-B, Crew's Quarters"}, {"key": "tn-8", "k": "tag", "title": "#8 Masanori Inui", "loc": "Deck-B, Crew's Quarters"}, {"key": "tn-9", "k": "tag", "title": "#9 Jeng L Valencia", "loc": "Deck-A, Crew's Lounge"}, {"key": "tn-10", "k": "tag", "title": "#10 Seth T Hay", "loc": "Deck-A, Crew's Lounge", "html": "<p>Stubborn soldier</p>"}, {"key": "tn-11", "k": "tag", "title": "#11 Daniel W Dennison", "loc": "Deck-A, Crew's Lounge"}, {"key": "tn-12", "k": "tag", "title": "#12 Flavio Camargos", "loc": "Deck-D, Crew's Quarters"}, {"key": "tn-13", "k": "tag", "title": "#13 Brad R Whitfield", "loc": "Deck-D, Crew's Quarters", "html": "<p>Stubborn soldier</p>"}, {"key": "tn-14", "k": "tag", "title": "#14 James Broome", "loc": "Deck-D, Crew's Quarters", "html": "<p>Stubborn soldier, appears after entering the pantry</p>"}, {"key": "tn-15", "k": "tag", "title": "#15 Hiromasa Watanabe", "loc": "Deck 2, Port"}, {"key": "tn-16", "k": "tag", "title": "#16 Kieran Keegan", "loc": "Deck 2, Port"}, {"key": "tn-17", "k": "tag", "title": "#17 Hirokazu Takahashi", "loc": "Deck 2, Port"}, {"key": "tn-18", "k": "tag", "title": "#18 Marwan Abdullah AlHarbi", "loc": "Engine Room"}, {"key": "tn-19", "k": "tag", "title": "#19 Henning Rhoden", "loc": "Engine Room"}, {"key": "tn-20", "k": "tag", "title": "#20 Marcelo Zamorano", "loc": "Engine Room", "html": "<p>Stubborn soldier</p>"}, {"key": "tn-21", "k": "tag", "title": "#21 Simon F Picard", "loc": "Engine Room"}, {"key": "tn-22", "k": "tag", "title": "#22 Haden K Oneil", "loc": "Engine Room"}, {"key": "tn-23", "k": "tag", "title": "#23 Yuji Higuchi", "loc": "Engine Room"}, {"key": "tn-24", "k": "tag", "title": "#24 Husain Abdulrazaq AlHasan", "loc": "Engine Room"}, {"key": "tn-25", "k": "tag", "title": "#25 Robert R Bruce", "loc": "Hold No. 1", "html": "<p>Hang from 2F right side, and move to the back</p>"}, {"key": "tn-26", "k": "tag", "title": "#26 Kenzi Tanda", "loc": "Hold No. 1", "html": "<p>Marine to the left of the projector</p>"}, {"key": "tn-27", "k": "tag", "title": "#27 Ivan E Saldarriaga", "loc": "Hold No. 1", "html": "<p>Marine near bottom-left pillar</p>"}, {"key": "tn-28", "k": "tag", "title": "#28 Christopher G Hercus", "loc": "Hold No. 2", "html": "<p>Marine near the top-left pillar</p>"}, {"key": "tn-29", "k": "tag", "title": "#29 Tomohiro Katoh", "loc": "Hold No. 2", "html": "<p>Marine to the right of the projectors</p>"}, {"key": "tn-30", "k": "tag", "title": "#30 David D Crumpler", "loc": "Hold No. 3", "html": "<p>Use the hanging in Hold No. 1 to reach the passageway at the back of 2F</p>"}, {"key": "tn-31", "k": "tag", "title": "#31 Joao E Martins", "loc": "Hold No. 3", "html": "<p>Marine napping in the back-right</p>"}, {"key": "tn-32", "k": "tag", "title": "#32 Mika A Taavela", "loc": "Hold No. 3", "html": "<p>Marine near top-left pillar</p>"}]}]},
+{"key": "tag-pve", "game": "plant", "title": "Dog tags: Plant, Very Easy (43)", "obj": "43 tags for Raiden on this difficulty, in route order. Hold each guard up, aim at his face, and fire near a stubborn one. The PerfectStealth video for this list is linked in Run 3.", "sections": [{"title": "", "items": [{"key": "pve-0", "k": "tag", "title": "#0 Iroquois Pliskin", "loc": "||Arsenal Gear-Ascending Colon||", "html": "<p><span class=\"spoil\">Pliskin's Dog Tag, obtained by knocking out Snake</span></p>"}, {"key": "pve-1", "k": "tag", "title": "#1 Brad I Lanning", "loc": "Strut A Deep Sea Dock"}, {"key": "pve-2", "k": "tag", "title": "#2 Charles P Pinkerton", "loc": "Strut A Deep Sea Dock"}, {"key": "pve-3", "k": "tag", "title": "#3 Jason M Gillispie", "loc": "Strut A Roof", "html": "<p>Appears after entering Pump Room for the first time and directly after Fortune battle</p>"}, {"key": "pve-4", "k": "tag", "title": "#4 Samuel Andi Hendranata", "loc": "Strut A Pump Room"}, {"key": "pve-5", "k": "tag", "title": "#5 Yasuhiro Matsuzaki", "loc": "Strut A Pump Room", "html": "<p>Stubborn soldier. Appears when defusing C4 at the bottom of Strut A</p>"}, {"key": "pve-6", "k": "tag", "title": "#6 Artthapong Siriamonthep", "loc": "AB Connecting Bridge"}, {"key": "pve-7", "k": "tag", "title": "#7 Amadeus Knothe", "loc": "AB Connecting Bridge"}, {"key": "pve-8", "k": "tag", "title": "#8 Bob Fu", "loc": "Strut B Transformer Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pve-9", "k": "tag", "title": "#9 Yasuo Suzuki", "loc": "Strut B Transformer Room"}, {"key": "pve-10", "k": "tag", "title": "#10 Yiqiang Yao", "loc": "BC Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pve-11", "k": "tag", "title": "#11 Vanessa E Mejia", "loc": "Strut C Dining Hall", "html": "<p>Appears after leaving the area and coming back</p>"}, {"key": "pve-12", "k": "tag", "title": "#12 Anthony J Willreign Supreme", "loc": "Strut C Dining Hall", "html": "<p>Stubborn soldier, appears after leaving the area and coming back</p>"}, {"key": "pve-13", "k": "tag", "title": "#13 Marques Dean", "loc": "CD Connecting Bridge"}, {"key": "pve-14", "k": "tag", "title": "#14 Kevin M Miller", "loc": "CD Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pve-15", "k": "tag", "title": "#15 Mathias Ellemann Jensen", "loc": "Strut D Sediment Pool"}, {"key": "pve-16", "k": "tag", "title": "#16 Christian Ryan De Ramos", "loc": "Strut D Sediment Pool"}, {"key": "pve-17", "k": "tag", "title": "#17 Derek Broadbent", "loc": "DE Connecting Bridge"}, {"key": "pve-18", "k": "tag", "title": "#18 Till Schlegel", "loc": "DE Connecting Bridge", "html": "<p>Stubborn soldier, appears after defeating Fatman</p>"}, {"key": "pve-19", "k": "tag", "title": "#19 Nana Mizuki", "loc": "Strut E Parcel Room 1F", "html": "<p>Disappears after the Oil Fence event</p>"}, {"key": "pve-20", "k": "tag", "title": "#20 Csaba Millei", "loc": "Strut E Parcel Room B1", "html": "<p>Stubborn soldier, appears after the Oil Fence event</p>"}, {"key": "pve-21", "k": "tag", "title": "#21 Jordan J Davis", "loc": "Strut E Heliport", "html": "<p>Does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pve-22", "k": "tag", "title": "#22 Luke Christian Roberts", "loc": "Strut E Heliport", "html": "<p>Stubborn soldier, does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pve-23", "k": "tag", "title": "#23 Sinya Tusunoda", "loc": "Strut F Warehouse"}, {"key": "pve-24", "k": "tag", "title": "#24 Asia R Pickle", "loc": "Strut F Warehouse", "html": "<p>Appears after meeting Stillman</p>"}, {"key": "pve-25", "k": "tag", "title": "#25 Daniel P Wells", "loc": "FA Connecting Bridge"}, {"key": "pve-26", "k": "tag", "title": "#26 David Anthony Wilson", "loc": "Shell 1 Core, 1F"}, {"key": "pve-27", "k": "tag", "title": "#27 Jasper A Hefko", "loc": "Shell 1 Core, 1F"}, {"key": "pve-28", "k": "tag", "title": "#28 Steven L Harper", "loc": "Shell 1 Core, 1F"}, {"key": "pve-29", "k": "tag", "title": "#29 Yasuhiko Nakamura", "loc": "Shell 1 Core, B1", "html": "<p>Stubborn soldier</p>"}, {"key": "pve-30", "k": "tag", "title": "#30 Chris Escobar", "loc": "Shell 1 Core, B1"}, {"key": "pve-31", "k": "tag", "title": "#31 Elliott I Kugler", "loc": "Shell 1 Core, B1", "html": "<p>Stubborn soldier</p>"}, {"key": "pve-32", "k": "tag", "title": "#32 Mai Ohta", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pve-33", "k": "tag", "title": "#33 Roth W Lanphear", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pve-34", "k": "tag", "title": "#34 Cheng exs Cheng", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pve-35", "k": "tag", "title": "#35 Liam P Slater", "loc": "Shell 1 Core, B2 Computer Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pve-36", "k": "tag", "title": "#36 Neill W Perry", "loc": "KL Connecting Bridge", "html": "<p>Appears while escorting Emma</p>"}, {"key": "pve-37", "k": "tag", "title": "#37 Robert W Goodenow III", "loc": "Strut L Sewage Treatment Facility"}, {"key": "pve-38", "k": "tag", "title": "#38 Mathias Buntrock", "loc": "Strut L Sewage Treatment Facility"}, {"key": "pve-39", "k": "tag", "title": "#39 Andrei V Galinski", "loc": "Shell 2 Core, 1F Air Purification Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pve-40", "k": "tag", "title": "#40 Naoki Inoue", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pve-41", "k": "tag", "title": "#41 Hiu Fung Wong", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pve-42", "k": "tag", "title": "#42 ||Peter Stillman||", "loc": "Strut E Heliport", "html": "<p><span class=\"spoil\">Obtainable by picking up and dropping Fatman after defeating him</span></p>"}]}]},
+{"key": "tag-pe", "game": "plant", "title": "Dog tags: Plant, Easy (44)", "obj": "44 tags for Raiden on this difficulty, in route order. Hold each guard up, aim at his face, and fire near a stubborn one. The PerfectStealth video for this list is linked in Run 3.", "sections": [{"title": "", "items": [{"key": "pe-0", "k": "tag", "title": "#0 Meryl Silverburgh", "loc": "||Arsenal Gear-Ascending Colon||", "html": "<p><span class=\"spoil\">Meryl's dog tag, obtained by knocking out Snake</span></p>"}, {"key": "pe-1", "k": "tag", "title": "#1 Emiko Yokoshima", "loc": "Strut A Deep Sea Dock"}, {"key": "pe-2", "k": "tag", "title": "#2 Terry Cheung", "loc": "Strut A Deep Sea Dock"}, {"key": "pe-3", "k": "tag", "title": "#3 Jacqueline D Benzon", "loc": "Strut A Roof", "html": "<p>Appears after entering Pump Room for the first time and directly after Fortune battle</p>"}, {"key": "pe-4", "k": "tag", "title": "#4 Akihide Yonekura", "loc": "Strut A Pump Room"}, {"key": "pe-5", "k": "tag", "title": "#5 Goushi Kawamura", "loc": "Strut A Pump Room", "html": "<p>Appears when defusing C4 at the bottom of Strut A</p>"}, {"key": "pe-6", "k": "tag", "title": "#6 William R Kelly", "loc": "AB Connecting Bridge"}, {"key": "pe-7", "k": "tag", "title": "#7 Ryosuke Sugie", "loc": "AB Connecting Bridge"}, {"key": "pe-8", "k": "tag", "title": "#8 Masanori Masabu Ihara", "loc": "Strut B Transformer Room"}, {"key": "pe-9", "k": "tag", "title": "#9 Hiroyuki Doi", "loc": "Strut B Transformer Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-10", "k": "tag", "title": "#10 Marius Alain Nguyen", "loc": "BC Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pe-11", "k": "tag", "title": "#11 Kevin Chen", "loc": "Strut C Dining Hall", "html": "<p>Appears after leaving the area and coming back</p>"}, {"key": "pe-12", "k": "tag", "title": "#12 Boudraa Reda", "loc": "Strut C Dining Hall", "html": "<p>Appears after leaving the area and coming back</p>"}, {"key": "pe-13", "k": "tag", "title": "#13 Yu Ya Nan", "loc": "CD Connecting Bridge"}, {"key": "pe-14", "k": "tag", "title": "#14 Takayuki Ueda", "loc": "CD Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pe-15", "k": "tag", "title": "#15 Luis Silva Garcia", "loc": "Strut D Sediment Pool", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-16", "k": "tag", "title": "#16 Brian A Brown", "loc": "Strut D Sediment Pool", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-17", "k": "tag", "title": "#17 Nicholas S DeGrazia", "loc": "DE Connecting Bridge"}, {"key": "pe-18", "k": "tag", "title": "#18 Yuuki Ito", "loc": "DE Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pe-19", "k": "tag", "title": "#19 Anmar Saad Albinyan", "loc": "Strut E Parcel Room 1F", "html": "<p>Disappears after the Oil Fence event</p>"}, {"key": "pe-20", "k": "tag", "title": "#20 Steve Masao Terada", "loc": "Strut E Parcel Room 1F", "html": "<p>Appears after the Oil Fence event</p>"}, {"key": "pe-21", "k": "tag", "title": "#21 Yuuki Yagi", "loc": "Strut E Heliport", "html": "<p>Does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pe-22", "k": "tag", "title": "#22 Brigitte Dickenscheid", "loc": "Strut E Heliport", "html": "<p>Does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pe-23", "k": "tag", "title": "#23 Agmall Sarwari", "loc": "Strut F Warehouse 1F", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-24", "k": "tag", "title": "#24 Naoto Yamazaki", "loc": "Strut F Warehouse 1F", "html": "<p>Stubborn soldier. Appears after meeting Stillman</p>"}, {"key": "pe-25", "k": "tag", "title": "#25 Terry Matalas", "loc": "Strut F Warehouse B1", "html": "<p>Appears after meeting Stillman</p>"}, {"key": "pe-26", "k": "tag", "title": "#26 Sefie J Nolte", "loc": "FA Connecting Bridge", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-27", "k": "tag", "title": "#27 David Li-San Chen", "loc": "Shell 1 Core, 1F"}, {"key": "pe-28", "k": "tag", "title": "#28 Ginseng W Mileur", "loc": "Shell 1 Core, 1F"}, {"key": "pe-29", "k": "tag", "title": "#29 Remy Schuster", "loc": "Shell 1 Core, 1F"}, {"key": "pe-30", "k": "tag", "title": "#30 Matthew J Whitney", "loc": "Shell 1 Core, B1"}, {"key": "pe-31", "k": "tag", "title": "#31 Ricardo Enrique Salazar", "loc": "Shell 1 Core, B1"}, {"key": "pe-32", "k": "tag", "title": "#32 Randall J Koerte", "loc": "Shell 1 Core, B1"}, {"key": "pe-33", "k": "tag", "title": "#33 Syouhei Yoshino", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pe-34", "k": "tag", "title": "#34 Mika M Claudepierre", "loc": "Shell 1 Core, B2 Computer Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-35", "k": "tag", "title": "#35 Joshua M Busby", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pe-36", "k": "tag", "title": "#36 Oliver Swann", "loc": "Shell 1 Core, B2 Computer Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pe-37", "k": "tag", "title": "#37 Toshifumi Kotogi", "loc": "KL Connecting Bridge", "html": "<p>Appears while escorting Emma</p>"}, {"key": "pe-38", "k": "tag", "title": "#38 Erich Werdermann", "loc": "Strut L Sewage Treatment Facility"}, {"key": "pe-39", "k": "tag", "title": "#39 Kouhei Tuzita", "loc": "Strut L Sewage Treatment Facility"}, {"key": "pe-40", "k": "tag", "title": "#40 Federico Biscetti", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pe-41", "k": "tag", "title": "#41 Matt R Miller", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pe-42", "k": "tag", "title": "#42 Jean Pierre Laforce", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pe-43", "k": "tag", "title": "#43 ||Peter Stillman||", "loc": "Strut E, Heliport", "html": "<p><span class=\"spoil\">Obtainable by picking up and dropping Fatman after defeating him</span></p>"}]}]},
+{"key": "tag-pn", "game": "plant", "title": "Dog tags: Plant, Normal (49)", "obj": "49 tags for Raiden on this difficulty, in route order. Hold each guard up, aim at his face, and fire near a stubborn one. The PerfectStealth video for this list is linked in Run 3.", "sections": [{"title": "", "items": [{"key": "pn-0", "k": "tag", "title": "#0 ||Solid Snake||", "loc": "||Arsenal Gear-Ascending Colon||", "html": "<p><span class=\"spoil\">Solid Snake's dog tag, obtained by knocking out Snake</span></p>"}, {"key": "pn-1", "k": "tag", "title": "#1 Jordan A Bowman", "loc": "Strut A, Roof", "html": "<p>Stubborn soldier, appears after entering Pump Room for the first time and directly after Fortune Battle</p>"}, {"key": "pn-2", "k": "tag", "title": "#2 Sean M Culhane", "loc": "Strut A, Pump Room"}, {"key": "pn-3", "k": "tag", "title": "#3 Jamie DR Dickie", "loc": "Strut A, Pump Room", "html": "<p>Appears after meeting Stillman</p>"}, {"key": "pn-4", "k": "tag", "title": "#4 Daichi Baba", "loc": "AB Connecting Bridge", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-5", "k": "tag", "title": "#5 David L Newell", "loc": "AB Connecting Bridge", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-6", "k": "tag", "title": "#6 Bren J Fraher", "loc": "Strut B, Transformer Room"}, {"key": "pn-7", "k": "tag", "title": "#7 Gavin C Elliott", "loc": "Strut B, Transformer Room"}, {"key": "pn-8", "k": "tag", "title": "#8 Johnny Chong", "loc": "BC Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pn-9", "k": "tag", "title": "#9 Chuoc Shan Lam", "loc": "Strut C, Dining Hall", "html": "<p>Appears after leaving the area and coming back</p>"}, {"key": "pn-10", "k": "tag", "title": "#10 Markus Huendgen", "loc": "Strut C, Dining Hall", "html": "<p>Appears after leaving the area and coming back</p>"}, {"key": "pn-11", "k": "tag", "title": "#11 Michael Roger Aarons", "loc": "CD Connecting Bridge"}, {"key": "pn-12", "k": "tag", "title": "#12 Takuji Tada", "loc": "CD Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pn-13", "k": "tag", "title": "#13 Joseph A McClaren", "loc": "Strut D Sediment Pool"}, {"key": "pn-14", "k": "tag", "title": "#14 Dustin Weger", "loc": "Strut D Sediment Pool", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pn-15", "k": "tag", "title": "#15 Wojtek Kujawa", "loc": "Strut D Sediment Pool", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-16", "k": "tag", "title": "#16 Kenji Yamaguchi", "loc": "DE Connecting Bridge", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-17", "k": "tag", "title": "#17 John A McCormick", "loc": "DE Connecting Bridge", "html": "<p>Appears after defeating Fatman</p>"}, {"key": "pn-18", "k": "tag", "title": "#18 Robert Viset", "loc": "Strut E, Parcel Room 1F", "html": "<p>Stubborn soldier, disappears after Oil Fence Event</p>"}, {"key": "pn-19", "k": "tag", "title": "#19 Tommi Eklof", "loc": "Strut E, Parcel Room 1F", "html": "<p>Disappears after the Oil Fence event</p>"}, {"key": "pn-20", "k": "tag", "title": "#20 Gary L Curtis", "loc": "Strut E, Parcel Room 1F", "html": "<p>Appears after the Oil Fence event</p>"}, {"key": "pn-21", "k": "tag", "title": "#21 Court Stauff", "loc": "Strut E Heliport", "html": "<p>Does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pn-22", "k": "tag", "title": "#22 Frode A Steine", "loc": "Strut E Heliport", "html": "<p>Does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pn-23", "k": "tag", "title": "#23 Katharine Irene Hargrove", "loc": "Strut E Heliport", "html": "<p>Does not appear between Fortune battle and meeting the ninja</p>"}, {"key": "pn-24", "k": "tag", "title": "#24 David R Papps", "loc": "Strut F Warehouse 1F", "html": "<p>Stubborn soldier. Appears after meeting Stillman</p>"}, {"key": "pn-25", "k": "tag", "title": "#25 Matt D Huffman", "loc": "Strut F Warehouse 1F", "html": "<p>Appears after meeting Stillman</p>"}, {"key": "pn-26", "k": "tag", "title": "#26 Ali H Rafati", "loc": "Strut F Warehouse B1", "html": "<p>Stubborn soldier. Appears after meeting Stillman</p>"}, {"key": "pn-27", "k": "tag", "title": "#27 Mais M Baali", "loc": "FA Connecting Bridge", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-28", "k": "tag", "title": "#28 Satoru Oda", "loc": "Shell 1 Core, 1F"}, {"key": "pn-29", "k": "tag", "title": "#29 Kamal Aggarwal", "loc": "Shell 1 Core, 1F"}, {"key": "pn-30", "k": "tag", "title": "#30 Anthony Hampton", "loc": "Shell 1 Core, 1F", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-31", "k": "tag", "title": "#31 Ivan Lui", "loc": "Shell 1 Core, 1F"}, {"key": "pn-32", "k": "tag", "title": "#32 Hideaki Dei", "loc": "Shell 1 Core, B1", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-33", "k": "tag", "title": "#33 Cesar Pariona Oncebay", "loc": "Shell 1 Core, B1"}, {"key": "pn-34", "k": "tag", "title": "#34 Yuuko Hayashi", "loc": "Shell 1 Core, B1"}, {"key": "pn-35", "k": "tag", "title": "#35 Viktor Hamrefors", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pn-36", "k": "tag", "title": "#36 Miroku Sato", "loc": "Shell 1 Core, B2 Computer Room", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-37", "k": "tag", "title": "#37 Kojiro Hayama", "loc": "Shell 1 Core, B2 Computer Room", "html": "<p>Appears while escorting Emma</p>"}, {"key": "pn-38", "k": "tag", "title": "#38 Mark S Eaton Fry", "loc": "Shell 1 Core, B2 Computer Room"}, {"key": "pn-39", "k": "tag", "title": "#39 Han Yi Cheng", "loc": "KL Connecting Bridge", "html": "<p>Stubborn soldier, appears while escorting Emma</p>"}, {"key": "pn-40", "k": "tag", "title": "#40 Yuta Tsubasa Teruya", "loc": "Strut L, Sewage Treatment Facility", "html": "<p>Stubborn soldier</p>"}, {"key": "pn-41", "k": "tag", "title": "#41 Mikiya Horiuchi", "loc": "Strut L, Sewage Treatment Facility"}, {"key": "pn-42", "k": "tag", "title": "#42 Martin Johansson", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pn-43", "k": "tag", "title": "#43 Taro Arakawa", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pn-44", "k": "tag", "title": "#44 Gaku Yamada", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pn-45", "k": "tag", "title": "#45 Zheng Xuan", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pn-46", "k": "tag", "title": "#46 Erasmo O Metos", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pn-47", "k": "tag", "title": "#47 Florian Busch", "loc": "Shell 2 Core, 1F Air Purification Room"}, {"key": "pn-48", "k": "tag", "title": "#48 ||Peter Stillman||", "loc": "Strut E, Heliport", "html": "<p><span class=\"spoil\">Obtainable by picking up and dropping Fatman after defeating him</span></p>"}]}]},
+{ key: "any", game: "both", title: "Any time: counters and rank", obj: "Counters that build up across your runs, the dog tag rewards and the Big Boss rank.",
+  sections: [
+  { title: "", items: [
+    { k: "ach", ach: "cameras", note: "Lethal shots at 5 cameras." },
+    { k: "ach", ach: "holdup", note: "Every dog tag needs a hold-up." },
+    { k: "ach", ach: "rent", note: "[O] [O] [O] on 30 guards." },
+    { k: "ach", ach: "necks", note: "Not on the Big Boss run." },
+    { k: "ach", ach: "tranq", note: "M9 on everyone." },
+    { k: "ach", ach: "dogtag", note: "Your first tag." },
+    { k: "ach", ach: "yorkie", note: "46 Tanker tags, after the credits." },
+    { k: "ach", ach: "beagle", note: "73 Plant tags, after the credits." },
+    { k: "ach", ach: "poodle", note: "76 Tanker tags, after the credits." },
+    { k: "ach", ach: "shiba", note: "121 Plant tags, after the credits." },
+    { k: "ach", ach: "bigboss", note: "Extreme, Tanker-Plant, every rule." },
+    { k: "ach", ach: "stealth", note: "With Big Boss." },
+    { k: "ach", ach: "pacifist", note: "With Big Boss." } ] } ] },
+{ key: "ext", game: "extra", title: "Menus and missions", obj: "Main menu content.",
+  sections: [
+  { title: "", items: [
+    { k: "ach", ach: "cake", note: "Any mission." },
+    { k: "ach", ach: "vr50", note: "Name the save UUDDLRLRBA." },
+    { k: "ach", ach: "casting", note: "Any scene." },
+    { k: "ach", ach: "lovehurts", note: "Demo 8, ||Rose as Raiden, Raiden as Solidus||." },
+    { k: "ach", ach: "screenplay", note: "All pages." },
+    { k: "ach", ach: "bosssurv", note: "Easy is enough." },
+    { k: "ach", ach: "tale", note: "The Wrongdoing." } ] } ] }
+];
+
+/* Collectible totals that tick an achievement automatically. */
+const AUTO = [
+  { ach: "wctanker", kind: "weapon", part: "tanker", label: "Tanker weapons" },
+  { ach: "wcplant", kind: "weapon", part: "plant", label: "Plant weapons" },
+  { ach: "boxes", kind: "box", label: "Boxes" },
+  { ach: "dogtag", kind: "tag", label: "Dog tags", min: 1 }
+];
+
+
+/* Guide images (WebP files in ../img/guides/mgs2/). */
+const IMGS = {"s_basic1": "../img/guides/mgs2/mgs2-menu-basic-actions-1.webp", "s_basic2": "../img/guides/mgs2/mgs2-menu-basic-actions-2.webp", "s_basic3": "../img/guides/mgs2/mgs2-menu-basic-actions-3.webp", "s_controls": "../img/guides/mgs2/mgs2-menu-controls.webp", "s_olga": "../img/guides/mgs2/mgs2-boss-olga-gap.webp", "s_fat1": "../img/guides/mgs2/mgs2-boss-fatman-ankle.webp", "s_fat2": "../img/guides/mgs2/mgs2-boss-fatman-down.webp", "s_fat3": "../img/guides/mgs2/mgs2-boss-fatman-claymore.webp", "s_ames": "../img/guides/mgs2/mgs2-story-ames.webp", "s_amesmic": "../img/guides/mgs2/mgs2-story-ames-mic.webp", "s_nik1": "../img/guides/mgs2/mgs2-story-nikita-crate.webp", "s_nik2": "../img/guides/mgs2/mgs2-story-nikita-vent.webp", "s_nik3": "../img/guides/mgs2/mgs2-story-nikita-panel.webp", "s_vamp1": "../img/guides/mgs2/mgs2-boss-vamp-corner.webp", "s_vamp2": "../img/guides/mgs2/mgs2-boss-vamp-aim.webp", "s_vamp3": "../img/guides/mgs2/mgs2-boss-vamp-shot.webp", "s_solidus": "../img/guides/mgs2/mgs2-boss-final-ledge.webp", "s_radio": "../img/guides/mgs2/mgs2-ach-radio.webp", "s_ghost": "../img/guides/mgs2/mgs2-ach-ghost-photo.webp", "s_sexting": "../img/guides/mgs2/mgs2-ach-sexting.webp", "s_johnny1": "../img/guides/mgs2/mgs2-ach-johnny-toilet.webp", "s_johnny2": "../img/guides/mgs2/mgs2-ach-johnny-silo.webp", "s_holdup": "../img/guides/mgs2/mgs2-ach-holdup.webp", "s_choke": "../img/guides/mgs2/mgs2-ach-chokehold.webp", "s_stars": "../img/guides/mgs2/mgs2-ach-knockout.webp", "s_grip1": "../img/guides/mgs2/mgs2-ach-grip-hang.webp", "s_grip2": "../img/guides/mgs2/mgs2-ach-grip-catch.webp", "s_camera": "../img/guides/mgs2/mgs2-ach-digital-camera.webp", "c_m9": "../img/guides/mgs2/mgs2-weapon-m9.webp", "c_chaff": "../img/guides/mgs2/mgs2-weapon-chaff-grenade.webp", "c_usp": "../img/guides/mgs2/mgs2-weapon-usp.webp", "c_stun": "../img/guides/mgs2/mgs2-weapon-stun-grenade.webp", "c_gren": "../img/guides/mgs2/mgs2-weapon-hand-grenade.webp", "c_socom": "../img/guides/mgs2/mgs2-weapon-socom.webp", "c_mag": "../img/guides/mgs2/mgs2-weapon-magazine.webp", "c_cool": "../img/guides/mgs2/mgs2-weapon-coolant.webp", "c_clay": "../img/guides/mgs2/mgs2-weapon-claymore.webp", "c_aks": "../img/guides/mgs2/mgs2-weapon-aks-74u.webp", "c_m4": "../img/guides/mgs2/mgs2-weapon-m4.webp", "c_c4": "../img/guides/mgs2/mgs2-weapon-c4.webp", "c_book": "../img/guides/mgs2/mgs2-weapon-book.webp", "c_dmic": "../img/guides/mgs2/mgs2-weapon-directional-mic.webp", "c_psg1": "../img/guides/mgs2/mgs2-weapon-psg1.webp", "c_psg1t": "../img/guides/mgs2/mgs2-weapon-psg1-t.webp", "c_rgb6": "../img/guides/mgs2/mgs2-weapon-rgb6.webp", "c_stinger": "../img/guides/mgs2/mgs2-weapon-stinger.webp", "c_nikita": "../img/guides/mgs2/mgs2-weapon-nikita.webp", "c_hf": "../img/guides/mgs2/mgs2-weapon-hf-blade.webp", "s_boxorange": "../img/guides/mgs2/mgs2-box-orange.webp", "s_boxwet": "../img/guides/mgs2/mgs2-box-wet.webp", "s_box1": "../img/guides/mgs2/mgs2-box-1.webp", "s_box2": "../img/guides/mgs2/mgs2-box-2.webp", "s_box5": "../img/guides/mgs2/mgs2-box-5.webp", "s_box3": "../img/guides/mgs2/mgs2-box-3.webp", "s_box4": "../img/guides/mgs2/mgs2-box-4.webp", "s_tagshine": "../img/guides/mgs2/mgs2-tag-shine.webp", "s_tagthermal": "../img/guides/mgs2/mgs2-tag-thermal.webp", "s_goggt": "../img/guides/mgs2/mgs2-goggles-tanker.webp", "s_goggp": "../img/guides/mgs2/mgs2-goggles-plant.webp", "s_bbreq": "../img/guides/mgs2/mgs2-bigboss-requirements.webp", "s_bbstats": "../img/guides/mgs2/mgs2-bigboss-stats.webp", "s_bbresult": "../img/guides/mgs2/mgs2-bigboss-results.webp", "s_bbtitle": "../img/guides/mgs2/mgs2-bigboss-codename.webp"};
+
+const PADS = {
+  ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], ST: ["Options", "sh"] },
+  xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], ST: ["Menu", "sh"] }
+};
+const TAGS = { story: "Story", missable: "Missable", collect: "Collectable", timed: "Time limited" };
+const KIND_LABEL = { ach: "Achievement", story: "Story", weapon: "Weapon", box: "Box", tag: "Dog tag" };
+const KIND_PLURAL = { ach: "Achievements", story: "Story", weapon: "Weapons", box: "Boxes", tag: "Dog tags" };
+const PART_BY = Object.fromEntries(PARTS.map(p => [p.key, p]));
+const RUN_BY_ID = Object.fromEntries(RUNS.map(r => [r.id, r]));
+const ALL = SECTIONS.flatMap(s => s.items.map(a => Object.assign(a, { game: s.game })));
+const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
+const CITEMS = COLL.flatMap(ch => ch.sections.flatMap(s => s.items.map(it => Object.assign(it, { ch: ch.key }))));
+const CBY = Object.fromEntries(CITEMS.filter(i => i.key).map(i => [i.key, i]));
+
+/* ---------------- state ---------------- */
+function blank() { return { got: {}, open: {}, tasks: {}, coll: {}, pad: "ps", tab: "ach", spoil: false }; }
+function clean(src) {
+  const out = blank();
+  if (!src || typeof src !== "object") return out;
+  for (const k of ["got", "open", "tasks", "coll"]) if (src[k] && typeof src[k] === "object") for (const x in src[k]) if (src[k][x] === true) out[k][x] = true;
+  if (src.pad === "xb") out.pad = "xb";
+  if (src.spoil === true) out.spoil = true;
+  if (["runs", "coll"].includes(src.tab)) out.tab = src.tab;
+  return out;
+}
+let state;
+try { const raw = localStorage.getItem(KEY); state = raw ? clean(JSON.parse(raw)) : blank(); } catch (e) { state = blank(); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let filter = "all", game = "all", runFilter = "all", query = "", kindFilter = "all", hideGot = false;
+
+/* ---------------- helpers ---------------- */
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function targetId(id) {
+  if (BY_ID[id]) return "a-" + id;
+  if (RUN_BY_ID[id]) return "run-" + id;
+  if (id === "coll") return "coll-top";
+  if (id === "runs") return "runs-top";
+  return id;
+}
+function buttons(t) { return t.replace(/\[(X|SQ|O|TR|L1|L2|R1|R2|L3|R3|ST)\]/g, (_, k) => { const [g, c] = PADS[state.pad][k]; return `<kbd class="b ${state.pad}-${k} ${c}">${g}</kbd>`; }); }
+/* spoilers: ||text|| in data strings, <span class="spoil"> in guide HTML, sp: "n" | "d" | "g" on achievements */
+const SP = h => `<span class="spoil" tabindex="0">${h}</span>`;
+const nm = a => a.sp === "n" ? SP(esc(a.name)) : esc(a.name);
+const ds = a => a.sp === "n" || a.sp === "d" ? SP(esc(a.desc)) : esc(a.desc);
+const plain = s => String(s).replace(/\|\|/g, "");
+function fmt(s) {
+  let t = esc(s);
+  t = t.replace(/\|\|(.+?)\|\|/g, (_, x) => SP(x));
+  t = t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\{\{([\w-]+)\|([^}]+)\}\}/g, (_, id, label) => `<a href="#${targetId(id)}" data-jump="${id}">${label}</a>`);
+  return buttons(t);
+}
+function blocks(list) {
+  return list.map(b => typeof b === "string" ? `<p>${fmt(b)}</p>` : b.h ? `<h4>${esc(b.h)}</h4>` : b.ul ? `<ul>${b.ul.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : b.box ? `<details class="more"><summary>${esc(BOXES[b.box].title)}</summary><div class="prose">${rich(BOXES[b.box].html)}</div></details>` : "").join("");
+}
+/* PSN guide HTML: button tokens, trophy lists as jump chips, wide tables scroll inside their box */
+function rich(h) {
+  return buttons(h)
+    .replace(/<div class="achrefs" data-ids="([^"]*)"><\/div>/g, (_, ids) => `<div class="tlinks">${ids.split(",").filter(id => BY_ID[id]).map(id => `<a class="tlink" href="#a-${id}" data-jump="${id}" data-tl="${id}">${nm(BY_ID[id])}</a>`).join("")}</div>`)
+    .replace(/<(span|div) class="spoil">/g, '<$1 class="spoil" tabindex="0">')
+    .replace(/<img data-img="(\w+)" alt="([^"]*)">/g, (_, k, alt) => IMGS[k] ? `<img class="${k[0] === "c" ? "card" : "shot"}" src="${IMGS[k]}" alt="${alt}" loading="lazy" decoding="async">` : "")
+    .replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, "</table></div>");
+}
+/* after inserting guide HTML: tables holding screenshots become labelled cards */
+function enhance(root) {
+  root.querySelectorAll(".tablewrap").forEach(w => {
+    if (w.classList.contains("stack") || !w.querySelector("img.shot")) return;
+    w.classList.add("stack");
+    const rows = [...w.querySelectorAll("tr")];
+    const head = rows.find(r => r.querySelector("th") && !r.querySelector("td"));
+    const labels = head ? [...head.cells].map(c => c.textContent.trim()) : [];
+    rows.forEach(r => [...r.cells].forEach((c, i) => {
+      if (c.tagName === "TD" && labels[i] && !/^image$/i.test(labels[i]) && !c.querySelector("img.shot")) c.dataset.label = labels[i];
+    }));
+  });
+}
+const runBadge = id => { const r = RUN_BY_ID[id]; return `<a class="run-badge" data-p="${r.game}" href="#run-${id}" data-jump="${id}">${esc(r.n)}</a>`; };
+const autoGot = rule => CITEMS.filter(i => i.k === rule.kind && i.ch !== undefined && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part) && state.coll[i.key]).length;
+const autoTotal = rule => CITEMS.filter(i => i.k === rule.kind && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part)).length;
+
+/* ---------------- progress & auto ticks ---------------- */
+function snapshot() { return AUTO.map(autoGot); }
+function applyAuto(before) {
+  AUTO.forEach((r, i) => {
+    const now = autoGot(r), need = r.min || autoTotal(r);
+    if (now >= need && before[i] < need) state.got[r.ach] = true;
+  });
+}
+function change(fn) { const b = snapshot(); fn(); applyAuto(b); save(); update(); }
+
+/* ---------------- render: achievements ---------------- */
+function renderItem(a) {
+  const auto = AUTO.find(r => r.ach === a.id && !r.min);
+  return `<li class="item" id="a-${a.id}"><div class="row">
+    <input type="checkbox" class="check" id="c-${a.id}" data-ach="${a.id}" aria-label="Mark ${a.sp === "n" ? "this achievement" : esc(a.name)} as unlocked">
+    <div>
+      <div class="title-line">
+        <h3><label for="c-${a.id}">${nm(a)}</label></h3>
+        ${a.runs.map(runBadge).join("")}
+        ${(a.tags || []).map(t => `<span class="tag ${t}">${TAGS[t]}</span>`).join("")}
+      </div>
+      <p class="desc">${ds(a)}</p>
+      ${auto ? `<div class="summary-line" data-autoline="${a.id}"></div>` : ""}
+      ${GUIDES[a.id] ? `<button class="guide-btn" aria-expanded="false" aria-controls="g-${a.id}">Show guide</button>
+      <div class="guide" id="g-${a.id}" data-p="${a.game}" hidden></div>` : ""}
+    </div></div></li>`;
+}
+function renderAch() {
+  const runOpts = RUNS.map(r => `<option value="${r.id}">${esc(r.n + ": " + r.title)}</option>`).join("");
+  document.getElementById("view-ach").innerHTML = `
+    <div class="row-tools" style="margin-bottom:.6rem">
+      <span class="seg" role="group" aria-label="Status"><button data-filter="all" aria-pressed="true">All</button><button data-filter="todo" aria-pressed="false">To do</button><button data-filter="done" aria-pressed="false">Unlocked</button><button data-filter="missable" aria-pressed="false">Missable</button></span>
+      <span class="seg" role="group" aria-label="Game or DLC"><button data-game="all" aria-pressed="true">All</button>${PARTS.map(p => `<button data-game="${p.key}" aria-pressed="false">${esc(p.short)}</button>`).join("")}</span>
+      <select class="select" id="run-filter" aria-label="Filter by playthrough"><option value="all">Any playthrough</option>${runOpts}</select>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+    </div>
+    <nav class="jumps" aria-label="Categories">${SECTIONS.map(s => `<a class="jump" data-p="${s.game}" href="#sec-${s.id}">${esc(s.title)} <span data-jcount="${s.id}"></span></a>`).join("")}</nav>
+    ${SECTIONS.map(sec => `<section class="sheet" data-p="${sec.game}" id="sec-${sec.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[sec.game].label)}</small>${esc(sec.title)}</h2><span class="sub" data-sub="${sec.id}"></span></div>
+      <p class="intro">${fmt(sec.intro)}${sec.src ? ` <a href="${sec.src}" target="_blank" rel="noopener">Guide source ↗</a>` : ""}</p>
+      <ul class="items">${sec.items.map(renderItem).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden>Nothing here for this filter.</p>
+    </section>`).join("")}`;
+}
+
+/* ---------------- render: runs ---------------- */
+function renderRuns() {
+  const achFor = id => ALL.filter(a => a.runs.includes(id));
+  document.getElementById("view-runs").innerHTML = `
+    <section class="sheet" id="runs-top"><div class="sheet-head"><h2><small>Your plan</small>Playthroughs</h2><span class="sub" id="runs-count"></span></div>
+      <p class="intro">Five Tanker-Plant runs on one save chain, starting with a blind first run just to enjoy the game, then Very Easy, Easy and Normal for the missables and dog tags, and the Big Boss rank on Extreme. Missions, Boss Survival and a Snake Tale fill the gaps. Each run's tasks are tickable, and its chips show which achievements it should unlock.</p>
+      <div class="runmap">${RUNS.map(r => `<a href="#run-${r.id}" data-jump="${r.id}" data-p="${r.game}" data-runcard="${r.id}"><b>${esc(r.n)}</b><span>${esc(r.title)}</span><br><span data-runprog="${r.id}"></span></a>`).join("")}</div>
+    </section>
+    ${RUNS.map(r => `<section class="sheet run" data-p="${r.game}" id="run-${r.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[r.game].label)} · ${esc(r.n)}</small>${esc(r.title)}</h2><span class="sub" data-runsub="${r.id}"></span></div>
+      <div class="mode">${esc(r.mode)}</div>
+      <p class="intro">${fmt(r.summary)}</p>
+      <ul class="tasks">${r.tasks.map((t, i) => `<li data-task="${r.id}:${i}"><input type="checkbox" class="check small" id="t-${r.id}-${i}" data-taskcheck="${r.id}:${i}"><label for="t-${r.id}-${i}"><span class="st-name">${fmt(t[0])}</span>${t[1] ? `<span class="st-desc">${fmt(t[1])}</span>` : ""}</label></li>`).join("")}</ul>
+      ${achFor(r.id).length ? `<div class="tlinks">${achFor(r.id).map(a => `<a class="tlink" href="#a-${a.id}" data-jump="${a.id}" data-tl="${a.id}">${nm(a)}</a>`).join("")}</div>` : ""}
+      ${r.body ? `<div class="prose" style="margin-top:.7rem">${blocks(r.body)}</div>` : ""}
+      <p></p>
+    </section>`).join("")}`;
+  enhance(document.getElementById("view-runs"));
+}
+
+/* ---------------- render: 100% guide ---------------- */
+function renderColl() {
+  const kinds = [...new Set(CITEMS.map(i => i.k))];
+  document.getElementById("view-coll").innerHTML = `
+    <section class="sheet" id="coll-top"><div class="sheet-head"><h2><small>Runs 3 to 5</small>100% Guide</h2><span class="sub" id="coll-count"></span></div>
+      <p class="intro">Every weapon and box in story order with the achievements tied to each part of the Tanker and the Plant, then the dog tags for Very Easy, Easy and Normal, and finally the counters and menu extras. Ticking a weapon or box here counts towards its achievement, and the last one ticks it for you. Dog tags carry over through New Game+; see {{shiba|Shiba Inu}} for how to take them.</p>
+      <div class="row-tools">
+        <span class="seg" role="group" aria-label="Show"><button data-kind="all" aria-pressed="true">All</button>${kinds.map(k => `<button data-kind="${k}" aria-pressed="false">${esc(KIND_PLURAL[k])}</button>`).join("")}</span>
+        <button class="chip" id="hide-got" aria-pressed="false">Hide ticked</button>
+      </div>
+      <div class="summary-line" id="coll-kinds"></div><p></p>
+    </section>
+    ${COLL.map(ch => `<details class="chapter" id="ch-${ch.key}" data-ch="${ch.key}" data-p="${ch.game}">
+      <summary><span class="ch-title">${fmt(ch.title)}</span><span class="ch-count" data-chcount="${ch.key}"></span><span class="ch-meta" data-chmeta="${ch.key}"></span></summary>
+      <div class="ch-body" data-chbody="${ch.key}"></div></details>`).join("")}`;
+  document.querySelector("#coll-top .intro").innerHTML = fmt(document.querySelector("#coll-top .intro").textContent);
+}
+function ciHtml(it) {
+  if (it.k === "ach" || it.k === "story") {
+    const a = BY_ID[it.ach];
+    return `<div class="ci" data-ciach="${a.id}" data-k="${it.k}">
+      <input type="checkbox" class="check small" id="cca-${a.id}-${it.ch}" data-ach="${a.id}" aria-label="Unlocked: ${a.sp === "n" ? "this achievement" : esc(a.name)}">
+      <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cca-${a.id}-${it.ch}">${nm(a)}</label></div>
+      <div class="ci-loc">${ds(a)}</div>
+      ${it.note ? `<div class="ci-desc"><p>${fmt(it.note)}</p></div>` : ""}
+      <a class="maplink" href="#a-${a.id}" data-jump="${a.id}">Open its guide ›</a></div></div>`;
+  }
+  return `<div class="ci" id="ci-${it.key}" data-ci="${it.key}" data-k="${it.k}">
+    <input type="checkbox" class="check small" id="cc-${it.key}" data-coll="${it.key}" aria-label="Collected: ${esc(plain(it.title))}">
+    <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cc-${it.key}">${fmt(it.title)}</label></div>
+    ${it.loc ? `<div class="ci-loc">${fmt(it.loc)}</div>` : ""}
+    ${it.html ? `<div class="ci-desc">${rich(it.html)}</div>` : ""}</div></div>`;
+}
+function renderChapter(key) {
+  const ch = COLL.find(c => c.key === key), body = document.querySelector(`[data-chbody="${key}"]`);
+  if (body.dataset.done) return;
+  body.dataset.done = "1";
+  body.innerHTML = (ch.obj ? `<p class="ch-obj">${fmt(ch.obj)}</p>` : "") +
+    ch.sections.map(s => `${s.title ? `<div class="sec-h">${esc(s.title)}</div>` : ""}${s.items.map(ciHtml).join("")}`).join("");
+  enhance(body);
+  updateColl();
+}
+
+function render() {
+  renderAch(); renderRuns(); renderColl();
+  document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
+  setTab(state.tab, true);
+  syncChips(); syncPad(); syncSpoil();
+  update();
+}
+
+/* ---------------- behaviour ---------------- */
+function toggleGuide(btn, force) {
+  const id = btn.getAttribute("aria-controls").slice(2), panel = document.getElementById("g-" + id);
+  const open = force !== undefined ? force : panel.hidden;
+  if (open && !panel.dataset.done) { panel.innerHTML = BY_ID[id].sp ? `<div class="spoil" tabindex="0">${rich(GUIDES[id])}</div>` : rich(GUIDES[id]); panel.dataset.done = "1"; enhance(panel); update(); }
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
+  if (open) state.open[id] = true; else delete state.open[id];
+}
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
+function setTab(t, quiet) {
+  state.tab = t;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
+  if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
+}
+function jumpTo(id) {
+  const el = document.getElementById(targetId(id));
+  if (!el) return;
+  const view = el.closest("[role=tabpanel]").id.slice(5);
+  if (view !== state.tab) setTab(view, true), save();
+  if (el.classList.contains("hidden") || (el.closest("section.sheet") || {}).hidden) { filter = "all"; game = "all"; runFilter = "all"; query = ""; searchEl.value = ""; clearEl.hidden = true; document.getElementById("run-filter").value = "all"; syncChips(); update(); }
+  const btn = el.querySelector(":scope > .row .guide-btn");
+  if (btn && btn.getAttribute("aria-expanded") !== "true") { toggleGuide(btn, true); save(); }
+  requestAnimationFrame(() => {
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+  });
+}
+
+const mainEl = document.querySelector("main");
+mainEl.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.ach) change(() => { if (t.checked) state.got[t.dataset.ach] = true; else delete state.got[t.dataset.ach]; });
+  else if (t.dataset.taskcheck) { if (t.checked) state.tasks[t.dataset.taskcheck] = true; else delete state.tasks[t.dataset.taskcheck]; save(); update(); }
+  else if (t.dataset.coll) change(() => { if (t.checked) state.coll[t.dataset.coll] = true; else delete state.coll[t.dataset.coll]; });
+  else if (t.id === "run-filter") { runFilter = t.value; update(); }
+});
+const searchEl = document.getElementById("search"), clearEl = document.getElementById("clear-search");
+function runSearch(v) {
+  query = v.trim().toLowerCase();
+  clearEl.hidden = !v;
+  if (query && state.tab !== "ach") setTab("ach", true);
+  if (query) { filter = "all"; game = "all"; runFilter = "all"; const rf = document.getElementById("run-filter"); if (rf) rf.value = "all"; syncChips(); }
+  update();
+  if (query) {
+    const first = document.querySelector("#view-ach li.item:not(.hidden)");
+    const top = (first || document.getElementById("view-ach")).getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 12;
+    window.scrollTo({ top, behavior: "auto" });
+  }
+}
+searchEl.addEventListener("input", () => runSearch(searchEl.value));
+searchEl.addEventListener("keydown", e => { if (e.key === "Enter") searchEl.blur(); if (e.key === "Escape") { searchEl.value = ""; runSearch(""); } });
+clearEl.addEventListener("click", () => { searchEl.value = ""; runSearch(""); searchEl.focus(); });
+const toTop = document.getElementById("totop");
+let ticking = false;
+window.addEventListener("scroll", () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 500); ticking = false; }); }, { passive: true });
+toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+mainEl.addEventListener("toggle", e => { const d = e.target; if (d.matches && d.matches("details.chapter") && d.open) renderChapter(d.dataset.ch); }, true);
+function reveal(e) {
+  const sp = e.target.closest && e.target.closest(".spoil");
+  if (!sp || state.spoil || sp.classList.contains("shown")) return false;
+  e.preventDefault(); e.stopPropagation(); sp.classList.add("shown"); return true;
+}
+mainEl.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("spoil")) reveal(e); });
+mainEl.addEventListener("click", e => {
+  if (reveal(e)) return;
+  if (e.target.matches("img.shot")) { openShot(e.target); return; }
+  const t = e.target.closest("button, a[data-jump]");
+  if (!t) return;
+  if (t.classList.contains("tab")) setTab(t.dataset.tab);
+  else if (t.dataset.filter) { filter = t.dataset.filter; syncChips(); update(); }
+  else if (t.dataset.game) { game = t.dataset.game; syncChips(); update(); }
+  else if (t.dataset.kind) { kindFilter = t.dataset.kind; syncChips(); updateColl(); }
+  else if (t.id === "hide-got") { hideGot = !hideGot; syncChips(); updateColl(); }
+  else if (t.id === "expand") { const open = t.getAttribute("aria-pressed") !== "true"; t.setAttribute("aria-pressed", String(open)); t.textContent = open ? "Hide all guides" : "Show all guides"; document.querySelectorAll("#view-ach .guide-btn").forEach(b => toggleGuide(b, open)); save(); }
+  else if (t.classList.contains("guide-btn")) { toggleGuide(t); save(); }
+  else if (t.id === "spoilers") { state.spoil = !state.spoil; save(); syncSpoil(); }
+  else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); render(); }
+  else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
+});
+
+/* tap a screenshot to see it full size */
+const lb = document.createElement("div");
+lb.className = "lightbox"; lb.hidden = true; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Screenshot, tap to close");
+lb.innerHTML = '<img alt="">';
+document.body.appendChild(lb);
+function openShot(img) { lb.firstChild.src = img.src; lb.firstChild.alt = img.alt; lb.hidden = false; }
+lb.addEventListener("click", () => { lb.hidden = true; lb.firstChild.removeAttribute("src"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) lb.click(); });
+
+function syncChips() {
+  document.querySelectorAll("[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
+  document.querySelectorAll("[data-game]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.game === game)));
+  document.querySelectorAll("[data-kind]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kindFilter)));
+  const h = document.getElementById("hide-got"); if (h) h.setAttribute("aria-pressed", String(hideGot));
+}
+function syncSpoil() {
+  document.body.classList.toggle("spoilers", state.spoil);
+  const b = document.getElementById("spoilers"); if (b) { b.setAttribute("aria-pressed", String(state.spoil)); b.textContent = state.spoil ? "Hide spoilers" : "Show all spoilers"; }
+}
+function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
+
+const flat = h => String(h || "").replace(/<[^>]+>/g, " ");
+function matches(a) {
+  const d = !!state.got[a.id];
+  if (filter === "todo" && d) return false;
+  if (filter === "done" && !d) return false;
+  if (filter === "missable" && !(a.tags || []).some(t => t === "missable" || t === "timed")) return false;
+  if (game !== "all" && a.game !== game) return false;
+  if (runFilter !== "all" && !a.runs.includes(runFilter)) return false;
+  if (query && ![a.name, a.desc, flat(GUIDES[a.id])].join(" ").toLowerCase().includes(query)) return false;
+  return true;
+}
+
+const isGot = it => it.ach ? !!state.got[it.ach] : !!state.coll[it.key];
+function updateColl() {
+  const got = CITEMS.filter(isGot).length;
+  const cc = document.getElementById("coll-count"); if (cc) cc.textContent = `${got} / ${CITEMS.length}`;
+  const totals = {};
+  CITEMS.forEach(i => { (totals[i.k] = totals[i.k] || [0, 0])[1]++; if (isGot(i)) totals[i.k][0]++; });
+  const ck = document.getElementById("coll-kinds");
+  if (ck) ck.innerHTML = Object.keys(KIND_LABEL).filter(k => totals[k]).map(k => `${KIND_PLURAL[k]} <b>${totals[k][0]}/${totals[k][1]}</b>`).join(" · ");
+  COLL.forEach(ch => {
+    const items = ch.sections.flatMap(s => s.items), g = items.filter(isGot).length, kc = {};
+    items.forEach(i => { (kc[i.k] = kc[i.k] || [0, 0])[1]++; if (isGot(i)) kc[i.k][0]++; });
+    document.querySelector(`[data-chcount="${ch.key}"]`).textContent = `${g} / ${items.length}`;
+    document.querySelector(`[data-chmeta="${ch.key}"]`).innerHTML = Object.keys(KIND_LABEL).filter(k => kc[k]).map(k => `<span>${KIND_PLURAL[k]} <span class="kd">${kc[k][0]}/${kc[k][1]}</span></span>`).join("");
+    document.getElementById("ch-" + ch.key).classList.toggle("full", g === items.length);
+  });
+  document.querySelectorAll(".ci").forEach(el => {
+    const on = el.dataset.ci ? !!state.coll[el.dataset.ci] : !!state.got[el.dataset.ciach];
+    el.classList.toggle("got", on);
+    const cb = el.querySelector("input.check"); if (cb) cb.checked = on;
+    el.classList.toggle("hidden", (kindFilter !== "all" && el.dataset.k !== kindFilter) || (hideGot && on));
+  });
+}
+
+function update() {
+  const per = Object.fromEntries(PARTS.map(p => [p.key, [0, 0]]));
+  SECTIONS.forEach(sec => {
+    let sd = 0, vis = 0;
+    sec.items.forEach(a => {
+      const d = !!state.got[a.id];
+      per[a.game][1]++; if (d) { per[a.game][0]++; sd++; }
+      const li = document.getElementById("a-" + a.id);
+      li.classList.toggle("done", d);
+      const cb = document.getElementById("c-" + a.id);
+      cb.checked = d;
+      const rule = AUTO.find(r => r.ach === a.id && !r.min);
+      cb.indeterminate = !d && !!rule && autoGot(rule) > 0;
+      const al = li.querySelector("[data-autoline]");
+      if (al && rule) al.innerHTML = `${esc(rule.label)} ticked in the <a href="#coll-top" data-jump="coll">100% Guide</a>: <b>${autoGot(rule)} / ${autoTotal(rule)}</b>`;
+      const show = matches(a); li.classList.toggle("hidden", !show); if (show) vis++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sd} / ${sec.items.length}`;
+    document.querySelector(`[data-jcount="${sec.id}"]`).textContent = `${sd}/${sec.items.length}`;
+    document.querySelector(`[data-empty="${sec.id}"]`).hidden = vis > 0;
+    document.getElementById("sec-" + sec.id).hidden = vis === 0 && (game !== "all" || runFilter !== "all" || !!query);
+  });
+  const sc = document.getElementById("search-count");
+  if (sc) { const n = ALL.filter(matches).length; sc.textContent = query ? `${n} found` : ""; let nm = document.getElementById("no-match"); if (!nm) { nm = document.createElement("p"); nm.id = "no-match"; nm.className = "empty"; document.getElementById("view-ach").appendChild(nm); } nm.hidden = !(query && n === 0); nm.textContent = "No achievements match that search."; }
+  let runsDone = 0;
+  RUNS.forEach(r => {
+    let g = 0;
+    r.tasks.forEach((_, i) => { const on = !!state.tasks[`${r.id}:${i}`]; if (on) g++; document.getElementById(`t-${r.id}-${i}`).checked = on; document.querySelector(`[data-task="${r.id}:${i}"]`).classList.toggle("got", on); });
+    const ach = ALL.filter(a => a.runs.includes(r.id)), ag = ach.filter(a => state.got[a.id]).length;
+    const full = g === r.tasks.length; if (full) runsDone++;
+    document.querySelector(`[data-runsub="${r.id}"]`).textContent = `${g} / ${r.tasks.length} tasks`;
+    document.querySelector(`[data-runprog="${r.id}"]`).textContent = `${g}/${r.tasks.length} tasks · ${ag}/${ach.length} achievements`;
+    document.querySelector(`[data-runcard="${r.id}"]`).classList.toggle("full", full);
+  });
+  document.getElementById("runs-count").textContent = `${runsDone} / ${RUNS.length} done`;
+  document.querySelectorAll("[data-tl]").forEach(l => l.classList.toggle("done", !!state.got[l.dataset.tl]));
+  updateColl();
+  const done = Object.values(per).reduce((s, v) => s + v[0], 0), total = Object.values(per).reduce((s, v) => s + v[1], 0), pct = Math.round(done / total * 100);
+  document.getElementById("count").innerHTML = `${done} / ${total} <small>unlocked · ${pct}%</small>`;
+  document.getElementById("bar").innerHTML = PARTS.map(p => `<span data-p="${p.key}" style="width:${per[p.key][0] / total * 100}%"></span>`).join("");
+  document.getElementById("legend").innerHTML = PARTS.map(p => `<span data-p="${p.key}"><i></i>${esc(p.label)} ${per[p.key][0]}/${per[p.key][1]}</span>`).join("");
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+/* ---------------- panel ---------------- */
+let statusTimer = null;
+function status(msg) { const el = document.getElementById("save-status"), d = el.dataset.d || (el.dataset.d = el.textContent); el.textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { el.textContent = d; }, 4500); }
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "mgs2-progress.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Backup saved as mgs2-progress.json.");
+});
+const fileInput = document.getElementById("import-file");
+document.getElementById("import").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const f = fileInput.files[0]; if (!f) return;
+  f.text().then(txt => { const d = JSON.parse(txt); if (!d || typeof d !== "object" || !d.got || typeof d.got !== "object") throw new Error(); state = clean(d); save(); render(); status("Backup restored."); })
+    .catch(() => status("That file isn't a checklist backup. Choose a mgs2-progress.json file."));
+  fileInput.value = "";
+});
+
+render();
+})();
+
+</script>
+<!-- hub:body -->
+<script src="../sync.js" defer></script>
+<script src="../steam-sync.js" defer></script>
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

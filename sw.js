@@ -1,5 +1,5 @@
 // Bump CACHE (a version like 1.3.0) whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v1.4.12";
+const CACHE = "checklists-v1.4.13";
 const FILES = [
   "./",
   "manifest.json",
@@ -54,7 +54,12 @@ const FILES = [
   "img/guides/re2/re2-gs-runaway-raccoon-2-map.webp",
   "img/guides/re2/re2-gs-runaway-raccoon-2.webp",
   "img/guides/re2/re2-gs-runaway-raccoon-3-map.webp",
-  "img/guides/re2/re2-gs-runaway-raccoon-3.webp"
+  "img/guides/re2/re2-gs-runaway-raccoon-3.webp",
+  "img/cards/borderlands-1.webp",
+  "img/guides/borderlands-1/borderlands-1-base-map-pandora.webp",
+  "img/guides/borderlands-1/borderlands-1-base-map-treachers-landing-boat.webp",
+  "img/guides/borderlands-1/borderlands-1-ned-map-jakobs-cove.webp",
+  "img/guides/borderlands-1/borderlands-1-ned-map-tk-baha.webp"
 ];
 
 self.addEventListener("install", e => {

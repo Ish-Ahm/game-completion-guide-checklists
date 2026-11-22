@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">
+<meta name="theme-color" content="#100e0b">
+<title>Borderlands GOTY Enhanced 100%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    /* ---- game palette: the only block that changes per game ---- */
+    --bg: #100e0b; --bg-2: #161310; --card: #1c1812; --card-2: #262017; --ink: #f1ece2; --ink-soft: #b3a996;
+    --accent: #f2b630; --accent-ink: #1a1205; --gold: #f2c96a; --green: #93c98a; --blue: #8fbfd8; --violet: #c2aedb; --orange: #ee9f5c; --warn: #f0877a;
+    --line: rgba(179, 169, 150, .2); --done-bg: rgba(147, 201, 138, .08);
+    --check-line: #5a5040; --task-line: #3a3226; --kbd-bg: #2a241a; --kbd-line: #4a4030; --header-ink: #ece5d6; --desc-ink: #ddd5c6; --totop-bg: rgba(38, 32, 23, .92);
+    /* one colour per part: base game (logo yellow), Dr. Ned (zombie green), Moxxi (pink), Knoxx (Crimson Lance red), Claptrap (Hyperion teal) */
+    --c-base: var(--accent); --c-ned: #93c98a; --c-moxxi: #ef93c4; --c-knoxx: #f0877a; --c-clap: #74c7c4;
+    /* ---- layout (do not change) ---- */
+    --nav-h: 0px; --sm: 116px;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.55;
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px)); -webkit-tap-highlight-color: transparent; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+  .cond, h2, .tab, .count, .tag, .run-badge { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; }
+  h3 { font-weight: 700; font-size: 1.07rem; line-height: 1.3; }
+  a { color: var(--gold); }
+  button { font: inherit; }
+
+  /* header */
+  header { position: relative; overflow: hidden; padding: calc(1.6rem + env(safe-area-inset-top, 0px)) 1rem 2.6rem; text-align: center; background: #000; }
+  .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: brightness(.38) saturate(.8); }
+  header::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.45), transparent 75%), linear-gradient(180deg, rgba(0,0,0,.2), transparent 40%, rgba(11,10,9,.7) 80%, var(--bg)); }
+  header > :not(.hero) { position: relative; z-index: 1; }
+  .logo { display: block; width: min(560px, 88vw); height: auto; margin: 0 auto; filter: drop-shadow(0 4px 14px #000); }
+  .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .eyebrow { margin-top: .9rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-size: .85rem; }
+  header p { max-width: 38rem; margin: .5rem auto 0; color: var(--header-ink); text-shadow: 0 1px 3px #000; font-size: .97rem; }
+
+  main { max-width: 56rem; margin: 0 auto; padding: 0 .75rem 3rem; }
+
+  /* tabs: top on wide screens, fixed bottom bar on phones */
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -.75rem; padding: 0 .75rem; border-bottom: 1px solid var(--line); }
+  .searchrow { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; }
+  .searchbox { position: relative; flex: 1; min-width: 0; }
+  .searchbox svg { position: absolute; left: .65rem; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+  .topsearch { width: 100%; min-height: 42px; font: inherit; font-size: 16px; padding: .3rem 2.4rem .3rem 2.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); color: var(--ink); }
+  .topsearch::-webkit-search-cancel-button { display: none; }
+  .topsearch:focus { border-color: var(--accent); outline: none; }
+  .clear-search { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--ink-soft); font-size: 1.2rem; cursor: pointer; }
+  .search-count { flex: none; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 0; border-top: 1px solid var(--line); }
+  .totop { position: fixed; right: max(1rem, env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 19; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--totop-bg); color: var(--ink); display: grid; place-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .totop.show { opacity: 1; transform: none; pointer-events: auto; }
+  .totop svg { width: 20px; height: 20px; }
+  .tab { flex: 1; min-height: 48px; font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: .45rem; padding: 0 .4rem; }
+  .tab svg { width: 20px; height: 20px; flex: none; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .panel { margin: 1rem 0; padding: .85rem .9rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
+  .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
+  .panel-top h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .count { font-weight: 700; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+  .count small { font-family: "Source Sans 3", sans-serif; font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  .meter { margin-top: .45rem; height: 10px; background: #000; border: 1px solid var(--line); display: flex; overflow: hidden; }
+  .meter span { display: block; height: 100%; transition: width .4s ease; }
+  .legend { display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin-top: .35rem; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .legend i { display: inline-block; width: .65rem; height: .65rem; margin-right: .3rem; vertical-align: -.05rem; }
+  .row-tools { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; }
+  .chip { min-height: 38px; font-weight: 600; font-size: .9rem; cursor: pointer; padding: .2rem .75rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip.reset { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .chip.reset.armed { background: var(--warn); color: var(--accent-ink); }
+  .select, .search { min-height: 38px; font: inherit; font-size: 16px; padding: .2rem .6rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .search { flex: 1 1 12rem; min-width: 0; }
+  .select { flex: 1 1 12rem; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+  .seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; flex-wrap: wrap; }
+  .seg button { min-height: 36px; font-size: .88rem; font-weight: 600; padding: .2rem .65rem; border: 0; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  details.settings { margin-top: .7rem; border-top: 1px solid var(--line); padding-top: .55rem; }
+  details.settings > summary { cursor: pointer; font-weight: 600; color: var(--ink-soft); font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+  .save-status { color: var(--ink-soft); font-size: .88rem; flex: 1 1 100%; }
+  button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, .spoil:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .jumps { display: flex; gap: .35rem; overflow-x: auto; margin: 0 -.75rem 1rem; padding: 0 .75rem .3rem; scrollbar-width: thin; }
+  .jump { flex: none; font-size: .88rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .35rem .65rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .jump span { color: var(--ink-soft); }
+
+  section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .9rem .85rem .4rem; margin-bottom: 1.3rem; scroll-margin-top: var(--sm); }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; line-height: 1.05; }
+  .sheet-head h2 small { display: block; font-size: .55em; letter-spacing: .16em; color: var(--accent); }
+  .sheet-head .sub { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .3rem 0 .5rem; color: var(--ink-soft); font-size: .96rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 1px solid var(--line); padding: .55rem 0; scroll-margin-top: var(--sm); }
+  li.item.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: start; padding: .35rem .3rem; }
+  .row > div { min-width: 0; }
+  li.item.done > .row { background: var(--done-bg); }
+  .flash { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .check { appearance: none; -webkit-appearance: none; margin: 0; width: 30px; height: 30px; cursor: pointer; border: 2px solid var(--check-line); background: var(--bg-2); border-radius: 3px; display: grid; place-content: center; flex: none; }
+  .check.small { width: 24px; height: 24px; }
+  .check::before { content: ""; width: 17px; height: 17px; clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 22%, 85% 8%, 39% 69%); background: #08130a; transform: scale(0); transition: transform .12s; }
+  .check.small::before { width: 13px; height: 13px; }
+  .check:checked { background: var(--green); border-color: var(--green); }
+  .check:checked::before { transform: scale(1); }
+  .check:indeterminate { border-color: var(--gold); }
+  .check:indeterminate::before { clip-path: none; height: 3px; width: 13px; background: var(--gold); transform: scale(1); }
+
+  .title-line { display: flex; align-items: center; gap: .25rem .45rem; flex-wrap: wrap; }
+  .title-line h3 { flex: 1 1 100%; }
+  .title-line h3 label { cursor: pointer; }
+  li.item.done .title-line h3 { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 0 .4rem; letter-spacing: .06em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.5; }
+  .tag.story { color: var(--blue); } .tag.missable { color: var(--warn); } .tag.collect { color: var(--green); } .tag.timed { color: var(--orange); }
+  .run-badge { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; padding: 0 .45rem; line-height: 1.55; background: var(--pc, var(--accent)); color: var(--accent-ink); text-decoration: none; }
+  .desc { margin: .15rem 0 0; color: var(--desc-ink); }
+
+  .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .35rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); font-size: .94rem; min-height: 44px; }
+  .steps li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .steps li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .steps label { cursor: pointer; min-width: 0; }
+  .st-name { font-weight: 600; }
+  .st-desc { display: block; color: var(--ink-soft); font-size: .84rem; }
+  details.steps-wrap { margin-top: .5rem; }
+  details.steps-wrap > summary { cursor: pointer; font-weight: 600; color: var(--gold); font-size: .95rem; min-height: 36px; display: flex; align-items: center; }
+  .mini { min-height: 34px; font-size: .85rem; font-weight: 600; cursor: pointer; padding: .1rem .6rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); }
+  .step-tools { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
+
+  .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .step-btn { font-weight: 700; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+  .count-input { font: inherit; font-size: 16px; font-weight: 700; width: 4.2rem; height: 42px; text-align: center; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .counter .of { color: var(--ink-soft); }
+  .summary-line { margin-top: .45rem; font-size: .93rem; font-weight: 600; color: var(--ink-soft); }
+  .summary-line b { color: var(--ink); }
+
+  .guide-btn { min-height: 36px; font-weight: 600; font-size: .93rem; margin-top: .25rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .guide { margin: .4rem 0 0; padding: .7rem .8rem; border-left: 2px solid var(--accent); background: var(--bg-2); font-size: .97rem; }
+  .guide > * + *, .prose > * + * { margin-top: .5rem; }
+  .guide p, .prose p { margin: 0; }
+  .guide h4, .prose h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-top: .8rem; }
+  .guide ul, .prose ul { margin: 0; padding-left: 1.1rem; }
+  .guide li + li, .prose li + li { margin-top: .3rem; }
+  .note { color: var(--ink-soft); font-style: italic; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .spoil { background: var(--kbd-line); color: transparent; border-radius: 2px; cursor: pointer; user-select: none; }
+  .spoil.shown, body.spoilers .spoil { background: transparent; color: inherit; user-select: auto; cursor: auto; }
+
+  kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.45em; height: 1.45em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px; font: 700 .78em/1 "Source Sans 3", sans-serif; vertical-align: .08em; background: var(--kbd-bg); color: var(--ink); border: 1px solid var(--kbd-line); }
+  kbd.b.sh { border-radius: 3px; }
+  kbd.ps-X { color: #8ab8ff; } kbd.ps-SQ { color: #f29ac8; } kbd.ps-O { color: #ff7676; } kbd.ps-TR { color: #5fd6aa; }
+  kbd.xb-X { color: #7bd67b; } kbd.xb-SQ { color: #6aa8ff; } kbd.xb-O { color: #ff7676; } kbd.xb-TR { color: #f4cf55; }
+
+  .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+  .tlink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .15rem .5rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
+  .tlink.done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
+
+  /* runs */
+  .runmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr)); gap: .4rem; margin-bottom: 1rem; }
+  .runmap a { display: block; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .45rem .55rem; }
+  .runmap a.full { background: var(--done-bg); }
+  .runmap b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.05rem; letter-spacing: .03em; }
+  .runmap span { font-size: .82rem; color: var(--ink-soft); }
+  .run { scroll-margin-top: var(--sm); }
+  .run .mode { font-family: "Barlow Condensed", sans-serif; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-size: .95rem; }
+  .run .tasks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .3rem; }
+  .run .tasks li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: center; padding: .4rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); min-height: 48px; }
+  .run .tasks li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .run .tasks li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .box { margin-top: .7rem; padding: .7rem .8rem; background: var(--bg-2); border: 1px solid var(--line); }
+  .box h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-size: 1rem; margin-bottom: .3rem; }
+  .box ul, .box ol { margin: .2rem 0 0; padding-left: 1.2rem; }
+  .box li + li { margin-top: .25rem; }
+  .ok { color: var(--green); font-weight: 700; } .no { color: var(--warn); font-weight: 700; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+
+  /* 100% guide */
+  .kinds { display: flex; gap: .35rem; flex-wrap: wrap; }
+  details.chapter { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); margin-bottom: .55rem; scroll-margin-top: var(--sm); }
+  details.chapter.full { border-left-color: var(--green); }
+  details.chapter > summary { list-style: none; cursor: pointer; padding: .7rem .8rem; display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; min-height: 56px; }
+  details.chapter > summary::-webkit-details-marker { display: none; }
+  .ch-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: .04em; text-transform: uppercase; }
+  .ch-count { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .15rem .7rem; font-size: .84rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta .kd { color: var(--ink); font-weight: 600; }
+  .ch-body { padding: 0 .6rem .6rem; }
+  .ch-obj { font-size: .9rem; color: var(--ink-soft); margin: 0 0 .4rem; }
+  .sec-h { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin: .9rem 0 .35rem; padding-bottom: .2rem; border-bottom: 1px solid var(--line); }
+  .sec-note { font-size: .9rem; color: var(--ink-soft); font-style: italic; }
+  .ci { display: grid; grid-template-columns: auto 1fr; gap: .6rem; padding: .55rem .35rem; border-top: 1px solid var(--line); scroll-margin-top: var(--sm); }
+  .ci.got { background: var(--done-bg); }
+  .ci.got .ci-title { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .ci.hidden { display: none; }
+  .ci > div { min-width: 0; }
+  .ci-head { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; }
+  .kind { font-family: "Barlow Condensed", sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 0 .4rem; border: 1px solid currentColor; line-height: 1.5; color: var(--ink-soft); }
+  .ci-title { font-weight: 700; flex: 1 1 100%; }
+  .shot { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-top: .45rem; background: #000; border: 1px solid var(--line); cursor: zoom-in; }
+  .shot.zoom { max-width: none; cursor: zoom-out; }
+  .maplink { display: inline-block; margin-top: .3rem; font-size: .88rem; font-weight: 600; min-height: 30px; }
+  .ci ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
+  .ci li + li { margin-top: .2rem; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .87rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
+
+
+  /* ---- parts: every element with data-p takes its part colour ---- */
+  [data-p="base"] { --pc: var(--c-base); } [data-p="ned"] { --pc: var(--c-ned); } [data-p="moxxi"] { --pc: var(--c-moxxi); } [data-p="knoxx"] { --pc: var(--c-knoxx); } [data-p="clap"] { --pc: var(--c-clap); }
+  section.sheet, .runmap a { border-top-color: var(--pc, var(--accent)); }
+  .sheet-head h2 small { color: var(--pc, var(--accent)); }
+  .jump, details.chapter { border-left-color: var(--pc, var(--accent)); }
+  .guide { border-left-color: var(--pc, var(--accent)); }
+  .meter span { background: var(--pc, var(--accent)); }
+  .legend i { background: var(--pc, var(--accent)); }
+
+  /* header: title text shown only until a logo image is embedded */
+  .logo[src=""], .hero[src=""] { display: none; }
+  .logo:not([src=""]) ~ h1.title { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  h1.title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(2.2rem, 9vw, 3.6rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1; text-shadow: 0 3px 16px #000; }
+
+  /* 100% Guide item kinds and helpers */
+  .kind.k-ach { color: var(--warn); } .kind.k-story { color: var(--blue); } .kind.k-mission { color: var(--gold); } .kind.k-claptrap { color: var(--orange); }
+  .kind.k-midget { color: var(--violet); } .kind.k-statue { color: var(--c-clap); }
+  .ci-loc { font-size: .85rem; color: var(--ink-soft); }
+  .ci-desc { margin-top: .3rem; font-size: .95rem; color: var(--desc-ink); }
+  .ci-desc > * + * { margin-top: .4rem; } .ci-desc p { margin: 0; }
+  .tablewrap { overflow-x: auto; margin-top: .4rem; }
+  .tablewrap table { min-width: 34rem; }
+  .guide table, .box table { font-size: .9rem; }
+  .guide .tablewrap table td:first-child { white-space: nowrap; }
+  details.more { margin-top: .7rem; background: var(--bg-2); border: 1px solid var(--line); }
+  details.more > summary { cursor: pointer; padding: .55rem .8rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); min-height: 44px; display: flex; align-items: center; }
+  details.more > .prose { padding: 0 .8rem .8rem; }
+  .prose h4 { margin-top: .8rem; }
+  .prose table td, .guide table td { overflow-wrap: anywhere; }
+
+  @media (max-width: 699px) {
+    :root { --nav-h: 62px; --sm: 70px; }
+    .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 20; margin: 0; padding: 0 0 env(safe-area-inset-bottom, 0px); background: var(--bg); }
+    .totop { width: 38px; height: 38px; right: .75rem; bottom: calc(var(--nav-h) + .7rem + env(safe-area-inset-bottom, 0px)); }
+    .totop svg { width: 17px; height: 17px; }
+    .tab { flex-direction: column; gap: .1rem; font-size: .8rem; min-height: var(--nav-h); border-bottom: 0; border-top: 3px solid transparent; }
+    .tab[aria-selected="true"] { border-top-color: var(--accent); }
+  }
+  @media (min-width: 700px) {
+    main { padding: 0 1.2rem 3rem; }
+    .topbar { margin: 0 -1.2rem; padding: 0 1.2rem; }
+    section.sheet { padding: 1.1rem 1.2rem .5rem; }
+    .title-line h3 { flex: 0 1 auto; }
+    .ci-title { flex: 0 1 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+#view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
+#view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
+#view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
+
+/* guide screenshots: full width, tap to enlarge; tables that hold screenshots stack as cards */
+img.shot { display: block; width: 100%; max-width: 560px; height: auto; aspect-ratio: auto; object-fit: contain; margin-top: .5rem; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
+.tablewrap.stack { overflow: visible; }
+.tablewrap.stack table, .tablewrap.stack tbody, .tablewrap.stack tr, .tablewrap.stack td { display: block; min-width: 0 !important; width: auto; }
+.tablewrap.stack thead { display: none; }
+.tablewrap.stack tr { border: 1px solid var(--line); background: var(--card); padding: .5rem .6rem; margin-bottom: .5rem; }
+.tablewrap.stack tr:has(th):not(:has(td)) { display: none; }
+.tablewrap.stack td { border: 0; padding: .2rem 0; white-space: normal !important; }
+.tablewrap.stack td:empty { display: none; }
+.tablewrap.stack td[data-label]::before { content: attr(data-label); display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.tablewrap.stack td img.shot { margin-top: .2rem; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .92); display: grid; place-items: center; padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
+
+/* spoilers: story text sits behind a bar until tapped; "Show all spoilers" in the settings reveals everything */
+.spoil { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body:not(.spoilers) .spoil:not(.shown) * { visibility: hidden; }
+div.spoil { display: block; border-radius: 4px; }
+body:not(.spoilers) div.spoil:not(.shown) { position: relative; max-height: 3rem; overflow: hidden; }
+body:not(.spoilers) div.spoil:not(.shown)::before { content: "Story spoiler · tap to reveal"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); font-size: .9rem; font-weight: 600; }
+
+</style>
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <img class="hero" src="../img/banners/borderlands-1.webp" alt="" width="1600" height="516" onerror="this.onerror=null;this.setAttribute('src','')">
+  <img class="logo" src="../img/logos/borderlands-1.webp" alt="Borderlands Game of the Year Enhanced" width="800" height="300" onerror="this.onerror=null;this.setAttribute('src','')">
+  <h1 class="title">Borderlands GOTY Enhanced</h1>
+  <div class="eyebrow">Steam · 100% checklist</div>
+  <p>All 80 achievements for the base game and its four DLCs (Zombie Island of Dr. Ned, Mad Moxxi's Underdome Riot, The Secret Armory of General Knoxx and Claptrap's New Robot Revolution), a twelve-run plan from a blind first playthrough to Crawmerax and the Claptrap grind, and a 100% guide with every mission, Claptrap, loot midget and statue. Progress saves in this browser.</p>
+</header>
+
+<main>
+  <div class="topbar">
+  <div class="searchrow" role="search">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" class="topsearch" id="search" placeholder="Search achievements" aria-label="Search achievements" autocomplete="off" enterkeyhint="search">
+      <button class="clear-search" id="clear-search" aria-label="Clear search" hidden>×</button>
+    </div>
+    <span class="search-count" id="search-count" aria-live="polite"></span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
+    <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
+    <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
+    <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
+  </nav>
+  </div>
+
+  <div class="panel" role="region" aria-label="Progress">
+    <div class="panel-top"><h2>Completion</h2><span class="count" id="count"></span></div>
+    <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="row-tools">
+        <span class="save-status" id="save-status">Saved in this browser automatically. To move progress to your phone, Back up here and Restore there.</span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip" id="spoilers" aria-pressed="false">Show all spoilers</button>
+        <span class="seg" role="group" aria-label="Button prompts"><button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button></span>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="view-ach" role="tabpanel" aria-labelledby="tab-ach"></div>
+  <div id="view-runs" role="tabpanel" aria-labelledby="tab-runs" hidden></div>
+  <div id="view-coll" role="tabpanel" aria-labelledby="tab-coll" hidden></div>
+</main>
+
+<footer>
+  Achievement names and descriptions from Steam (Borderlands Game of the Year Enhanced, app 729040, 0 of 80 unlocked when this was made). Strategies, mission lists and maps come from the PSNProfiles trophy guides for the base game (danceswithsloths) and the four DLCs, linked in every section, reworded. The PS3 platinum isn't part of the Steam list.
+</footer>
+<button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function () {
+"use strict";
+const KEY = "borderlands-1-checklist-v1";
+
+/* Game parts, in display order. Colours come from --c-<key> in the CSS. */
+const PARTS = [{"key": "base", "label": "Base game", "short": "Base"}, {"key": "ned", "label": "Zombie Island of Dr. Ned", "short": "Dr. Ned"}, {"key": "moxxi", "label": "Mad Moxxi's Underdome Riot", "short": "Moxxi"}, {"key": "knoxx", "label": "Secret Armory of General Knoxx", "short": "Knoxx"}, {"key": "clap", "label": "Claptrap's New Robot Revolution", "short": "Claptrap"}];
+
+/* Achievement categories. Each achievement object starts id, name, desc, pct (Steam sync reads these). */
+const SECTIONS = [
+{ id: "story", game: "base", title: "Story bosses", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "The five bosses that hold the Vault key pieces. All come with the story on your first playthrough.",
+  items: [
+  { id: "sledge", name: "Wanted: Sledge", desc: "Killed Sledge", pct: 59.37, tags: ["story"], runs: ["r1"] },
+  { id: "krom", name: "Wanted: Krom", desc: "Killed Krom", pct: 46.95, tags: ["story"], runs: ["r1"] },
+  { id: "hive", name: "Destroyed the Hive", desc: "Killed the Rakk Hive", pct: 43.63, tags: ["story"], runs: ["r1"] },
+  { id: "flynt", name: "Wanted: Flynt", desc: "Killed Flynt", pct: 41.86, tags: ["story"], runs: ["r1"] },
+  { id: "destroyer", name: "Destroyed the Destroyer", desc: "Killed the Vault Boss", pct: 40.85, tags: ["story"], runs: ["r1"], sp: "n" }
+  ] },
+{ id: "explore", game: "base", title: "Exploration", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "Seven areas unlock as the story moves on, plus a boat hidden in Treacher's Landing. Each one pops a few seconds after the area loads. The Pandora map is in the Exploration box on Run 2.",
+  items: [
+  { id: "skaggully", name: "Discovered Skag Gully", desc: "Discovered Skag Gully", pct: 83.43, tags: ["story"], runs: ["r1"] },
+  { id: "safehouse", name: "Discovered Sledge's Safe House", desc: "Discovered Sledge's Safe House", pct: 66.67, tags: ["story"], runs: ["r1"] },
+  { id: "headstone", name: "Discovered Headstone Mine", desc: "Discovered Headstone Mine", pct: 62.13, tags: ["story"], runs: ["r1"] },
+  { id: "scrapyard", name: "Discovered The Scrapyard", desc: "Discovered The Scrapyard", pct: 52.71, tags: ["story"], runs: ["r1"] },
+  { id: "kromcanyon", name: "Discovered Krom's Canyon", desc: "Discovered Krom's Canyon", pct: 48.87, tags: ["story"], runs: ["r1"] },
+  { id: "trashcoast", name: "Discovered Trash Coast", desc: "Discovered Trash Coast", pct: 44.42, tags: ["story"], runs: ["r1"] },
+  { id: "enclave", name: "Discovered Crimson Lance Enclave", desc: "Discovered Crimson Lance Enclave", pct: 42.22, tags: ["story"], runs: ["r1"] },
+  { id: "promontory", name: "Discovered Eridian Promontory", desc: "Discovered Eridian Promontory", pct: 42.29, tags: ["story"], runs: ["r1"] },
+  { id: "boat", name: "You're on a boat!", desc: "I bet you never thought you'd be here", pct: 24.09, tags: [], runs: ["r2"] }
+  ] },
+{ id: "missions", game: "base", title: "Missions and Claptraps", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "Every mission in the Arid Badlands and the Rust Commons, and all ten Claptrap rescues for 42 backpack slots. Use the backpack SDU from each Claptrap straight away so you can't sell it by mistake.",
+  items: [
+  { id: "paidfy", name: "Paid in Fyrestone", desc: "Completed 5 missions in the Arid Badlands", pct: 88.61, tags: ["story"], runs: ["r1"] },
+  { id: "madefy", name: "Made in Fyrestone", desc: "Completed all missions in the Arid Badlands", pct: 44.4, tags: [], runs: ["r2"] },
+  { id: "paidnh", name: "Paid in New Haven", desc: "Completed 5 missions in the Rust Commons", pct: 52.9, tags: ["story"], runs: ["r1"] },
+  { id: "madenh", name: "Made in New Haven", desc: "Completed all missions in the Rust Commons", pct: 30.93, tags: [], runs: ["r2"] },
+  { id: "fully", name: "Fully Loaded", desc: "Rescued enough Claptraps to earn 42 inventory slots", pct: 23.41, tags: ["collect"], runs: ["r2"] }
+  ] },
+{ id: "levels", game: "base", title: "Levels", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "The base game caps at 50. Expect about level 35 to 38 at the end of your first playthrough; Playthrough 2 covers the rest.",
+  items: [
+  { id: "lv5", name: "Ding! Newbie", desc: "Earned level 5", pct: 83.95, tags: [], runs: ["r1"] },
+  { id: "lv10", name: "Ding! Novice", desc: "Earned level 10", pct: 73.46, tags: [], runs: ["r1"] },
+  { id: "lv20", name: "Ding! Expert", desc: "Earned level 20", pct: 58.35, tags: [], runs: ["r1"] },
+  { id: "lv30", name: "Ding! Hardcore", desc: "Earned level 30", pct: 46.15, tags: [], runs: ["r1"] },
+  { id: "lv40", name: "Ding! Sleepless", desc: "Earned level 40", pct: 33.04, tags: [], runs: ["r7"] },
+  { id: "lv50", name: "Ding! Champion", desc: "Earned level 50", pct: 24.32, tags: [], runs: ["r7"] }
+  ] },
+{ id: "combat", game: "base", title: "Combat and driving", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "Mostly natural progress. The elemental kill counts include barrels and elemental artifacts on your action skill.",
+  items: [
+  { id: "plumber", name: "My Brother is an Italian Plumber", desc: "Killed an enemy plumber-style", pct: 32.95, tags: [], runs: ["r2"] },
+  { id: "twelve", name: "12 Days of Pandora", desc: "Mastered the technology of Pandora", pct: 51.05, tags: [], runs: ["r1"] },
+  { id: "rakk", name: "Rootinest, Tootinest, Shootinest", desc: "Killed 5 Rakk in under 10 seconds", pct: 64.74, tags: ["timed"], runs: ["r1"] },
+  { id: "tires", name: "Get A Little Blood on the Tires", desc: "Killed 25 enemies by ramming them with any vehicle", pct: 63.28, tags: [], runs: ["r1"] },
+  { id: "speedy", name: "Speedy McSpeederton", desc: "Raced around the Ludicrous Speedway in record time", pct: 21.45, tags: ["timed"], runs: ["r2"] },
+  { id: "pyro", name: "Pyro", desc: "Killed 25 enemies with incendiary weapons", pct: 67.13, tags: [], runs: ["r1"] },
+  { id: "shock", name: "1.21 Gigawatts", desc: "Killed 25 enemies with shock weapons", pct: 53.93, tags: [], runs: ["r1"] },
+  { id: "corrosive", name: "Facemelter", desc: "Killed 25 enemies with corrosive weapons", pct: 46.93, tags: [], runs: ["r1"] },
+  { id: "explosive", name: "Master Exploder", desc: "Killed 25 enemies with explosive weapons", pct: 63.52, tags: [], runs: ["r1"] },
+  { id: "prof", name: "Weapon Aficionado", desc: "Reached proficiency level 10 with any weapon type", pct: 50.28, tags: [], runs: ["r1"] }
+  ] },
+{ id: "gear", game: "base", title: "Gear and money", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "Artifacts, class mods and the cash grind. The million is cumulative: spending doesn't reset it.",
+  items: [
+  { id: "artifact", name: "You call this archaeology?", desc: "Applied an elemental artifact", pct: 58.42, tags: [], runs: ["r2"] },
+  { id: "classmod", name: "There are some who call me...Tim", desc: "Equipped a class mod for your character", pct: 59.79, tags: [], runs: ["r1"] },
+  { id: "fence", name: "Fence", desc: "Sold 50 guns to a shop", pct: 56.53, tags: [], runs: ["r1"] },
+  { id: "million", name: "Pandora-dog Millionaire", desc: "Earned $1,000,000", pct: 45.39, tags: [], runs: ["r2"] }
+  ] },
+{ id: "classes", game: "base", title: "Action skills", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "One per class. Your main character covers one; make a new character of each other class and use the action skill from level 5.",
+  items: [
+  { id: "siren", name: "Truly Outrageous", desc: "Killed an enemy with the Siren's action skill", pct: 38.64, tags: [], runs: ["r11"] },
+  { id: "hunter", name: "Careful, He Bites", desc: "Killed 15 enemies with the Hunter's action skill", pct: 39.19, tags: [], runs: ["r11"] },
+  { id: "berserker", name: "Reckless Abandon", desc: "Killed 15 enemies with the Berserker's action skill", pct: 30.35, tags: [], runs: ["r11"] },
+  { id: "soldier", name: "Down in Front!", desc: "Killed 15 enemies with the Soldier's action skill", pct: 45.02, tags: [], runs: ["r11"] }
+  ] },
+{ id: "coop", game: "base", title: "Co-op", src: "https://psnprofiles.com/guide/4598-borderlands-trophy-guide",
+  intro: "All of these work in local split-screen with extra controllers on PC, including And They'll Tell Two Friends, which needs three players in total.",
+  items: [
+  { id: "arena", name: "Can't We Get BEYOND Thunderdome?", desc: "Emerged victorious from an arena match", pct: 27.5, tags: [], runs: ["r10"] },
+  { id: "duel", name: "Duel-icious", desc: "Won a duel against another player", pct: 45.46, tags: [], runs: ["r10"] },
+  { id: "duelinator", name: "Duelinator", desc: "Won a duel without taking damage", pct: 42.14, tags: [], runs: ["r10"] },
+  { id: "healer", name: "Group LF Healer", desc: "Rescued a groupmate from death in a co-op game", pct: 57.24, tags: [], runs: ["r10"] },
+  { id: "team", name: "There's No \"I\" In \"Team\"", desc: "Completed 15 missions in co-op", pct: 49.5, tags: [], runs: ["r10"] },
+  { id: "united", name: "United We Stand", desc: "Defeated the Rakk Hive, the Vault Boss, Sledge, Krom, or Flynt in a co-op game", pct: 43.08, tags: [], runs: ["r10"] },
+  { id: "friends", name: "And They'll Tell Two Friends", desc: "Play with at least two other players.", pct: 51.15, tags: [], runs: ["r10"] }
+  ] },
+{ id: "ned", game: "ned", title: "The Zombie Island of Dr. Ned", src: "https://psnprofiles.com/guide/4833-borderlands-zombie-island-of-dr-ned-dlc-trophy-guide",
+  intro: "Short story DLC reached from any fast travel station. Fire and headshots are king: corrosive does nothing to zombies and shock heals Tankensteins.",
+  items: [
+  { id: "houseofned", name: "House of the Ned", desc: "Completed the \"House of the Ned\" mission", pct: 49.69, tags: ["story"], runs: ["r3"] },
+  { id: "fodder", name: "Jakobs Fodder", desc: "Completed the \"Jakobs Fodder\" mission", pct: 43.84, tags: ["story"], runs: ["r3"] },
+  { id: "nightned", name: "Night of the Living Ned", desc: "Killed Ned...sort of", pct: 42.28, tags: ["story"], runs: ["r3"], sp: "d" },
+  { id: "undeadned", name: "Ned's Undead, Baby, Ned's Undead", desc: "Killed Ned. Again.", pct: 42.82, tags: ["story"], runs: ["r3"], sp: "n" },
+  { id: "brains", name: "Braaaaaaaaaaaaains!", desc: "Completed the \"Braaaaaaaaaaaaains!\" mission", pct: 23.76, tags: [], runs: ["r3"] }
+  ] },
+{ id: "moxxi", game: "moxxi", title: "Mad Moxxi's Underdome Riot", src: "https://psnprofiles.com/guide/7300-borderlands-mad-moxxis-underdome-riot-dlc-trophy-guide",
+  intro: "Three arenas of waves, no story. The lesser challenges are 5 rounds each; the larger ones are 20. No XP here apart from challenges.",
+  items: [
+  { id: "smalltour", name: "Small Tournament", desc: "Completed the lesser challenge in all 3 coliseums", pct: 32.39, tags: [], runs: ["r6"] },
+  { id: "gully", name: "The Gully", desc: "Completed the larger challenge in The Gully coliseum", pct: 14.49, tags: [], runs: ["r9"] },
+  { id: "hellburbia", name: "Hell-Burbia", desc: "Completed the larger challenge in the Hell-Burbia coliseum", pct: 12.83, tags: [], runs: ["r9"] },
+  { id: "angelic", name: "The Angelic Ruins", desc: "Completed the larger challenge in The Angelic Ruins coliseum", pct: 12.29, tags: [], runs: ["r9"] },
+  { id: "bigtour", name: "Big Tournament", desc: "Completed each of the larger challenges in all 3 coliseums", pct: 10.6, tags: [], runs: ["r9"] }
+  ] },
+{ id: "knoxx", game: "knoxx", title: "The Secret Armory of General Knoxx", src: "https://psnprofiles.com/guide/7332-borderlands-the-secret-armory-of-general-knoxx-dlc-trophy-guide",
+  intro: "The biggest DLC, from T-Bone Junction. Raises the level cap to 61 (69 with Claptrap's DLC) and holds the raid boss Crawmerax.",
+  items: [
+  { id: "monster", name: "Making a Monster", desc: "Built the New Car: Monster", pct: 45.28, tags: ["story"], runs: ["r4"] },
+  { id: "athena", name: "Athena, Out", desc: "Rescued Athena", pct: 35.83, tags: ["story"], runs: ["r4"] },
+  { id: "depot", name: "Depot Demolition", desc: "Destroyed Lance Depot", pct: 28.24, tags: ["story"], runs: ["r4"], sp: "d" },
+  { id: "speedkills", name: "Speed Kills", desc: "Destroyed a Lancer while in a Racer", pct: 32.01, tags: [], runs: ["r4"] },
+  { id: "midgets", name: "Sneaky Little Buggers", desc: "Killed each of the loot midgets", pct: 14.04, tags: ["collect"], runs: ["r4"] },
+  { id: "sucker", name: "Sucker born every minute", desc: "Paid for a worthless tour of the world's largest bullet", pct: 15.83, tags: [], runs: ["r8"] },
+  { id: "lv51", name: "Ding! Overleveled", desc: "Reached Level 51", pct: 35.65, tags: [], runs: ["r7"] },
+  { id: "lv61", name: "Ding! Overleveled to 11", desc: "Reached Level 61", pct: 24.18, tags: [], runs: ["r8"] },
+  { id: "vincible", name: "Vincible", desc: "Killed Crawmerax the Invincible", pct: 22.34, tags: [], runs: ["r8"] },
+  { id: "completionist", name: "Completionist", desc: "Completed all missions in Secret Armory", pct: 7.88, tags: [], runs: ["r4", "r8"] }
+  ] },
+{ id: "clap", game: "clap", title: "Claptrap's New Robot Revolution", src: "https://psnprofiles.com/guide/7312-borderlands-claptraps-new-robot-revolution-dlc-trophy-guide",
+  intro: "Seven story missions from Tartarus Station, then a long grind for random Claptrap drops. Bring corrosive weapons.",
+  items: [
+  { id: "tourist", name: "Tourist", desc: "Found all 6 Claptrap statues", pct: 16.46, tags: ["collect"], runs: ["r5"] },
+  { id: "knoxxtrap", name: "Knoxx-Trap", desc: "Killed General Knoxx-trap", pct: 34.98, tags: ["story"], runs: ["r5"] },
+  { id: "nedtrap", name: "Ned-Trap", desc: "Killed Dr. Ned-trap", pct: 34.96, tags: ["story"], runs: ["r5"] },
+  { id: "steeletrap", name: "Steele-Trap", desc: "Killed Commandant Steele-trap", pct: 34.94, tags: ["story"], runs: ["r5"] },
+  { id: "robolucion", name: "Muerte la robo-lución", desc: "Killed the Interplanetary Ninja Assassin Claptrap", pct: 34.42, tags: ["story"], runs: ["r5"], sp: "d" },
+  { id: "collector", name: "The Collector", desc: "Completed a crazy request for Tannis", pct: 24.53, tags: [], runs: ["r5"] },
+  { id: "glasses", name: "It's so realistic!", desc: "Collected 5 3D glasses", pct: 26.84, tags: ["collect"], runs: ["r12"] },
+  { id: "lubricator", name: "The Lubricator", desc: "Found 25 oil cans", pct: 8.36, tags: ["collect"], runs: ["r12"] },
+  { id: "bobble", name: "Bobble-trap", desc: "Collected 15 Claptrap bobbleheads", pct: 8.35, tags: ["collect"], runs: ["r12"] },
+  { id: "party", name: "What a party!", desc: "Collected 3 panties, 5 fish in a bag, and 15 pizzas", pct: 8.38, tags: ["collect"], runs: ["r12"] }
+  ] }
+];
+
+/* Achievements already unlocked on Steam when this was made: ticked in a fresh save. */
+const PRE = [];
+
+/* Guide text per achievement (HTML; [X] style tokens become button glyphs). */
+const GUIDES = {"sledge": "<p>Arid Badlands boss in Headstone Mine, during Sledge: Battle For The Badlands. He hits hard up close with a hammer and a wide shotgun, and bandits keep running in.</p><ul><li>Keep your distance. A shock weapon strips his shield quickly.</li><li>Leave a weak bandit alive for a Second Wind if you go down.</li><li>Cheese: stand at a sliding door to the arena, shoot while it's open, step back while it closes.</li></ul>", "krom": "<p>End of The Next Piece, in Krom's Canyon. He sits in a turret at the top of the arena.</p><ul><li>Either work up the narrow bridges using cover, or stay near the entrance and snipe him.</li><li>Once the turret blows, he jumps out with a pistol and drops quickly.</li></ul>", "hive": "<p>During Another Piece Of The Puzzle in Trash Coast. The Hive spawns Rakk all fight long and also stomps and spits corrosive balls.</p><p>Bring an SMG or shotgun for the Rakk and pour fire into its eyes, the critical spots on each side of the head.</p>", "flynt": "<p>Top of the tower in the Salt Flats, during The Final Piece. First comes a gauntlet of bandits, then the mini-bosses Hanz (melee) and Franz (machine gun, big shield).</p><p>Then Flynt walks down. His shotgun fires a burst of rockets with a long reload: stay in cover and hit him while he reloads. Shock helps with both shields.</p>", "destroyer": "<p>The final boss, in the Vault. It never moves, so this is about cover and ammo: come in full.</p><ul><li>Stand by one of the two far pillars on either side. The eye laser can't hurt you behind them.</li><li>When the tentacles with purple weak spots appear, shoot them off: they launch exploding crystals.</li><li>The rest of the time, shoot the big eye. It has a lot of health.</li></ul>", "skaggully": "<p>Far east of the Arid Badlands. The entrance is blocked until Nine-Toes: Take Him Down clears it.</p>", "safehouse": "<p>Reached through Arid Hills (north exit of the Badlands), then the entrance in the north-east of Arid Hills.</p>", "headstone": "<p>South of the Arid Badlands, behind a metal gate that opens after Sledge: To The Safe House.</p>", "scrapyard": "<p>Earl's Scrapyard: the south-west exit of Rust Commons West. Comes with the story.</p>", "kromcanyon": "<p>Far north-east of the Rust Commons, under the drawbridge.</p>", "trashcoast": "<p>South-east of Rust Commons East. A Claptrap blocks the way until you finish Jaynistown: Cleaning Up Your Mess.</p>", "enclave": "<p>Opens with Reactivate The ECHO Comm System near the end. From the Salt Flats go through the Back Door (south-west), on to Crimson Fastness, then the north exit.</p>", "promontory": "<p>The last area before the final boss, during Find Steele. From the Salt Flats take The Descent (north-west) to its north end.</p>", "boat": "<p>In Treacher's Landing (off Rust Commons West), step on to the boat docked off the pier in the south-east corner: the only ship there, four sails and coloured string lights.</p><img data-img=\"m_boat\" alt=\"Map: Treacher's Landing, boat marked\">", "paidfy": "<p>Five Arid Badlands missions. The story alone gets you there.</p>", "madefy": "<p>All 43 Arid Badlands missions: 20 story and 23 side. Leaving Fyrestone isn't needed. Side missions unlock as you finish the one before, so check the bounty boards again after each one. The full list is in the 100% Guide; ticking the last one ticks this.</p>", "paidnh": "<p>Five Rust Commons missions. Comes with the story.</p>", "madenh": "<p>Misleading: 64 Rust Commons missions plus three outside it (Get Some Answers and the Salt Flats and Crimson Fastness Claptraps), 67 in all. It pops while you talk to Tannis in her cell. Full list in the 100% Guide.</p>", "fully": "<p>Rescue all ten Claptraps in one playthrough: 12 starting slots plus 3 per SDU makes 42. Each one just wants a repair kit found nearby. They are gold stars on the Pandora map, and listed in the 100% Guide.</p><p>Use each backpack SDU from your inventory right away.</p>", "lv5": "<p>Minutes into the game. Level 5 also unlocks your action skill.</p>", "lv10": "<p>Early in your first playthrough.</p>", "lv20": "<p>About halfway through the first playthrough if you do side missions.</p>", "lv30": "<p>Late in the first playthrough. Expect 35 or more at the final boss.</p>", "lv40": "<p>Early in Playthrough 2.</p>", "lv50": "<p>The last levels are slow and low-level enemies give little XP. Options:</p><ul><li><b>Playthrough 2</b> (recommended): load your character after beating the game, pick Playthrough 2 and redo the missions. Enemies scale up.</li><li><b>DLCs:</b> Zombie Island, Knoxx and Claptrap give good XP. Moxxi gives almost none.</li><li><b>Eridian Promontory</b> in Playthrough 2.5: the Guardians respawn and give big XP.</li><li><b>Med-kit exploit:</b> repeatedly earns a challenge through the buy-back system. Tedious. <a href=\"https://www.youtube.com/watch?v=-K8t0rJpxPc\" target=\"_blank\" rel=\"noopener\">How it works ↗</a></li></ul>", "plumber": "<p>Kill an enemy by jumping on its head. Do it on low-level Skags in the Arid Badlands: wait for one to charge, then keep landing on it. Soften it with a shot first if your guns aren't overkill.</p>", "twelve": "<p>A challenge (Challenges tab of the mission log). In total: 1 grenade, 2 corrosive, 3 incendiary, 4 shock, 5 explosive, 6 critical, 7 melee, 8 sniper, 9 SMG, 10 shotgun, 11 pistol and 12 combat rifle kills. Corrosive guns come late, so use dark green corrosive barrels.</p>", "rakk": "<p>Kill five Rakk within ten seconds. Wait for a flock to dive, then use a shotgun, fast SMG or the Runner's machine gun. Get The Flock Outta Here (10 Rakk, Arid Badlands) is the perfect time.</p>", "tires": "<p>Run over 25 enemies. The Catch-A-Ride works after Bone Head's Theft; spawn a Runner and flatten Skags and bandits around the Badlands. Pick up the side mission of the same name from the Fyrestone board at the same time.</p>", "speedy": "<p>Lap the Ludicrous Speedway (the loop in the south-west of Dahl Headland) in under 31 seconds. There's no timer. The long set of flags past the metal hut is the start, the short set the finish. Full boost over the start, take the cave shortcut on the left, full boost off the ramp. Works as a passenger too. <a href=\"https://www.youtube.com/watch?v=K9pvw3XLjkg\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "pyro": "<p>25 kills with fire. The most useful element anyway: carry an incendiary gun all game. Red barrels and fire artifacts count.</p>", "shock": "<p>25 kills with shock. Strong against shields, weak against flesh, so it may come slower. Blue barrels and shock artifacts count.</p>", "corrosive": "<p>25 kills with corrosive. Usually the last elemental one, since corrosive guns appear late. Use dark green barrels earlier on, or a corrosive artifact.</p>", "explosive": "<p>25 kills with explosive damage. Rocket launchers, grenades, yellow barrels and the vehicle launcher all count.</p>", "prof": "<p>Proficiency 10 with any weapon type (Character tab). Every kill with that type equipped counts, even grenade and elemental kills. Stick with one favourite type and it comes during Playthrough 1.</p>", "artifact": "<p>Get an elemental artifact and use it from the backpack. Early options from the Fyrestone board: Shock Crystal Harvest (level 14, shock artifact) or The Legend Of Moe And Marley (level 15, fire artifact).</p>", "classmod": "<p>Equip any class mod. Sledge: Battle For The Badlands rewards one, and it equips itself.</p>", "fence": "<p>Sell 50 guns. Pick up everything, then sell your spare weapons, shields and grenade mods at any vending machine (all of them buy).</p>", "million": "<p>Earn $1,000,000 in total. Pick up cash, sell everything you don't use and do the side missions: it comes towards the end of Playthrough 1. Track it on the money challenges.</p>", "siren": "<p>Lilith's Phasewalk: one kill. Phase next to a weak Skag and melee it: the blasts going in and out plus the melee finish it.</p>", "hunter": "<p>Mordecai's Bloodwing: 15 kills. Slowest of the four, as he hits one target per throw. Soften tougher enemies with a few bullets first.</p>", "berserker": "<p>Brick's Berserk: 15 kills. Two or three kills per use on early enemies.</p>", "soldier": "<p>Roland's Scorpio Turret: 15 kills. Let the turret land the last hit.</p>", "arena": "<p>Win a match in one of the three arenas (Fyrestone, Rust Commons West, Salt Flats). Needs at least two players; best of five rounds. Easy with a second controller in split screen.</p>", "duel": "<p>Melee another player to challenge them; they melee back to accept. Win the duel. With a second controller, both players accept and the guest just stands there.</p>", "duelinator": "<p>Win a duel without taking damage. With a second controller or a willing friend, this comes with Duel-icious.</p>", "healer": "<p>Revive a downed co-op partner. With a second controller, let the guest get downed and hold the interact button on them.</p>", "team": "<p>Finish 15 missions in co-op. Both players must be present when you turn them in, and a guest must be eligible for the host's missions. The short early missions are quickest; a split-screen guest can stand idle.</p>", "united": "<p>Beat Sledge, Krom, the Rakk Hive, Flynt or the final boss in any co-op game, split screen included. Sledge is the earliest.</p>", "friends": "<p>On Steam the requirement is the newer one: play with at least two other players. Three players in split screen (three controllers) counts, as does online co-op.</p>", "houseofned": "<p>The first three story missions: Welcoming Committee, Is The Doctor In? and House Of The Ned. Go to the north-east exit for Hallow's End, then round to the south-west and over the bridge to Ned's treehouse. Hold off zombie waves while his hand-cranked lift comes down, then ride it up. The bridge makes a good choke point.</p>", "fodder": "<p>After There May Be Some Side Effects and Secrets And Mysteries. Both ECHOs are in Ned's underground lab: the counter in the north-west corner by the surgical table, and an overhead cupboard in the north-east. Then go north round the barricades to the comm array on the west side of Dead Haven, upload, and use it a second time.</p>", "nightned": "<p>The penultimate mission, in Ned's lair at the end of The Mill. He has a strong SMG and the only shield in the DLC. Use the cover and shoot when he reloads. <span class=\"spoil\">Easier than you'd expect, and the reason shows when the credits start.</span></p>", "undeadned": "<p><span class=\"spoil\">Ned tears through the fake credits as Undead Ned.</span> Restock at the entrance, then drop into the hole in the floor and follow the tunnels.</p><ul><li>Kite him round the cone pillars. Kill his summoned zombies quickly.</li><li>Stay out of melee range: the spinning claw attack can take you from full to dead.</li><li>Fire and headshots speed it up.</li></ul>", "brains": "<p>Collect 435 zombie brains for T.K. Baha over five missions. Pick up T.K. Lives! in the far south-west of Hallow's End as soon as you arrive and farm through the story.</p><ul><li>Brains only drop from zombies killed with a critical (head) hit, and not from explosive kills.</li><li>Brains collected before a mission starts, or past its target, don't carry over: hand each one in as soon as it's done.</li><li>After the story, farm Dead Haven or Generally Hospital. Quitting and reloading respawns enemies.</li></ul><img data-img=\"m_tkbaha\" alt=\"Map: T.K. Baha in Hallow's End\">", "smalltour": "<p>Fast travel to The Underdome and take Prove Yourself from the bounty board. Survive 5 rounds of 5 waves in each of the three arenas, then hand it in. About 30 to 45 minutes per arena. Bonus: a free skill point.</p><p>Use the low-level host trick in the Underdome box (Run 6).</p>", "gully": "<p>The 20-round challenge in The Gully. See Big Tournament.</p>", "hellburbia": "<p>The 20-round challenge in Hell-Burbia. See Big Tournament.</p>", "angelic": "<p>The 20-round challenge in The Angelic Ruins. See Big Tournament.</p>", "bigtour": "<p>Complete all three larger challenges: 20 rounds of 5 waves each, around three hours per arena. They open after Prove Yourself.</p><p>Do all three with the same character on the same playthrough: some players found this didn't unlock otherwise. Use the low-level host trick so enemies stay around level 12.</p>", "monster": "<p>The third story mission, Greasemonkey. Follow the map for car parts; the Monster then appears at every Catch-A-Ride.</p>", "athena": "<p>The eighth story mission, Prison Break: Try Not To Get Shanked, in Lockdown Palace. Drop through the hole into the showers to fight Mr. Shank: shock his shield, then fire to the head. Carry on to the upper cell block.</p>", "depot": "<p>The last two story missions. In Armory Assault, <span class=\"spoil\">General Knoxx</span> calls in medics and Devastators as his health drops: kill the medics first, and use fast corrosive fire with crits. Then Loot Larceny gives 2 minutes 30 to loot the armory before it blows.</p>", "speedkills": "<p>Destroy a Lancer (the big Atlas APC) while driving a Racer, available from Prison Break: Over The Wall. Fight near a Catch-A-Ride so you can respawn the car, and keep dodging. A gunner friend helps.</p>", "midgets": "<p>Kill the five loot midgets that jump out of containers:</p><ol><li><b>Truxican Wrestler:</b> Lockdown Palace, usually a locker near the entrance.</li><li><b>Meat Popsicle:</b> Lockdown Palace, a fridge about halfway through.</li><li><b>Mini-Steve:</b> any Lockdown Palace container, often near the Claptrap.</li><li><b>Crimson Shorty:</b> Road's End, a weapon chest just before Knoxx's Armory.</li><li><b>Dumpster Diver:</b> a dumpster in Motorhead's Garage, only open during Little People, Big Experiments (Thirsty the Midget, Sunken Sea).</li></ol><p><a href=\"https://www.youtube.com/watch?v=mrg7nzNDhIM\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "sucker": "<p>In the Sunken Sea, go left from the entrance to the giant bullet by some shacks. Pay into the tiny box: usually $5 to 8 million (the cap is $9,999,999). On PS3 the trick was quitting at once without saving to keep the money; back up your save before trying it on PC. Claptrap's DLC has a refilling loot room (Hyperion gift shop) that makes the money easy. <a href=\"https://www.youtube.com/watch?v=qA5Kq2UDFfo\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "lv51": "<p>One level past the base cap. Comes on the way to 61.</p>", "lv61": "<p>Needs about 6 million XP in total. After both playthroughs you'll likely be in the low 50s. Ways to finish:</p><ul><li>Redo the Knoxx and Claptrap DLCs on Playthrough 2 (missions start around 51 and 58).</li><li>Eridian Promontory Guardians on Playthrough 2.5.</li><li>Crawmerax's endless minions.</li><li>XP boosts: Roland's Leader class mod (up to 25%), Lilith's Intuition (20%), Mordecai's Smirk (15%).</li></ul>", "vincible": "<p>Crawmerax the Invincible, from You. Will. Die. on the T-Bone Junction board after the story. Reach him from Deep Fathoms, up a hidden path to the north. He scales to 4 levels above the top player (up to 72) and kills in a couple of hits.</p><ul><li>Only the small purple spots take damage: on the four arms, the head, and behind the head.</li><li>Ideally four players: some distract, others shoot. Don't use transfusion weapons.</li><li><b>Solo glitch spot:</b> as soon as you leave the lift, run to the small ledge below the floor between the N and NW map markers. If it works, he roars but doesn't come for you. Works about half the time; don't shoot anything on the way. The back weak spot needs rockets fired over him plus ammo regen, so it's slow.</li></ul><p><a href=\"https://www.youtube.com/watch?v=bJZxqJ5fQ68\" target=\"_blank\" rel=\"noopener\">Kill using the glitch ↗</a></p>", "completionist": "<p>All 43 missions: 15 story and 28 side. The list is in the 100% Guide.</p><ul><li>Don't take Marcus' missions beyond Core Collection and Mop Up until the story is done. Having Loot Larceny, Super Marcus Sweep and It's Like Christmas active together can break the counter.</li><li>Don't glitch into the armory outside a mission.</li><li>Back up your save often and check each mission moves to Completed. If it breaks, quit without saving.</li></ul>", "tourist": "<p>Read the plaque on the Claptrap statue in each of the six areas: Hyperion Dump, Sanders Gorge, Dividing Faults, Scorched Snake Canyon, Tartarus Station and Wayward Pass. Most are by the entrance or on the main path. In co-op every player must use the plaque. <a href=\"https://www.youtube.com/watch?v=6z35B6DtKFU\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "knoxxtrap": "<p>Beaten twice: in Phase One and again in the boss rush of Phase Four. Kill the Kamikaze-traps he calls first, then headshots and corrosive.</p>", "nedtrap": "<p>Beaten twice: in Phase Two and again in Phase Four, where he's bigger, burrows under you and spits acid. Watch for Kamikaze-traps.</p>", "steeletrap": "<p>Beaten twice: in Phase Three and in Phase Four. Fast with energy blades, but every hit staggers her: a fast-firing gun keeps her locked down.</p>", "robolucion": "<p>The end of Phase Four. <span class=\"spoil\">First the giant MINAC: hide behind the overturned bus and shoot the big eye when its shield is down, with fast corrosive guns. Look round every minute for Kamikaze-traps. Then the small INA Claptrap, who only spins at close range: keep away and shoot.</span></p>", "collector": "<p>Tannis' five missions: Are You From These Parts? (story) and four side missions needing 42, 75, 100 and 150 Claptrap parts (367 in all). Any mix of wires, gears and motherboards counts, but only for the current mission, so hand each in when done.</p>", "glasses": "<p>5 pairs of 3-D glasses. See What a party! for how to farm.</p>", "lubricator": "<p>25 oil cans. One of the rarer drops. See What a party!.</p>", "bobble": "<p>15 Claptrap bobbleheads. One of the rarer drops. See What a party!.</p>", "party": "<p>3 pink panties, 5 fish in a bag and 15 pizzas. Every Claptrap has about a 5% chance to drop one of the six collectables, random which. Plan on 5+ hours. Farming spots:</p><ol><li>Hyperion Dump: go left to the walled complex full of Claptraps.</li><li>Dividing Faults: the city in front of the factory.</li><li><b>Best:</b> the final boss arena via Wayward Pass (you re-fight the boss rush each time). Wedge yourself between the rock and the overturned bus, destroy the boss's guns, and let the endless Kamikaze-traps die around you.</li><li>Faster but riskier: follow the boss and blast the door the Claptraps come out of. Your own kills seem to drop more.</li></ol>"};
+
+/* Playthroughs. */
+const RUNS = [{"id": "r1", "game": "base", "n": "Run 1", "title": "Blind first playthrough", "mode": "Playthrough 1 · any class", "summary": "Pick the class you like and play the story your own way, no guide. Do side missions when they appeal: the XP helps. The bosses, the area discoveries, most levels and the early combat achievements all come on their own.", "tasks": [["Choose your main class", "The other three come later in Run 11"], ["Arid Badlands", "Sledge"], ["Rust Commons", "Krom and the ||Rakk Hive||"], ["Salt Flats", "Flynt"], ["||The Vault||", "Finish the story"]], "body": [{"box": "classes"}]}, {"id": "r2", "game": "base", "n": "Run 2", "title": "Playthrough 1 cleanup", "mode": "Playthrough 1 · after the story", "summary": "Stay on Playthrough 1 (it's easier while enemies are your level or lower) and use the 100% Guide: every Arid Badlands and Rust Commons mission, all ten Claptraps, the boat, the speedway lap and the odd jobs.", "tasks": [["All 43 Arid Badlands missions", "Made in Fyrestone"], ["All 67 Rust Commons missions", "Made in New Haven"], ["All 10 Claptraps", "Fully Loaded"], ["Lap the Ludicrous Speedway under 31 seconds", "Speedy McSpeederton"], ["Board the boat in Treacher's Landing", "You're on a boat!"], ["Jump-kill a Skag", "Italian Plumber"], ["Use an elemental artifact", ""], ["Keep selling loot", "Million and Fence"]], "body": [{"box": "pandora"}]}, {"id": "r3", "game": "ned", "n": "Run 3", "title": "Zombie Island", "mode": "Playthrough 1 · level 38+", "summary": "Zombie Island scales to your story progress: from about level 38 on Playthrough 1 it's quick. Start T.K.'s brain missions as soon as you reach Hallow's End and farm headshots through the story.", "tasks": [["Welcoming Committee to House Of The Ned", ""], ["Pick up T.K. Lives! in Hallow's End", "Start the brains chain"], ["Jakobs Fodder", ""], ["||Ned, twice||", "Finish the story"], ["Finish the 250-brain mission", "Braaaaaaaaaaaaains!"]], "body": [{"box": "jakobs"}]}, {"id": "r4", "game": "knoxx", "n": "Run 4", "title": "The Secret Armory", "mode": "Playthrough 1 · T-Bone Junction", "summary": "The story and every side mission except the raid boss. Missions sit around level 35 to 38 on Playthrough 1. Grab the loot midgets in Lockdown Palace and Road's End on the way.", "tasks": [["Greasemonkey", "Making a Monster"], ["Racer kills a Lancer", "Speed Kills"], ["Prison Break: Try Not To Get Shanked", "Athena, Out"], ["Four loot midgets in Lockdown Palace and Road's End", ""], ["Little People, Big Experiments: Dumpster Diver", ""], ["Only Core Collection and Mop Up from Marcus until the story ends", "Avoids a broken counter"], ["Armory Assault and Loot Larceny", "Depot Demolition"], ["Every side mission except You. Will. Die.", "42 of 43"]]}, {"id": "r5", "game": "clap", "n": "Run 5", "title": "Robot Revolution story", "mode": "Playthrough 1 · level 40 or so", "summary": "Seven story missions from Tartarus Station, the six statues, and Tannis' parts missions. Every Claptrap you kill can drop a collectable, so the farm for Run 12 starts here.", "tasks": [["Read all six statue plaques", "Tourist"], ["Phase One", "Knoxx-Trap, first time"], ["Phase Two", "Ned-Trap, first time"], ["Phase Three", "Steele-Trap, first time"], ["Phase Four: the boss rush and ||the giant Claptrap||", "Three bosses again"], ["Tannis' four parts missions", "The Collector"]]}, {"id": "r6", "game": "moxxi", "n": "Run 6", "title": "Underdome: lesser challenges", "mode": "The Underdome · Prove Yourself", "summary": "Five rounds in each of the three arenas. Set up the low-level host trick first and it's a formality.", "tasks": [["The Gully, 5 rounds", ""], ["Hell-Burbia, 5 rounds", ""], ["The Angelic Ruins, 5 rounds", ""], ["Hand in Prove Yourself", "Small Tournament"]], "body": [{"box": "underdome"}]}, {"id": "r7", "game": "base", "n": "Run 7", "title": "Playthrough 2", "mode": "Playthrough 2 · same character", "summary": "Start Playthrough 2 with your main character and redo the story and side missions. Level 50 comes naturally; the DLCs on Playthrough 2 push you past it.", "tasks": [["Level 40", "Ding! Sleepless"], ["Level 50", "Ding! Champion"], ["Level 51", "Needs Knoxx's DLC"], ["Finish the story", "Unlocks Playthrough 2.5 scaling"]], "body": [{"box": "levelling"}]}, {"id": "r8", "game": "knoxx", "n": "Run 8", "title": "Level 61 and Crawmerax", "mode": "Playthrough 2 or 2.5", "summary": "Grind to 61, then the raid boss. Crawmerax also finishes Completionist. Bank the $5 to 8 million for the bullet tour.", "tasks": [["Reach level 61", "Ding! Overleveled to 11"], ["You. Will. Die.", "Vincible"], ["All 43 missions complete", "Completionist"], ["Pay for the bullet tour", "Sucker born every minute"]], "body": [{"box": "levelling"}]}, {"id": "r9", "game": "moxxi", "n": "Run 9", "title": "Underdome: larger challenges", "mode": "The Underdome · same character and playthrough", "summary": "Twenty rounds per arena, roughly three hours each. Keep the same character and playthrough for all three, and keep the low-level host trick going.", "tasks": [["The Gully, 20 rounds", ""], ["Hell-Burbia, 20 rounds", ""], ["The Angelic Ruins, 20 rounds", "Big Tournament with the third"]], "body": [{"box": "underdome"}]}, {"id": "r10", "game": "base", "n": "Run 10", "title": "Co-op in split screen", "mode": "Local co-op · 2 to 3 controllers", "summary": "All seven co-op achievements work in split screen with extra controllers. A fresh character for the guests is fine: they can stand still while you do the work. Do this early and the 15 short missions go fast.", "tasks": [["Three players join", "And They'll Tell Two Friends"], ["Revive a downed guest", "Group LF Healer"], ["Duel the guest without being hit", "Duel-icious and Duelinator"], ["15 missions turned in together", "There's No \"I\" In \"Team\""], ["Kill a story boss together", "United We Stand"], ["Win an arena match", "Thunderdome"]], "body": [{"box": "splitscreen"}]}, {"id": "r11", "game": "base", "n": "Run 11", "title": "The other three action skills", "mode": "New characters · Playthrough 1", "summary": "Make a character of each class you didn't pick. The action skill unlocks at level 5, a few minutes in; then use it on every Skag in sight.", "tasks": [["Siren: one Phasewalk kill", "Truly Outrageous"], ["Hunter: 15 Bloodwing kills", "Careful, He Bites"], ["Berserker: 15 Berserk kills", "Reckless Abandon"], ["Soldier: 15 turret kills", "Down in Front!"]]}, {"id": "r12", "game": "clap", "n": "Run 12", "title": "Claptrap collectables", "mode": "Playthrough 1 or 2 · farming", "summary": "The long grind: about 5% of Claptraps drop one of six random collectables. Farm the final boss arena from the bus corner.", "tasks": [["5 pairs of 3-D glasses", "It's so realistic!"], ["25 oil cans", "The Lubricator"], ["15 bobbleheads", "Bobble-trap"], ["3 panties, 5 fish in a bag, 15 pizzas", "What a party!"]]}];
+
+/* Reference boxes (HTML) shown inside runs. */
+const BOXES = {"classes": {"title": "The four classes", "html": "<ul><li><b>Roland, Soldier:</b> easiest start. Turret, healing and ammo regen skills; combat rifles and shotguns.</li><li><b>Lilith, Siren:</b> Phasewalk makes her invisible and fast. Elemental skills; fast SMGs and repeaters. Strong solo and best for the Crawmerax glitch.</li><li><b>Mordecai, Hunter:</b> sniper and revolvers, with Bloodwing the bird.</li><li><b>Brick, Berserker:</b> tanky, punches in Berserk; launchers and grenades.</li></ul><p>Roland or Lilith are the solo picks. Weapon rarity runs white, green, blue, purple, then three shades of orange (legendary); the Knoxx DLC adds cyan pearlescents.</p>"}, "pandora": {"title": "Map of Pandora", "html": "<p>Every playable area with NPCs and the Claptraps (gold stars). Open it full size to read the labels.</p><img data-img=\"m_pandora\" alt=\"Map of Pandora with Claptraps\">"}, "jakobs": {"title": "Zombie Island tips", "html": "<ul><li><b>Levels:</b> on Playthrough 1 enemies run from about 15 to 36 depending on your story progress; on Playthrough 2, about 42 to 48. Aim for 38+ on PT1 or 45+ on PT2.</li><li><b>Elements:</b> fire and explosive excel. Corrosive does nothing to zombies, and shock heals Badass Tankensteins.</li><li><b>Headshots</b> do huge damage and are the only way to get brains.</li></ul><img data-img=\"m_jakobs\" alt=\"Map: Jakobs Cove and the Zombie Island areas\">"}, "underdome": {"title": "The Underdome", "html": "<p><b>Low-level host trick:</b> enemies scale to player 1. In split screen, make player 1 a character below level 12 and play as your main as player 2. Everything stays around level 12.</p><ul><li>Each round is five waves: starter, guns, a psycho horde, badasses, then a random main-game boss.</li><li>From round 2 random modifiers apply (up to four from round 15). Naked plus Vampire together is the nasty one.</li><li>If everyone goes down, the round restarts at wave 1. A downed player who isn't revived waits in the penalty box and can still shoot.</li><li>Enemies drop nothing; Moxxi drops ammo and health after most waves.</li><li>Arenas in any order. A 12-slot bank comes with this DLC.</li></ul>"}, "levelling": {"title": "Getting the last levels", "html": "<ul><li><b>Playthrough 2:</b> redo the story and side missions; everything scales up.</li><li><b>DLCs on Playthrough 2:</b> Knoxx starts around 51, Claptrap around 58. Skip Moxxi for XP.</li><li><b>Playthrough 2.5:</b> after reaching the final boss on PT2, enemies scale with you. Eridian Promontory Guardians respawn when you fast travel back.</li><li><b>Crawmerax's minions</b> respawn endlessly.</li><li><b>XP boosts:</b> Roland's Leader class mod (up to 25% for the whole lobby), Lilith's Intuition (20%), Mordecai's Smirk (15%).</li></ul><p>Option the PSN guide mentions: <a href=\"https://www.youtube.com/watch?v=-K8t0rJpxPc\" target=\"_blank\" rel=\"noopener\">the med-kit exploit ↗</a>.</p>"}, "splitscreen": {"title": "Split screen on PC", "html": "<p>The Enhanced edition supports local split screen with controllers. Connect a controller for each extra player, join from the main menu and make a throwaway character for each guest.</p><ul><li>Duels: melee the other player, and they melee back to accept.</li><li>Arenas: Fyrestone, Rust Commons West and the Salt Flats.</li><li>Mission count: guests must be eligible (not \"Not Eligible\") and in the game when you turn in.</li></ul>"}};
+
+/* 100% Guide chapters: missions, collectables and achievements in story order. */
+const COLL = [{"key": "c1", "game": "base", "title": "The Arid Badlands", "obj": "Fyrestone, Skag Gully, the Lost Cave, Arid Hills, Sledge's Safe House and Headstone Mine.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "lv5", "note": "Minutes in; unlocks your action skill."}, {"k": "ach", "ach": "plumber", "note": "Jump on a Skag until it dies."}, {"k": "ach", "ach": "tires", "note": "Run over 25 enemies after Bone Head's Theft."}, {"k": "ach", "ach": "rakk", "note": "During Get The Flock Outta Here."}, {"k": "ach", "ach": "artifact", "note": "Shock Crystal Harvest or Moe And Marley."}, {"k": "story", "ach": "skaggully", "note": "Opened by Nine-Toes: Take Him Down."}, {"k": "story", "ach": "safehouse", "note": "Via Arid Hills."}, {"k": "story", "ach": "headstone", "note": "After Sledge: To The Safe House."}, {"k": "story", "ach": "sledge", "note": "Sledge: Battle For The Badlands."}, {"k": "ach", "ach": "classmod", "note": "Sledge's mission reward."}]}, {"title": "Story missions", "items": [{"key": "fy1", "k": "mission", "title": "Fresh Off The Bus", "loc": "Guardian Angel, first mission"}, {"key": "fy2", "k": "mission", "title": "The Doctor Is In", "loc": "Automatic"}, {"key": "fy3", "k": "mission", "title": "Skags At The Gate", "loc": "Dr. Zed"}, {"key": "fy4", "k": "mission", "title": "Claptrap Rescue", "loc": "Automatic, story (not one of the ten)"}, {"key": "fy5", "k": "mission", "title": "Fix'er Upper", "loc": "Dr. Zed"}, {"key": "fy6", "k": "mission", "title": "Blinding Nine-Toes", "loc": "Dr. Zed"}, {"key": "fy7", "k": "mission", "title": "Nine-Toes: Meet T.K. Baha", "loc": "Dr. Zed"}, {"key": "fy8", "k": "mission", "title": "Nine-Toes: T.K.'s Food", "loc": "T.K. Baha"}, {"key": "fy9", "k": "mission", "title": "Got Grenades?", "loc": "T.K. Baha"}, {"key": "fy10", "k": "mission", "title": "Nine-Toes: Take Him Down", "loc": "T.K. Baha"}, {"key": "fy11", "k": "mission", "title": "Nine-Toes: Time To Collect", "loc": "T.K. Baha"}, {"key": "fy12", "k": "mission", "title": "Job Hunting", "loc": "Dr. Zed"}, {"key": "fy13", "k": "mission", "title": "Catch-A-Ride", "loc": "Fyrestone bounty board"}, {"key": "fy14", "k": "mission", "title": "Bone Head's Theft", "loc": "Catch-A-Ride, south of Fyrestone"}, {"key": "fy15", "k": "mission", "title": "The Piss Wash Hurdle", "loc": "Catch-A-Ride, south of Fyrestone"}, {"key": "fy16", "k": "mission", "title": "Return To Zed", "loc": "Gate switch east of Shep Sanders"}, {"key": "fy17", "k": "mission", "title": "Sledge: Meet Shep", "loc": "Dr. Zed"}, {"key": "fy18", "k": "mission", "title": "Sledge: The Mine Key", "loc": "Shep Sanders"}, {"key": "fy19", "k": "mission", "title": "Sledge: To The Safe House", "loc": "Note in the metal hut south of Shep"}, {"key": "fy20", "k": "mission", "title": "Sledge: Battle For The Badlands", "loc": "Gate at the Headstone Mine entrance"}]}, {"title": "Side missions (Leaving Fyrestone isn't needed)", "items": [{"key": "fy21", "k": "mission", "title": "T.K. Has More Work", "loc": "Fyrestone bounty board"}, {"key": "fy22", "k": "mission", "title": "T.K.'s Life And Limb", "loc": "T.K. Baha"}, {"key": "fy23", "k": "mission", "title": "By The Seeds Of Your Pants", "loc": "T.K. Baha"}, {"key": "fy24", "k": "mission", "title": "Get The Flock Outta Here", "loc": "Shep Sanders"}, {"key": "fy25", "k": "mission", "title": "Braking Wind", "loc": "Shep Sanders"}, {"key": "fy26", "k": "mission", "title": "What Hit The Fan", "loc": "Shep Sanders"}, {"key": "fy27", "k": "claptrap", "title": "Claptrap Rescue: Safe House", "loc": "Claptrap in Sledge's Safe House"}, {"key": "fy28", "k": "claptrap", "title": "Claptrap Rescue: The Lost Cave", "loc": "Claptrap in the Lost Cave"}, {"key": "fy29", "k": "mission", "title": "Why Are They Here?", "loc": "Data recorder near the Skag Gully entrance"}, {"key": "fy30", "k": "mission", "title": "Get A Little Blood On The Tires", "loc": "Fyrestone bounty board"}, {"key": "fy31", "k": "mission", "title": "Hidden Journal: The Arid Badlands", "loc": "Fyrestone bounty board"}, {"key": "fy32", "k": "mission", "title": "Shock Crystal Harvest", "loc": "Fyrestone bounty board"}, {"key": "fy33", "k": "mission", "title": "Scavenger: Sniper Rifle", "loc": "Fyrestone bounty board"}, {"key": "fy34", "k": "mission", "title": "The Legend Of Moe And Marley", "loc": "Fyrestone bounty board"}, {"key": "fy35", "k": "mission", "title": "Scavenger: Combat Rifle", "loc": "Fyrestone bounty board"}, {"key": "fy36", "k": "mission", "title": "Insult To Injury", "loc": "Fyrestone bounty board"}, {"key": "fy37", "k": "mission", "title": "Schemin' That Sabotage", "loc": "Fyrestone bounty board"}, {"key": "fy38", "k": "mission", "title": "Find Bruce McClane", "loc": "Fyrestone bounty board"}, {"key": "fy39", "k": "mission", "title": "Product Recall", "loc": "Bruce McClane's journal, south of Rade Zayben"}, {"key": "fy40", "k": "mission", "title": "Circle Of Death: Meat And Greet", "loc": "Fyrestone bounty board"}, {"key": "fy41", "k": "mission", "title": "Circle Of Death: Round 1", "loc": "Rade Zayben"}, {"key": "fy42", "k": "mission", "title": "Circle Of Death: Round 2", "loc": "Rade Zayben"}, {"key": "fy43", "k": "mission", "title": "Circle Of Death: Final Round", "loc": "Rade Zayben"}]}]}, {"key": "c2", "game": "base", "title": "The Rust Commons", "obj": "New Haven, Rust Commons West and East, Earl's Scrapyard, Tetanus Warren, Treacher's Landing, Krom's Canyon, Old Haven and Trash Coast.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "speedy", "note": "Ludicrous Speedway, south-west of Dahl Headland."}, {"k": "ach", "ach": "boat", "note": "Treacher's Landing pier, south-east corner."}, {"k": "story", "ach": "scrapyard", "note": "South-west of Rust Commons West."}, {"k": "story", "ach": "kromcanyon", "note": "Under the drawbridge, far north-east."}, {"k": "story", "ach": "krom", "note": "End of The Next Piece."}, {"k": "story", "ach": "trashcoast", "note": "After Jaynistown: Cleaning Up Your Mess."}, {"k": "story", "ach": "hive", "note": "Another Piece Of The Puzzle."}]}, {"title": "Story missions", "items": [{"key": "nh1", "k": "mission", "title": "Power To The People", "loc": "Helena Pierce, New Haven"}, {"key": "nh2", "k": "mission", "title": "Seek Out Tannis", "loc": "Helena Pierce"}, {"key": "nh3", "k": "mission", "title": "Meet 'Crazy' Earl", "loc": "Tannis, Rust Commons West"}, {"key": "nh4", "k": "mission", "title": "Get Off My Lawn", "loc": "Crazy Earl, Scrapyard"}, {"key": "nh5", "k": "mission", "title": "Hair Of The Dog", "loc": "Crazy Earl"}, {"key": "nh6", "k": "mission", "title": "The Next Piece", "loc": "Crazy Earl"}, {"key": "nh7", "k": "mission", "title": "Jaynistown: Secret Rendezvous", "loc": "Tannis"}, {"key": "nh8", "k": "mission", "title": "Jaynistown: A Brother's Love", "loc": "Taylor Kobb, Rust Commons East"}, {"key": "nh9", "k": "mission", "title": "Jaynistown: Spread The Word", "loc": "Taylor Kobb"}, {"key": "nh10", "k": "mission", "title": "Jaynistown: Getting What's Coming To You", "loc": "Erik Franks, New Haven"}, {"key": "nh11", "k": "mission", "title": "Jaynistown: Unintended Consequences", "loc": "Container north of New Haven"}, {"key": "nh12", "k": "mission", "title": "Jaynistown: Cleaning Up Your Mess", "loc": "Helena Pierce"}, {"key": "nh13", "k": "mission", "title": "Another Piece Of The Puzzle", "loc": "Guardian Angel, Rust Commons East"}, {"key": "nh14", "k": "mission", "title": "Not Without My Claptrap", "loc": "Tannis"}, {"key": "nh15", "k": "mission", "title": "The Final Piece", "loc": "Claptrap, Old Haven"}]}, {"title": "Side missions", "items": [{"key": "nh16", "k": "mission", "title": "Like A Moth To A Flame", "loc": "New Haven bounty board"}, {"key": "nh17", "k": "mission", "title": "King Tossing", "loc": "New Haven bounty board"}, {"key": "nh18", "k": "mission", "title": "Corrosive Crystal Harvest", "loc": "New Haven bounty board"}, {"key": "nh19", "k": "claptrap", "title": "Claptrap Rescue: New Haven", "loc": "Claptrap in New Haven"}, {"key": "nh20", "k": "mission", "title": "Scooter's Used Car Parts", "loc": "Scooter"}, {"key": "nh21", "k": "mission", "title": "Is T.K. O.K.?", "loc": "Scooter"}, {"key": "nh22", "k": "mission", "title": "Up To Our Ears", "loc": "Scooter"}, {"key": "nh23", "k": "mission", "title": "Firepower: All Sales Are Final", "loc": "Marcus"}, {"key": "nh24", "k": "mission", "title": "Firepower: Market Correction", "loc": "Marcus"}, {"key": "nh25", "k": "mission", "title": "Firepower: Plight Of The Middle Man", "loc": "Marcus"}, {"key": "nh26", "k": "mission", "title": "Jack's Other Eye", "loc": "Helena Pierce"}, {"key": "nh27", "k": "mission", "title": "Scavenger: Submachine Gun", "loc": "New Haven bounty board"}, {"key": "nh28", "k": "mission", "title": "Hidden Journal: Rust Commons West", "loc": "New Haven bounty board"}, {"key": "nh29", "k": "mission", "title": "Today's Lesson: High Explosives", "loc": "Crazy Earl"}, {"key": "nh30", "k": "mission", "title": "Earl Needs Food... Badly", "loc": "Crazy Earl"}, {"key": "nh31", "k": "claptrap", "title": "Claptrap Rescue: Scrapyard", "loc": "Claptrap in Earl's Scrapyard"}, {"key": "nh32", "k": "mission", "title": "Missing Persons", "loc": "New Haven bounty board"}, {"key": "nh33", "k": "mission", "title": "Two Wrongs Make A Right", "loc": "Shawn Stokely's body, south New Haven"}, {"key": "nh34", "k": "claptrap", "title": "Claptrap Rescue: Tetanus Warren", "loc": "Claptrap in Tetanus Warren"}, {"key": "nh35", "k": "claptrap", "title": "Claptrap Rescue: Krom's Canyon", "loc": "Claptrap in Krom's Canyon"}, {"key": "nh36", "k": "mission", "title": "Middle Of Nowhere No More: Investigate", "loc": "Helena Pierce"}, {"key": "nh37", "k": "mission", "title": "Middle Of Nowhere No More: Fuses? Really?", "loc": "Hudson Johns, Rust Commons East"}, {"key": "nh38", "k": "mission", "title": "Middle Of Nowhere No More: Small Favor", "loc": "Hudson Johns"}, {"key": "nh39", "k": "mission", "title": "Middle Of Nowhere No More: Scoot On Back", "loc": "Hudson Johns"}, {"key": "nh40", "k": "mission", "title": "Scavenger: Shotgun", "loc": "Middle of Nowhere bounty board"}, {"key": "nh41", "k": "mission", "title": "Altar Ego: Burning Heresy", "loc": "Middle of Nowhere bounty board"}, {"key": "nh42", "k": "mission", "title": "Altar Ego: The New Religion", "loc": "Middle of Nowhere bounty board"}, {"key": "nh43", "k": "mission", "title": "Altar Ego: Godless Monsters", "loc": "Middle of Nowhere bounty board"}, {"key": "nh44", "k": "mission", "title": "Hidden Journal: Rust Commons East", "loc": "Middle of Nowhere bounty board"}, {"key": "nh45", "k": "mission", "title": "Circle Of Slaughter: Meat And Greet", "loc": "Middle of Nowhere bounty board"}, {"key": "nh46", "k": "mission", "title": "Circle Of Slaughter: Round 1", "loc": "Chuck Durden, Rust Commons West"}, {"key": "nh47", "k": "mission", "title": "Circle Of Slaughter: Round 2", "loc": "Chuck Durden"}, {"key": "nh48", "k": "mission", "title": "Circle Of Slaughter: Final Round", "loc": "Chuck Durden"}, {"key": "nh49", "k": "mission", "title": "A Bug Problem", "loc": "Middle of Nowhere bounty board"}, {"key": "nh50", "k": "mission", "title": "Relight The Beacons", "loc": "Helena Pierce"}, {"key": "nh51", "k": "mission", "title": "Green Thumb", "loc": "Stance Von Kofsky, Rust Commons East"}, {"key": "nh52", "k": "mission", "title": "Smoke Signals: Investigate Old Haven", "loc": "Helena Pierce"}, {"key": "nh53", "k": "mission", "title": "Smoke Signals: Shut Them Down", "loc": "Bodies on entering Old Haven"}, {"key": "nh54", "k": "claptrap", "title": "Claptrap Rescue: Old Haven", "loc": "Claptrap in Old Haven"}, {"key": "nh55", "k": "mission", "title": "I've Got A Sinking Feeling", "loc": "Scooter"}, {"key": "nh56", "k": "mission", "title": "Wanted: Fresh Fish", "loc": "New Haven bounty board"}, {"key": "nh57", "k": "mission", "title": "Bait And Switch", "loc": "Middle of Nowhere bounty board"}, {"key": "nh58", "k": "claptrap", "title": "Claptrap Rescue: Trash Coast", "loc": "Claptrap in Trash Coast"}, {"key": "nh59", "k": "mission", "title": "Earl's Best Friend", "loc": "Crazy Earl"}, {"key": "nh60", "k": "mission", "title": "House Hunting", "loc": "Middle of Nowhere bounty board"}, {"key": "nh61", "k": "mission", "title": "Dumpster Diving For Great Justice", "loc": "Erik Franks"}, {"key": "nh62", "k": "mission", "title": "Bandit Treasure: Three Corpses, Three Keys", "loc": "Dead bandit, north Old Haven"}, {"key": "nh63", "k": "mission", "title": "Bandit Treasure: X Marks The Spot", "loc": "Map, north Old Haven"}, {"key": "nh64", "k": "mission", "title": "Scavenger: Machine Gun", "loc": "Middle of Nowhere bounty board"}]}]}, {"key": "c3", "game": "base", "title": "The Salt Flats to the Vault", "obj": "Three missions here still count for Made in New Haven, then the ending.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "flynt", "note": "The Final Piece."}, {"k": "story", "ach": "enclave", "note": "Back Door, Crimson Fastness, then north."}, {"k": "story", "ach": "promontory", "note": "Through The Descent during Find Steele."}, {"k": "story", "ach": "destroyer", "note": "The last fight."}]}, {"title": "Missions that count for New Haven", "items": [{"key": "sf1", "k": "mission", "title": "Get Some Answers", "loc": "Chest behind Baron Flynt's throne, Salt Flats"}, {"key": "sf2", "k": "claptrap", "title": "Claptrap Rescue: Salt Flats", "loc": "Claptrap in the Salt Flats"}, {"key": "sf3", "k": "claptrap", "title": "Claptrap Rescue: Crimson Fastness", "loc": "Claptrap in Crimson Fastness"}]}]}, {"key": "n1", "game": "ned", "title": "Jakobs Cove story", "obj": "From the DLC's start to Ned's lair.", "sections": [{"title": "", "items": [{"k": "story", "ach": "houseofned", "note": "Ned's treehouse in Hallow's End."}, {"k": "story", "ach": "fodder", "note": "Two ECHOs in the lab, then the Dead Haven comm array."}, {"k": "story", "ach": "nightned", "note": "End of The Mill."}, {"k": "story", "ach": "undeadned", "note": "Down the hole after the credits."}]}]}, {"key": "n2", "game": "ned", "title": "T.K.'s brains", "obj": "435 headshot brains across five missions. Hand each in the moment it's full.", "sections": [{"title": "Missions", "items": [{"key": "br1", "k": "mission", "title": "T.K. Lives!", "loc": "T.K.'s leg, far south-west of Hallow's End"}, {"key": "br2", "k": "mission", "title": "Brains (10)", "loc": "Zombie T.K. Baha"}, {"key": "br3", "k": "mission", "title": "Braaains (25)", "loc": "Zombie T.K. Baha"}, {"key": "br4", "k": "mission", "title": "Braaaaains (50)", "loc": "Zombie T.K. Baha"}, {"key": "br5", "k": "mission", "title": "Braaaaaaaaaaaains (100)", "loc": "Zombie T.K. Baha"}, {"key": "br6", "k": "mission", "title": "Braaaaaaaaaaaaaaaaains (250)", "loc": "Zombie T.K. Baha"}]}]}, {"key": "x1", "game": "moxxi", "title": "The Underdome", "obj": "Three arenas, lesser then larger challenges.", "sections": [{"title": "", "items": [{"k": "ach", "ach": "smalltour", "note": "5 rounds in each arena."}, {"k": "ach", "ach": "gully", "note": "20 rounds."}, {"k": "ach", "ach": "hellburbia", "note": "20 rounds."}, {"k": "ach", "ach": "angelic", "note": "20 rounds."}, {"k": "ach", "ach": "bigtour", "note": "All three larger challenges."}]}]}, {"key": "k1", "game": "knoxx", "title": "Secret Armory story", "obj": "15 story missions from T-Bone Junction.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "monster", "note": "Greasemonkey."}, {"k": "ach", "ach": "speedkills", "note": "Racer against a Lancer, from Over The Wall."}, {"k": "story", "ach": "athena", "note": "Try Not To Get Shanked."}, {"k": "story", "ach": "depot", "note": "Armory Assault and Loot Larceny."}, {"k": "ach", "ach": "sucker", "note": "Giant bullet, left of the Sunken Sea entrance (needs millions)."}]}, {"title": "Story missions", "items": [{"key": "kx1", "k": "mission", "title": "Scooter? But I Don't Even Know Her.", "loc": "Starts the DLC, T-Bone Junction"}, {"key": "kx2", "k": "mission", "title": "Boost the Monster", "loc": "Scooter"}, {"key": "kx3", "k": "mission", "title": "Greasemonkey", "loc": "Scooter"}, {"key": "kx4", "k": "mission", "title": "You've Got Moxxi: Roadblock", "loc": "Scooter, Crimson Tollway"}, {"key": "kx5", "k": "mission", "title": "You've Got Moxxi: Moxxi's Red Light", "loc": "Scooter"}, {"key": "kx6", "k": "mission", "title": "Prison Break: Road Warrior", "loc": "Moxxi, The Ridgeway"}, {"key": "kx7", "k": "mission", "title": "Prison Break: Over The Wall", "loc": "Moxxi, Sunken Sea"}, {"key": "kx8", "k": "mission", "title": "Prison Break: Try Not To Get Shanked", "loc": "Moxxi, Lockdown Palace"}, {"key": "kx9", "k": "mission", "title": "Rendezvous", "loc": "Athena, T-Bone Junction"}, {"key": "kx10", "k": "mission", "title": "Code Breaker: Analysis", "loc": "Athena, The Ridgeway"}, {"key": "kx11", "k": "mission", "title": "Code Breaker: Time Is Bullets", "loc": "Lance ECHO, Sunken Sea"}, {"key": "kx12", "k": "mission", "title": "Athena Set Up Us The Bomb", "loc": "Athena"}, {"key": "kx13", "k": "mission", "title": "Bridging The Gap", "loc": "Athena, Deep Fathoms"}, {"key": "kx14", "k": "mission", "title": "Armory Assault", "loc": "Athena, Crimson Armory"}, {"key": "kx15", "k": "mission", "title": "Loot Larceny", "loc": "Athena, Crimson Armory"}]}]}, {"key": "k2", "game": "knoxx", "title": "Secret Armory side missions", "obj": "28 side missions. Leave Marcus' armory missions until the story is done.", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "vincible", "note": "You. Will. Die."}, {"k": "ach", "ach": "completionist", "note": "All 43 missions."}]}, {"title": "Side missions", "items": [{"key": "kx16", "k": "mission", "title": "Core Collection", "loc": "Marcus; anywhere with Atlas soldiers"}, {"key": "kx17", "k": "mission", "title": "Mop Up", "loc": "Marcus; anywhere with Atlas soldiers"}, {"key": "kx18", "k": "mission", "title": "Super Marcus Sweep", "loc": "Marcus, Crimson Armory (after the story)"}, {"key": "kx19", "k": "mission", "title": "Local Trouble", "loc": "Marcus; best in Lockdown Palace"}, {"key": "kx20", "k": "mission", "title": "It's Like Christmas!", "loc": "Marcus, Crimson Armory (after the story)"}, {"key": "kx21", "k": "mission", "title": "This Bitch Is Payback", "loc": "Athena, The Ridgeway"}, {"key": "kx22", "k": "mission", "title": "This Bitch Is Payback, pt 2", "loc": "Athena, Road's End"}, {"key": "kx23", "k": "mission", "title": "Knoxxed Out", "loc": "Athena, Road's End"}, {"key": "kx24", "k": "mission", "title": "Thrown For A Loop", "loc": "Moxxi, Road's End"}, {"key": "kx25", "k": "mission", "title": "Stain Removal", "loc": "Moxxi, Deep Fathoms"}, {"key": "kx26", "k": "mission", "title": "Purple Juice!", "loc": "Thirsty the Midget, Sunken Sea"}, {"key": "kx27", "k": "mission", "title": "Little People, Big Experiments", "loc": "Thirsty the Midget, The Ridgeway"}, {"key": "kx28", "k": "mission", "title": "Big Crimson Brother Is Watching", "loc": "T-Bone Junction board"}, {"key": "kx29", "k": "mission", "title": "Drifter Lifter", "loc": "T-Bone Junction board, Sunken Sea"}, {"key": "kx30", "k": "mission", "title": "Road Rage", "loc": "T-Bone Junction board, Sunken Sea"}, {"key": "kx31", "k": "mission", "title": "Power Leech", "loc": "T-Bone Junction board, Sunken Sea"}, {"key": "kx32", "k": "mission", "title": "Bugged", "loc": "T-Bone Junction board, Road's End"}, {"key": "kx33", "k": "mission", "title": "You. Will. Die.", "loc": "T-Bone Junction board, Crawmerax's Lair"}, {"key": "kx34", "k": "mission", "title": "Circle Of Duty: New Recruit", "loc": "T-Bone Junction board"}, {"key": "kx35", "k": "mission", "title": "Circle Of Duty: Cadet", "loc": "Zach"}, {"key": "kx36", "k": "mission", "title": "Circle Of Duty: Private", "loc": "Zach"}, {"key": "kx37", "k": "mission", "title": "Circle Of Duty: Corporal", "loc": "Zach"}, {"key": "kx38", "k": "mission", "title": "Circle Of Duty: Sergeant", "loc": "Zach"}, {"key": "kx39", "k": "mission", "title": "Circle Of Duty: Medal Of Duty", "loc": "Zach"}, {"key": "kx40", "k": "mission", "title": "Wanted: Dead!", "loc": "Agent 01, when assassins attack in T-Bone Junction"}, {"key": "kx41", "k": "claptrap", "title": "Claptrap Rescue: Lockdown Palace", "loc": "Claptrap in Lockdown Palace"}, {"key": "kx42", "k": "mission", "title": "OMG APC", "loc": "Scooter, The Ridgeway"}, {"key": "kx43", "k": "mission", "title": "Lost Lewts", "loc": "Radar device in a chest, Road's End"}]}, {"title": "Loot midgets", "items": [{"key": "mg1", "k": "midget", "title": "Truxican Wrestler", "loc": "Lockdown Palace, usually a locker near the entrance"}, {"key": "mg2", "k": "midget", "title": "Meat Popsicle", "loc": "Lockdown Palace, a fridge about halfway"}, {"key": "mg3", "k": "midget", "title": "Mini-Steve", "loc": "Lockdown Palace, any container, often near the Claptrap"}, {"key": "mg4", "k": "midget", "title": "Crimson Shorty", "loc": "Road's End, weapon chest just before Knoxx's Armory"}, {"key": "mg5", "k": "midget", "title": "Dumpster Diver", "loc": "Motorhead's Garage dumpster, during Little People, Big Experiments"}]}]}, {"key": "t1", "game": "clap", "title": "Robot Revolution", "obj": "Tartarus Station and five areas, with a statue in each of six.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "knoxxtrap", "note": "Phase One and Phase Four."}, {"k": "story", "ach": "nedtrap", "note": "Phase Two and Phase Four."}, {"k": "story", "ach": "steeletrap", "note": "Phase Three and Phase Four."}, {"k": "story", "ach": "robolucion", "note": "End of Phase Four."}, {"k": "ach", "ach": "collector", "note": "Tannis' five missions."}]}, {"title": "Claptrap statues", "items": [{"key": "st1", "k": "statue", "title": "Statue: Hyperion Dump", "loc": "Read the plaque; often near the entrance or on the main path"}, {"key": "st2", "k": "statue", "title": "Statue: Sanders Gorge", "loc": "Read the plaque; often near the entrance or on the main path"}, {"key": "st3", "k": "statue", "title": "Statue: Dividing Faults", "loc": "Read the plaque; often near the entrance or on the main path"}, {"key": "st4", "k": "statue", "title": "Statue: Scorched Snake Canyon", "loc": "Read the plaque; often near the entrance or on the main path"}, {"key": "st5", "k": "statue", "title": "Statue: Tartarus Station", "loc": "Read the plaque; often near the entrance or on the main path"}, {"key": "st6", "k": "statue", "title": "Statue: Wayward Pass", "loc": "Read the plaque; often near the entrance or on the main path"}]}, {"title": "Story missions", "items": [{"key": "cl1", "k": "mission", "title": "Are You From These Parts?", "loc": "Tannis, Hyperion Dump"}, {"key": "cl2", "k": "mission", "title": "New Contact", "loc": "Blake, Tartarus Station"}, {"key": "cl3", "k": "mission", "title": "Operation Trap Claptrap Trap, Phase One", "loc": "Blake, Sanders Gorge"}, {"key": "cl4", "k": "mission", "title": "Phase Two: Industrial Revolution", "loc": "Blake, Dividing Faults"}, {"key": "cl5", "k": "mission", "title": "Phase Three: TripWIRED", "loc": "Blake, Scorched Snake Canyon"}, {"key": "cl6", "k": "mission", "title": "Phase Four: reboot", "loc": "Blake, Wayward Pass and Arid Badlands"}, {"key": "cl7", "k": "mission", "title": "Helping is its own reward... Wait no it isn't!", "loc": "Blake, Tartarus Station"}]}, {"title": "Side missions", "items": [{"key": "cl8", "k": "mission", "title": "Fight For Your Right To Part-E (42 parts)", "loc": "Tannis; anywhere with Claptraps"}, {"key": "cl9", "k": "mission", "title": "Parts Is Parts (75 parts)", "loc": "Tannis"}, {"key": "cl10", "k": "mission", "title": "We All Have Our Part To Play (100 parts)", "loc": "Tannis"}, {"key": "cl11", "k": "mission", "title": "A Part of Something Larger Than Yourself (150 parts)", "loc": "Tannis"}, {"key": "cl12", "k": "mission", "title": "Like Shootin' Rakk in a Barrel", "loc": "Hyperion tourist board, Tartarus Station"}, {"key": "cl13", "k": "mission", "title": "Spa vs Spa", "loc": "Hyperion tourist board"}, {"key": "cl14", "k": "mission", "title": "One-UpmanPipp", "loc": "Hyperion tourist board"}, {"key": "cl15", "k": "mission", "title": "Finger Lickin' Bad", "loc": "Hyperion tourist board, Sanders Gorge"}, {"key": "cl16", "k": "mission", "title": "Not My Fault", "loc": "Hyperion tourist board, Dividing Faults"}, {"key": "cl17", "k": "mission", "title": "Burnin Rubber", "loc": "Marcus, Tartarus Station"}, {"key": "cl18", "k": "mission", "title": "Taking Stock", "loc": "Marcus, Dividing Faults"}, {"key": "cl19", "k": "mission", "title": "Old Spicy", "loc": "Marcus, Scorched Snake Canyon"}, {"key": "cl20", "k": "mission", "title": "Eleven Rakk and Spices", "loc": "Marcus, Sanders Gorge"}, {"key": "cl21", "k": "claptrap", "title": "It's A Trap... Clap", "loc": "Claptrap in Tartarus Station: 3 more backpack slots"}]}]}];
+
+/* Collectable totals that tick an achievement automatically. kind may be a list; ch limits to chapters. */
+const AUTO = [{"ach": "madefy", "kind": ["mission", "claptrap"], "ch": ["c1"], "label": "Arid Badlands missions"}, {"ach": "paidfy", "kind": ["mission", "claptrap"], "ch": ["c1"], "label": "Arid Badlands missions", "min": 5}, {"ach": "madenh", "kind": ["mission", "claptrap"], "ch": ["c2", "c3"], "label": "Rust Commons missions"}, {"ach": "paidnh", "kind": ["mission", "claptrap"], "ch": ["c2"], "label": "Rust Commons missions", "min": 5}, {"ach": "fully", "kind": "claptrap", "part": "base", "label": "Claptraps"}, {"ach": "brains", "kind": "mission", "ch": ["n2"], "label": "Brains missions"}, {"ach": "completionist", "kind": ["mission", "claptrap"], "part": "knoxx", "label": "Secret Armory missions"}, {"ach": "midgets", "kind": "midget", "label": "Loot midgets"}, {"ach": "tourist", "kind": "statue", "label": "Statues"}];
+
+/* Guide images (WebP files in ../img/guides/borderlands-1/). */
+const IMGS = {"m_pandora": "../img/guides/borderlands-1/borderlands-1-base-map-pandora.webp", "m_boat": "../img/guides/borderlands-1/borderlands-1-base-map-treachers-landing-boat.webp", "m_jakobs": "../img/guides/borderlands-1/borderlands-1-ned-map-jakobs-cove.webp", "m_tkbaha": "../img/guides/borderlands-1/borderlands-1-ned-map-tk-baha.webp"};
+
+const PADS = {
+  ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], ST: ["Options", "sh"] },
+  xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], ST: ["Menu", "sh"] }
+};
+const TAGS = { story: "Story", missable: "Missable", collect: "Collectable", timed: "Time limited" };
+const KIND_LABEL = { ach: "Achievement", story: "Story", mission: "Mission", claptrap: "Claptrap", midget: "Loot midget", statue: "Statue" };
+const KIND_PLURAL = { ach: "Achievements", story: "Story", mission: "Missions", claptrap: "Claptraps", midget: "Loot midgets", statue: "Statues" };
+const PART_BY = Object.fromEntries(PARTS.map(p => [p.key, p]));
+const RUN_BY_ID = Object.fromEntries(RUNS.map(r => [r.id, r]));
+const ALL = SECTIONS.flatMap(s => s.items.map(a => Object.assign(a, { game: s.game })));
+const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
+const CITEMS = COLL.flatMap(ch => ch.sections.flatMap(s => s.items.map(it => Object.assign(it, { ch: ch.key }))));
+const CBY = Object.fromEntries(CITEMS.filter(i => i.key).map(i => [i.key, i]));
+
+/* ---------------- state ---------------- */
+function blank() { return { got: {}, open: {}, tasks: {}, coll: {}, pad: "ps", tab: "ach", spoil: false }; }
+function clean(src) {
+  const out = blank();
+  if (!src || typeof src !== "object") return out;
+  for (const k of ["got", "open", "tasks", "coll"]) if (src[k] && typeof src[k] === "object") for (const x in src[k]) if (src[k][x] === true) out[k][x] = true;
+  if (src.pad === "xb") out.pad = "xb";
+  if (src.spoil === true) out.spoil = true;
+  if (["runs", "coll"].includes(src.tab)) out.tab = src.tab;
+  return out;
+}
+let state;
+try { const raw = localStorage.getItem(KEY); state = raw ? clean(JSON.parse(raw)) : fresh(); } catch (e) { state = fresh(); }
+function fresh() { const s = blank(); PRE.forEach(id => { s.got[id] = true; }); return s; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let filter = "all", game = "all", runFilter = "all", query = "", kindFilter = "all", hideGot = false;
+
+/* ---------------- helpers ---------------- */
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function targetId(id) {
+  if (BY_ID[id]) return "a-" + id;
+  if (RUN_BY_ID[id]) return "run-" + id;
+  if (id === "coll") return "coll-top";
+  if (id === "runs") return "runs-top";
+  return id;
+}
+function buttons(t) { return t.replace(/\[(X|SQ|O|TR|L1|L2|R1|R2|L3|R3|ST)\]/g, (_, k) => { const [g, c] = PADS[state.pad][k]; return `<kbd class="b ${state.pad}-${k} ${c}">${g}</kbd>`; }); }
+/* spoilers: ||text|| in data strings, <span class="spoil"> in guide HTML, sp: "n" | "d" | "g" on achievements */
+const SP = h => `<span class="spoil" tabindex="0">${h}</span>`;
+const nm = a => a.sp === "n" ? SP(esc(a.name)) : esc(a.name);
+const ds = a => a.sp === "n" || a.sp === "d" ? SP(esc(a.desc)) : esc(a.desc);
+const plain = s => String(s).replace(/\|\|/g, "");
+function fmt(s) {
+  let t = esc(s);
+  t = t.replace(/\|\|(.+?)\|\|/g, (_, x) => SP(x));
+  t = t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\{\{([\w-]+)\|([^}]+)\}\}/g, (_, id, label) => `<a href="#${targetId(id)}" data-jump="${id}">${label}</a>`);
+  return buttons(t);
+}
+function blocks(list) {
+  return list.map(b => typeof b === "string" ? `<p>${fmt(b)}</p>` : b.h ? `<h4>${esc(b.h)}</h4>` : b.ul ? `<ul>${b.ul.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : b.box ? `<details class="more"><summary>${esc(BOXES[b.box].title)}</summary><div class="prose">${rich(BOXES[b.box].html)}</div></details>` : "").join("");
+}
+/* PSN guide HTML: button tokens, trophy lists as jump chips, wide tables scroll inside their box */
+function rich(h) {
+  return buttons(h)
+    .replace(/<div class="achrefs" data-ids="([^"]*)"><\/div>/g, (_, ids) => `<div class="tlinks">${ids.split(",").filter(id => BY_ID[id]).map(id => `<a class="tlink" href="#a-${id}" data-jump="${id}" data-tl="${id}">${nm(BY_ID[id])}</a>`).join("")}</div>`)
+    .replace(/<(span|div) class="spoil">/g, '<$1 class="spoil" tabindex="0">')
+    .replace(/<img data-img="(\w+)" alt="([^"]*)">/g, (_, k, alt) => IMGS[k] ? `<img class="${k[0] === "c" ? "card" : "shot"}" src="${IMGS[k]}" alt="${alt}" loading="lazy" decoding="async">` : "")
+    .replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, "</table></div>");
+}
+/* after inserting guide HTML: tables holding screenshots become labelled cards */
+function enhance(root) {
+  root.querySelectorAll(".tablewrap").forEach(w => {
+    if (w.classList.contains("stack") || !w.querySelector("img.shot")) return;
+    w.classList.add("stack");
+    const rows = [...w.querySelectorAll("tr")];
+    const head = rows.find(r => r.querySelector("th") && !r.querySelector("td"));
+    const labels = head ? [...head.cells].map(c => c.textContent.trim()) : [];
+    rows.forEach(r => [...r.cells].forEach((c, i) => {
+      if (c.tagName === "TD" && labels[i] && !/^image$/i.test(labels[i]) && !c.querySelector("img.shot")) c.dataset.label = labels[i];
+    }));
+  });
+}
+const runBadge = id => { const r = RUN_BY_ID[id]; return `<a class="run-badge" data-p="${r.game}" href="#run-${id}" data-jump="${id}">${esc(r.n)}</a>`; };
+const autoGot = rule => CITEMS.filter(i => [].concat(rule.kind).includes(i.k) && i.ch !== undefined && (!rule.ch || rule.ch.includes(i.ch)) && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part) && state.coll[i.key]).length;
+const autoTotal = rule => CITEMS.filter(i => [].concat(rule.kind).includes(i.k) && (!rule.ch || rule.ch.includes(i.ch)) && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part)).length;
+
+/* ---------------- progress & auto ticks ---------------- */
+function snapshot() { return AUTO.map(autoGot); }
+function applyAuto(before) {
+  AUTO.forEach((r, i) => {
+    const now = autoGot(r), need = r.min || autoTotal(r);
+    if (now >= need && before[i] < need) state.got[r.ach] = true;
+  });
+}
+function change(fn) { const b = snapshot(); fn(); applyAuto(b); save(); update(); }
+
+/* ---------------- render: achievements ---------------- */
+function renderItem(a) {
+  const auto = AUTO.find(r => r.ach === a.id && !r.min);
+  return `<li class="item" id="a-${a.id}"><div class="row">
+    <input type="checkbox" class="check" id="c-${a.id}" data-ach="${a.id}" aria-label="Mark ${a.sp === "n" ? "this achievement" : esc(a.name)} as unlocked">
+    <div>
+      <div class="title-line">
+        <h3><label for="c-${a.id}">${nm(a)}</label></h3>
+        ${a.runs.map(runBadge).join("")}
+        ${(a.tags || []).map(t => `<span class="tag ${t}">${TAGS[t]}</span>`).join("")}
+      </div>
+      <p class="desc">${ds(a)}</p>
+      ${auto ? `<div class="summary-line" data-autoline="${a.id}"></div>` : ""}
+      ${GUIDES[a.id] ? `<button class="guide-btn" aria-expanded="false" aria-controls="g-${a.id}">Show guide</button>
+      <div class="guide" id="g-${a.id}" data-p="${a.game}" hidden></div>` : ""}
+    </div></div></li>`;
+}
+function renderAch() {
+  const runOpts = RUNS.map(r => `<option value="${r.id}">${esc(r.n + ": " + r.title)}</option>`).join("");
+  document.getElementById("view-ach").innerHTML = `
+    <div class="row-tools" style="margin-bottom:.6rem">
+      <span class="seg" role="group" aria-label="Status"><button data-filter="all" aria-pressed="true">All</button><button data-filter="todo" aria-pressed="false">To do</button><button data-filter="done" aria-pressed="false">Unlocked</button><button data-filter="missable" aria-pressed="false">Missable</button></span>
+      <span class="seg" role="group" aria-label="Game or DLC"><button data-game="all" aria-pressed="true">All</button>${PARTS.map(p => `<button data-game="${p.key}" aria-pressed="false">${esc(p.short)}</button>`).join("")}</span>
+      <select class="select" id="run-filter" aria-label="Filter by playthrough"><option value="all">Any playthrough</option>${runOpts}</select>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+    </div>
+    <nav class="jumps" aria-label="Categories">${SECTIONS.map(s => `<a class="jump" data-p="${s.game}" href="#sec-${s.id}">${esc(s.title)} <span data-jcount="${s.id}"></span></a>`).join("")}</nav>
+    ${SECTIONS.map(sec => `<section class="sheet" data-p="${sec.game}" id="sec-${sec.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[sec.game].label)}</small>${esc(sec.title)}</h2><span class="sub" data-sub="${sec.id}"></span></div>
+      <p class="intro">${fmt(sec.intro)}${sec.src ? ` <a href="${sec.src}" target="_blank" rel="noopener">Guide source ↗</a>` : ""}</p>
+      <ul class="items">${sec.items.map(renderItem).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden>Nothing here for this filter.</p>
+    </section>`).join("")}`;
+}
+
+/* ---------------- render: runs ---------------- */
+function renderRuns() {
+  const achFor = id => ALL.filter(a => a.runs.includes(id));
+  document.getElementById("view-runs").innerHTML = `
+    <section class="sheet" id="runs-top"><div class="sheet-head"><h2><small>Your plan</small>Playthroughs</h2><span class="sub" id="runs-count"></span></div>
+      <p class="intro">One main character carries the whole plan: a blind first playthrough, the Playthrough 1 cleanup and the DLCs, then Playthrough 2 for the level cap, the raid boss and the Underdome. Co-op, the other three classes and the Claptrap grind close it out. Each run's tasks are tickable, and its chips show which achievements it should unlock.</p>
+      <div class="runmap">${RUNS.map(r => `<a href="#run-${r.id}" data-jump="${r.id}" data-p="${r.game}" data-runcard="${r.id}"><b>${esc(r.n)}</b><span>${esc(r.title)}</span><br><span data-runprog="${r.id}"></span></a>`).join("")}</div>
+    </section>
+    ${RUNS.map(r => `<section class="sheet run" data-p="${r.game}" id="run-${r.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[r.game].label)} · ${esc(r.n)}</small>${esc(r.title)}</h2><span class="sub" data-runsub="${r.id}"></span></div>
+      <div class="mode">${esc(r.mode)}</div>
+      <p class="intro">${fmt(r.summary)}</p>
+      <ul class="tasks">${r.tasks.map((t, i) => `<li data-task="${r.id}:${i}"><input type="checkbox" class="check small" id="t-${r.id}-${i}" data-taskcheck="${r.id}:${i}"><label for="t-${r.id}-${i}"><span class="st-name">${fmt(t[0])}</span>${t[1] ? `<span class="st-desc">${fmt(t[1])}</span>` : ""}</label></li>`).join("")}</ul>
+      ${achFor(r.id).length ? `<div class="tlinks">${achFor(r.id).map(a => `<a class="tlink" href="#a-${a.id}" data-jump="${a.id}" data-tl="${a.id}">${nm(a)}</a>`).join("")}</div>` : ""}
+      ${r.body ? `<div class="prose" style="margin-top:.7rem">${blocks(r.body)}</div>` : ""}
+      <p></p>
+    </section>`).join("")}`;
+  enhance(document.getElementById("view-runs"));
+}
+
+/* ---------------- render: 100% guide ---------------- */
+function renderColl() {
+  const kinds = [...new Set(CITEMS.map(i => i.k))];
+  document.getElementById("view-coll").innerHTML = `
+    <section class="sheet" id="coll-top"><div class="sheet-head"><h2><small>Run 2 onwards</small>100% Guide</h2><span class="sub" id="coll-count"></span></div>
+      <p class="intro">Every Arid Badlands and Rust Commons mission with who gives it, all ten Claptraps, then the DLC mission lists, T.K.'s brains, the loot midgets and the Claptrap statues. Ticking an item here counts towards its achievement, and the last one ticks the achievement for you.</p>
+      <div class="row-tools">
+        <span class="seg" role="group" aria-label="Show"><button data-kind="all" aria-pressed="true">All</button>${kinds.map(k => `<button data-kind="${k}" aria-pressed="false">${esc(KIND_PLURAL[k])}</button>`).join("")}</span>
+        <button class="chip" id="hide-got" aria-pressed="false">Hide ticked</button>
+      </div>
+      <div class="summary-line" id="coll-kinds"></div><p></p>
+    </section>
+    ${COLL.map(ch => `<details class="chapter" id="ch-${ch.key}" data-ch="${ch.key}" data-p="${ch.game}">
+      <summary><span class="ch-title">${fmt(ch.title)}</span><span class="ch-count" data-chcount="${ch.key}"></span><span class="ch-meta" data-chmeta="${ch.key}"></span></summary>
+      <div class="ch-body" data-chbody="${ch.key}"></div></details>`).join("")}`;
+  document.querySelector("#coll-top .intro").innerHTML = fmt(document.querySelector("#coll-top .intro").textContent);
+}
+function ciHtml(it) {
+  if (it.k === "ach" || it.k === "story") {
+    const a = BY_ID[it.ach];
+    return `<div class="ci" data-ciach="${a.id}" data-k="${it.k}">
+      <input type="checkbox" class="check small" id="cca-${a.id}-${it.ch}" data-ach="${a.id}" aria-label="Unlocked: ${a.sp === "n" ? "this achievement" : esc(a.name)}">
+      <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cca-${a.id}-${it.ch}">${nm(a)}</label></div>
+      <div class="ci-loc">${ds(a)}</div>
+      ${it.note ? `<div class="ci-desc"><p>${fmt(it.note)}</p></div>` : ""}
+      <a class="maplink" href="#a-${a.id}" data-jump="${a.id}">Open its guide ›</a></div></div>`;
+  }
+  return `<div class="ci" id="ci-${it.key}" data-ci="${it.key}" data-k="${it.k}">
+    <input type="checkbox" class="check small" id="cc-${it.key}" data-coll="${it.key}" aria-label="Collected: ${esc(plain(it.title))}">
+    <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cc-${it.key}">${fmt(it.title)}</label></div>
+    ${it.loc ? `<div class="ci-loc">${fmt(it.loc)}</div>` : ""}
+    ${it.html ? `<div class="ci-desc">${rich(it.html)}</div>` : ""}</div></div>`;
+}
+function renderChapter(key) {
+  const ch = COLL.find(c => c.key === key), body = document.querySelector(`[data-chbody="${key}"]`);
+  if (body.dataset.done) return;
+  body.dataset.done = "1";
+  body.innerHTML = (ch.obj ? `<p class="ch-obj">${fmt(ch.obj)}</p>` : "") +
+    ch.sections.map(s => `${s.title ? `<div class="sec-h">${esc(s.title)}</div>` : ""}${s.items.map(ciHtml).join("")}`).join("");
+  enhance(body);
+  updateColl();
+}
+
+function render() {
+  renderAch(); renderRuns(); renderColl();
+  document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
+  setTab(state.tab, true);
+  syncChips(); syncPad(); syncSpoil();
+  update();
+}
+
+/* ---------------- behaviour ---------------- */
+function toggleGuide(btn, force) {
+  const id = btn.getAttribute("aria-controls").slice(2), panel = document.getElementById("g-" + id);
+  const open = force !== undefined ? force : panel.hidden;
+  if (open && !panel.dataset.done) { panel.innerHTML = BY_ID[id].sp ? `<div class="spoil" tabindex="0">${rich(GUIDES[id])}</div>` : rich(GUIDES[id]); panel.dataset.done = "1"; enhance(panel); update(); }
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
+  if (open) state.open[id] = true; else delete state.open[id];
+}
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
+function setTab(t, quiet) {
+  state.tab = t;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
+  if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
+}
+function jumpTo(id) {
+  const el = document.getElementById(targetId(id));
+  if (!el) return;
+  const view = el.closest("[role=tabpanel]").id.slice(5);
+  if (view !== state.tab) setTab(view, true), save();
+  if (el.classList.contains("hidden") || (el.closest("section.sheet") || {}).hidden) { filter = "all"; game = "all"; runFilter = "all"; query = ""; searchEl.value = ""; clearEl.hidden = true; document.getElementById("run-filter").value = "all"; syncChips(); update(); }
+  const btn = el.querySelector(":scope > .row .guide-btn");
+  if (btn && btn.getAttribute("aria-expanded") !== "true") { toggleGuide(btn, true); save(); }
+  requestAnimationFrame(() => {
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+  });
+}
+
+const mainEl = document.querySelector("main");
+mainEl.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.ach) change(() => { if (t.checked) state.got[t.dataset.ach] = true; else delete state.got[t.dataset.ach]; });
+  else if (t.dataset.taskcheck) { if (t.checked) state.tasks[t.dataset.taskcheck] = true; else delete state.tasks[t.dataset.taskcheck]; save(); update(); }
+  else if (t.dataset.coll) change(() => { if (t.checked) state.coll[t.dataset.coll] = true; else delete state.coll[t.dataset.coll]; });
+  else if (t.id === "run-filter") { runFilter = t.value; update(); }
+});
+const searchEl = document.getElementById("search"), clearEl = document.getElementById("clear-search");
+function runSearch(v) {
+  query = v.trim().toLowerCase();
+  clearEl.hidden = !v;
+  if (query && state.tab !== "ach") setTab("ach", true);
+  if (query) { filter = "all"; game = "all"; runFilter = "all"; const rf = document.getElementById("run-filter"); if (rf) rf.value = "all"; syncChips(); }
+  update();
+  if (query) {
+    const first = document.querySelector("#view-ach li.item:not(.hidden)");
+    const top = (first || document.getElementById("view-ach")).getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 12;
+    window.scrollTo({ top, behavior: "auto" });
+  }
+}
+searchEl.addEventListener("input", () => runSearch(searchEl.value));
+searchEl.addEventListener("keydown", e => { if (e.key === "Enter") searchEl.blur(); if (e.key === "Escape") { searchEl.value = ""; runSearch(""); } });
+clearEl.addEventListener("click", () => { searchEl.value = ""; runSearch(""); searchEl.focus(); });
+const toTop = document.getElementById("totop");
+let ticking = false;
+window.addEventListener("scroll", () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 500); ticking = false; }); }, { passive: true });
+toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+mainEl.addEventListener("toggle", e => { const d = e.target; if (d.matches && d.matches("details.chapter") && d.open) renderChapter(d.dataset.ch); }, true);
+function reveal(e) {
+  const sp = e.target.closest && e.target.closest(".spoil");
+  if (!sp || state.spoil || sp.classList.contains("shown")) return false;
+  e.preventDefault(); e.stopPropagation(); sp.classList.add("shown"); return true;
+}
+mainEl.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("spoil")) reveal(e); });
+mainEl.addEventListener("click", e => {
+  if (reveal(e)) return;
+  if (e.target.matches("img.shot")) { openShot(e.target); return; }
+  const t = e.target.closest("button, a[data-jump]");
+  if (!t) return;
+  if (t.classList.contains("tab")) setTab(t.dataset.tab);
+  else if (t.dataset.filter) { filter = t.dataset.filter; syncChips(); update(); }
+  else if (t.dataset.game) { game = t.dataset.game; syncChips(); update(); }
+  else if (t.dataset.kind) { kindFilter = t.dataset.kind; syncChips(); updateColl(); }
+  else if (t.id === "hide-got") { hideGot = !hideGot; syncChips(); updateColl(); }
+  else if (t.id === "expand") { const open = t.getAttribute("aria-pressed") !== "true"; t.setAttribute("aria-pressed", String(open)); t.textContent = open ? "Hide all guides" : "Show all guides"; document.querySelectorAll("#view-ach .guide-btn").forEach(b => toggleGuide(b, open)); save(); }
+  else if (t.classList.contains("guide-btn")) { toggleGuide(t); save(); }
+  else if (t.id === "spoilers") { state.spoil = !state.spoil; save(); syncSpoil(); }
+  else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); render(); }
+  else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
+});
+
+/* tap a screenshot to see it full size */
+const lb = document.createElement("div");
+lb.className = "lightbox"; lb.hidden = true; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Screenshot, tap to close");
+lb.innerHTML = '<img alt="">';
+document.body.appendChild(lb);
+function openShot(img) { lb.firstChild.src = img.src; lb.firstChild.alt = img.alt; lb.hidden = false; }
+lb.addEventListener("click", () => { lb.hidden = true; lb.firstChild.removeAttribute("src"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) lb.click(); });
+
+function syncChips() {
+  document.querySelectorAll("[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
+  document.querySelectorAll("[data-game]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.game === game)));
+  document.querySelectorAll("[data-kind]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kindFilter)));
+  const h = document.getElementById("hide-got"); if (h) h.setAttribute("aria-pressed", String(hideGot));
+}
+function syncSpoil() {
+  document.body.classList.toggle("spoilers", state.spoil);
+  const b = document.getElementById("spoilers"); if (b) { b.setAttribute("aria-pressed", String(state.spoil)); b.textContent = state.spoil ? "Hide spoilers" : "Show all spoilers"; }
+}
+function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
+
+const flat = h => String(h || "").replace(/<[^>]+>/g, " ");
+function matches(a) {
+  const d = !!state.got[a.id];
+  if (filter === "todo" && d) return false;
+  if (filter === "done" && !d) return false;
+  if (filter === "missable" && !(a.tags || []).some(t => t === "missable" || t === "timed")) return false;
+  if (game !== "all" && a.game !== game) return false;
+  if (runFilter !== "all" && !a.runs.includes(runFilter)) return false;
+  if (query && ![a.name, a.desc, flat(GUIDES[a.id])].join(" ").toLowerCase().includes(query)) return false;
+  return true;
+}
+
+const isGot = it => it.ach ? !!state.got[it.ach] : !!state.coll[it.key];
+function updateColl() {
+  const got = CITEMS.filter(isGot).length;
+  const cc = document.getElementById("coll-count"); if (cc) cc.textContent = `${got} / ${CITEMS.length}`;
+  const totals = {};
+  CITEMS.forEach(i => { (totals[i.k] = totals[i.k] || [0, 0])[1]++; if (isGot(i)) totals[i.k][0]++; });
+  const ck = document.getElementById("coll-kinds");
+  if (ck) ck.innerHTML = Object.keys(KIND_LABEL).filter(k => totals[k]).map(k => `${KIND_PLURAL[k]} <b>${totals[k][0]}/${totals[k][1]}</b>`).join(" · ");
+  COLL.forEach(ch => {
+    const items = ch.sections.flatMap(s => s.items), g = items.filter(isGot).length, kc = {};
+    items.forEach(i => { (kc[i.k] = kc[i.k] || [0, 0])[1]++; if (isGot(i)) kc[i.k][0]++; });
+    document.querySelector(`[data-chcount="${ch.key}"]`).textContent = `${g} / ${items.length}`;
+    document.querySelector(`[data-chmeta="${ch.key}"]`).innerHTML = Object.keys(KIND_LABEL).filter(k => kc[k]).map(k => `<span>${KIND_PLURAL[k]} <span class="kd">${kc[k][0]}/${kc[k][1]}</span></span>`).join("");
+    document.getElementById("ch-" + ch.key).classList.toggle("full", g === items.length);
+  });
+  document.querySelectorAll(".ci").forEach(el => {
+    const on = el.dataset.ci ? !!state.coll[el.dataset.ci] : !!state.got[el.dataset.ciach];
+    el.classList.toggle("got", on);
+    const cb = el.querySelector("input.check"); if (cb) cb.checked = on;
+    el.classList.toggle("hidden", (kindFilter !== "all" && el.dataset.k !== kindFilter) || (hideGot && on));
+  });
+}
+
+function update() {
+  const per = Object.fromEntries(PARTS.map(p => [p.key, [0, 0]]));
+  SECTIONS.forEach(sec => {
+    let sd = 0, vis = 0;
+    sec.items.forEach(a => {
+      const d = !!state.got[a.id];
+      per[a.game][1]++; if (d) { per[a.game][0]++; sd++; }
+      const li = document.getElementById("a-" + a.id);
+      li.classList.toggle("done", d);
+      const cb = document.getElementById("c-" + a.id);
+      cb.checked = d;
+      const rule = AUTO.find(r => r.ach === a.id && !r.min);
+      cb.indeterminate = !d && !!rule && autoGot(rule) > 0;
+      const al = li.querySelector("[data-autoline]");
+      if (al && rule) al.innerHTML = `${esc(rule.label)} ticked in the <a href="#coll-top" data-jump="coll">100% Guide</a>: <b>${autoGot(rule)} / ${autoTotal(rule)}</b>`;
+      const show = matches(a); li.classList.toggle("hidden", !show); if (show) vis++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sd} / ${sec.items.length}`;
+    document.querySelector(`[data-jcount="${sec.id}"]`).textContent = `${sd}/${sec.items.length}`;
+    document.querySelector(`[data-empty="${sec.id}"]`).hidden = vis > 0;
+    document.getElementById("sec-" + sec.id).hidden = vis === 0 && (game !== "all" || runFilter !== "all" || !!query);
+  });
+  const sc = document.getElementById("search-count");
+  if (sc) { const n = ALL.filter(matches).length; sc.textContent = query ? `${n} found` : ""; let nm = document.getElementById("no-match"); if (!nm) { nm = document.createElement("p"); nm.id = "no-match"; nm.className = "empty"; document.getElementById("view-ach").appendChild(nm); } nm.hidden = !(query && n === 0); nm.textContent = "No achievements match that search."; }
+  let runsDone = 0;
+  RUNS.forEach(r => {
+    let g = 0;
+    r.tasks.forEach((_, i) => { const on = !!state.tasks[`${r.id}:${i}`]; if (on) g++; document.getElementById(`t-${r.id}-${i}`).checked = on; document.querySelector(`[data-task="${r.id}:${i}"]`).classList.toggle("got", on); });
+    const ach = ALL.filter(a => a.runs.includes(r.id)), ag = ach.filter(a => state.got[a.id]).length;
+    const full = g === r.tasks.length; if (full) runsDone++;
+    document.querySelector(`[data-runsub="${r.id}"]`).textContent = `${g} / ${r.tasks.length} tasks`;
+    document.querySelector(`[data-runprog="${r.id}"]`).textContent = `${g}/${r.tasks.length} tasks · ${ag}/${ach.length} achievements`;
+    document.querySelector(`[data-runcard="${r.id}"]`).classList.toggle("full", full);
+  });
+  document.getElementById("runs-count").textContent = `${runsDone} / ${RUNS.length} done`;
+  document.querySelectorAll("[data-tl]").forEach(l => l.classList.toggle("done", !!state.got[l.dataset.tl]));
+  updateColl();
+  const done = Object.values(per).reduce((s, v) => s + v[0], 0), total = Object.values(per).reduce((s, v) => s + v[1], 0), pct = Math.round(done / total * 100);
+  document.getElementById("count").innerHTML = `${done} / ${total} <small>unlocked · ${pct}%</small>`;
+  document.getElementById("bar").innerHTML = PARTS.map(p => `<span data-p="${p.key}" style="width:${per[p.key][0] / total * 100}%"></span>`).join("");
+  document.getElementById("legend").innerHTML = PARTS.map(p => `<span data-p="${p.key}"><i></i>${esc(p.label)} ${per[p.key][0]}/${per[p.key][1]}</span>`).join("");
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+/* ---------------- panel ---------------- */
+let statusTimer = null;
+function status(msg) { const el = document.getElementById("save-status"), d = el.dataset.d || (el.dataset.d = el.textContent); el.textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { el.textContent = d; }, 4500); }
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "borderlands-1-progress.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Backup saved as borderlands-1-progress.json.");
+});
+const fileInput = document.getElementById("import-file");
+document.getElementById("import").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const f = fileInput.files[0]; if (!f) return;
+  f.text().then(txt => { const d = JSON.parse(txt); if (!d || typeof d !== "object" || !d.got || typeof d.got !== "object") throw new Error(); state = clean(d); save(); render(); status("Backup restored."); })
+    .catch(() => status("That file isn't a checklist backup. Choose a borderlands-1-progress.json file."));
+  fileInput.value = "";
+});
+
+render();
+})();
+
+</script>
+<!-- hub:body -->
+<script src="../sync.js" defer></script>
+<script src="../steam-sync.js" defer></script>
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

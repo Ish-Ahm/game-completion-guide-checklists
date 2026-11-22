@@ -40,6 +40,7 @@ GAMES = {
     "re8.html": {"appid": 1196590, "kind": "sections", "name": "Resident Evil Village"},
     "re2.html": {"appid": 883710, "kind": "sections", "name": "Resident Evil 2"},
     "borderlands-1.html": {"appid": 729040, "kind": "sections", "name": "Borderlands Game of the Year Enhanced"},
+    "mouse-pi-for-hire.html": {"appid": 2416450, "kind": "sections", "name": "MOUSE: P.I. For Hire"},
 }
 FLAT = {"sot-missables.html"}  # these store { id: true } instead of { got: { id: true } }
 

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0b">
+<title>Mouse: P.I. For Hire 100%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    /* ---- game palette: the only block that changes per game ---- */
+    --bg: #0b0b0b; --bg-2: #121212; --card: #181818; --card-2: #212121; --ink: #f2f2f2; --ink-soft: #a8a8a8;
+    --accent: #f2f2f2; --accent-ink: #0b0b0b; --gold: #e2e2e2; --green: #cfcfcf; --blue: #bdbdbd; --violet: #b3b3b3; --orange: #d6d6d6; --warn: #ffffff;
+    --line: rgba(255, 255, 255, .16); --done-bg: rgba(255, 255, 255, .06);
+    --check-line: #5a5a5a; --task-line: #363636; --kbd-bg: #222222; --kbd-line: #474747; --header-ink: #e6e6e6; --desc-ink: #d6d6d6; --totop-bg: rgba(33, 33, 33, .92);
+    /* pure black and white, like the game: white accent, greys for everything else */
+    --c-base: var(--accent);
+    /* ---- layout (do not change) ---- */
+    --nav-h: 0px; --sm: 116px;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.55;
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px)); -webkit-tap-highlight-color: transparent; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+  .cond, h2, .tab, .count, .tag, .run-badge { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; }
+  h3 { font-weight: 700; font-size: 1.07rem; line-height: 1.3; }
+  a { color: var(--gold); }
+  button { font: inherit; }
+
+  /* header */
+  header { position: relative; overflow: hidden; padding: calc(1.6rem + env(safe-area-inset-top, 0px)) 1rem 2.6rem; text-align: center; background: #000; }
+  .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: brightness(.38) saturate(.8); }
+  header::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.45), transparent 75%), linear-gradient(180deg, rgba(0,0,0,.2), transparent 40%, rgba(11,10,9,.7) 80%, var(--bg)); }
+  header > :not(.hero) { position: relative; z-index: 1; }
+  .logo { display: block; width: min(560px, 88vw); height: auto; margin: 0 auto; filter: drop-shadow(0 4px 14px #000); }
+  .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .eyebrow { margin-top: .9rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-size: .85rem; }
+  header p { max-width: 38rem; margin: .5rem auto 0; color: var(--header-ink); text-shadow: 0 1px 3px #000; font-size: .97rem; }
+
+  main { max-width: 56rem; margin: 0 auto; padding: 0 .75rem 3rem; }
+
+  /* tabs: top on wide screens, fixed bottom bar on phones */
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -.75rem; padding: 0 .75rem; border-bottom: 1px solid var(--line); }
+  .searchrow { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; }
+  .searchbox { position: relative; flex: 1; min-width: 0; }
+  .searchbox svg { position: absolute; left: .65rem; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+  .topsearch { width: 100%; min-height: 42px; font: inherit; font-size: 16px; padding: .3rem 2.4rem .3rem 2.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); color: var(--ink); }
+  .topsearch::-webkit-search-cancel-button { display: none; }
+  .topsearch:focus { border-color: var(--accent); outline: none; }
+  .clear-search { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--ink-soft); font-size: 1.2rem; cursor: pointer; }
+  .search-count { flex: none; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 0; border-top: 1px solid var(--line); }
+  .totop { position: fixed; right: max(1rem, env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 19; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--totop-bg); color: var(--ink); display: grid; place-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .totop.show { opacity: 1; transform: none; pointer-events: auto; }
+  .totop svg { width: 20px; height: 20px; }
+  .tab { flex: 1; min-height: 48px; font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: .45rem; padding: 0 .4rem; }
+  .tab svg { width: 20px; height: 20px; flex: none; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .panel { margin: 1rem 0; padding: .85rem .9rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
+  .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
+  .panel-top h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .count { font-weight: 700; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+  .count small { font-family: "Source Sans 3", sans-serif; font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  .meter { margin-top: .45rem; height: 10px; background: #000; border: 1px solid var(--line); display: flex; overflow: hidden; }
+  .meter span { display: block; height: 100%; transition: width .4s ease; }
+  .legend { display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin-top: .35rem; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .legend i { display: inline-block; width: .65rem; height: .65rem; margin-right: .3rem; vertical-align: -.05rem; }
+  .row-tools { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; }
+  .chip { min-height: 38px; font-weight: 600; font-size: .9rem; cursor: pointer; padding: .2rem .75rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip.reset { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .chip.reset.armed { background: var(--warn); color: var(--accent-ink); }
+  .select, .search { min-height: 38px; font: inherit; font-size: 16px; padding: .2rem .6rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .search { flex: 1 1 12rem; min-width: 0; }
+  .select { flex: 1 1 12rem; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+  .seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; flex-wrap: wrap; }
+  .seg button { min-height: 36px; font-size: .88rem; font-weight: 600; padding: .2rem .65rem; border: 0; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  details.settings { margin-top: .7rem; border-top: 1px solid var(--line); padding-top: .55rem; }
+  details.settings > summary { cursor: pointer; font-weight: 600; color: var(--ink-soft); font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+  .save-status { color: var(--ink-soft); font-size: .88rem; flex: 1 1 100%; }
+  button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, .spoil:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .jumps { display: flex; gap: .35rem; overflow-x: auto; margin: 0 -.75rem 1rem; padding: 0 .75rem .3rem; scrollbar-width: thin; }
+  .jump { flex: none; font-size: .88rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .35rem .65rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .jump span { color: var(--ink-soft); }
+
+  section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .9rem .85rem .4rem; margin-bottom: 1.3rem; scroll-margin-top: var(--sm); }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; line-height: 1.05; }
+  .sheet-head h2 small { display: block; font-size: .55em; letter-spacing: .16em; color: var(--accent); }
+  .sheet-head .sub { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .3rem 0 .5rem; color: var(--ink-soft); font-size: .96rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 1px solid var(--line); padding: .55rem 0; scroll-margin-top: var(--sm); }
+  li.item.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: start; padding: .35rem .3rem; }
+  .row > div { min-width: 0; }
+  li.item.done > .row { background: var(--done-bg); }
+  .flash { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .check { appearance: none; -webkit-appearance: none; margin: 0; width: 30px; height: 30px; cursor: pointer; border: 2px solid var(--check-line); background: var(--bg-2); border-radius: 3px; display: grid; place-content: center; flex: none; }
+  .check.small { width: 24px; height: 24px; }
+  .check::before { content: ""; width: 17px; height: 17px; clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 22%, 85% 8%, 39% 69%); background: #08130a; transform: scale(0); transition: transform .12s; }
+  .check.small::before { width: 13px; height: 13px; }
+  .check:checked { background: var(--green); border-color: var(--green); }
+  .check:checked::before { transform: scale(1); }
+  .check:indeterminate { border-color: var(--gold); }
+  .check:indeterminate::before { clip-path: none; height: 3px; width: 13px; background: var(--gold); transform: scale(1); }
+
+  .title-line { display: flex; align-items: center; gap: .25rem .45rem; flex-wrap: wrap; }
+  .title-line h3 { flex: 1 1 100%; }
+  .title-line h3 label { cursor: pointer; }
+  li.item.done .title-line h3 { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 0 .4rem; letter-spacing: .06em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.5; }
+  .tag.story { color: var(--blue); } .tag.missable { color: var(--warn); } .tag.collect { color: var(--green); } .tag.timed { color: var(--orange); }
+  .run-badge { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; padding: 0 .45rem; line-height: 1.55; background: var(--pc, var(--accent)); color: var(--accent-ink); text-decoration: none; }
+  .desc { margin: .15rem 0 0; color: var(--desc-ink); }
+
+  .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .35rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); font-size: .94rem; min-height: 44px; }
+  .steps li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .steps li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .steps label { cursor: pointer; min-width: 0; }
+  .st-name { font-weight: 600; }
+  .st-desc { display: block; color: var(--ink-soft); font-size: .84rem; }
+  details.steps-wrap { margin-top: .5rem; }
+  details.steps-wrap > summary { cursor: pointer; font-weight: 600; color: var(--gold); font-size: .95rem; min-height: 36px; display: flex; align-items: center; }
+  .mini { min-height: 34px; font-size: .85rem; font-weight: 600; cursor: pointer; padding: .1rem .6rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); }
+  .step-tools { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
+
+  .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .step-btn { font-weight: 700; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+  .count-input { font: inherit; font-size: 16px; font-weight: 700; width: 4.2rem; height: 42px; text-align: center; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .counter .of { color: var(--ink-soft); }
+  .summary-line { margin-top: .45rem; font-size: .93rem; font-weight: 600; color: var(--ink-soft); }
+  .summary-line b { color: var(--ink); }
+
+  .guide-btn { min-height: 36px; font-weight: 600; font-size: .93rem; margin-top: .25rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .guide { margin: .4rem 0 0; padding: .7rem .8rem; border-left: 2px solid var(--accent); background: var(--bg-2); font-size: .97rem; }
+  .guide > * + *, .prose > * + * { margin-top: .5rem; }
+  .guide p, .prose p { margin: 0; }
+  .guide h4, .prose h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-top: .8rem; }
+  .guide ul, .prose ul { margin: 0; padding-left: 1.1rem; }
+  .guide li + li, .prose li + li { margin-top: .3rem; }
+  .note { color: var(--ink-soft); font-style: italic; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .spoil { background: var(--kbd-line); color: transparent; border-radius: 2px; cursor: pointer; user-select: none; }
+  .spoil.shown, body.spoilers .spoil { background: transparent; color: inherit; user-select: auto; cursor: auto; }
+
+  kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.45em; height: 1.45em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px; font: 700 .78em/1 "Source Sans 3", sans-serif; vertical-align: .08em; background: var(--kbd-bg); color: var(--ink); border: 1px solid var(--kbd-line); }
+  kbd.b.sh { border-radius: 3px; }
+  kbd.ps-X { color: #8ab8ff; } kbd.ps-SQ { color: #f29ac8; } kbd.ps-O { color: #ff7676; } kbd.ps-TR { color: #5fd6aa; }
+  kbd.xb-X { color: #7bd67b; } kbd.xb-SQ { color: #6aa8ff; } kbd.xb-O { color: #ff7676; } kbd.xb-TR { color: #f4cf55; }
+
+  .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+  .tlink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .15rem .5rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
+  .tlink.done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
+
+  /* runs */
+  .runmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr)); gap: .4rem; margin-bottom: 1rem; }
+  .runmap a { display: block; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .45rem .55rem; }
+  .runmap a.full { background: var(--done-bg); }
+  .runmap b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.05rem; letter-spacing: .03em; }
+  .runmap span { font-size: .82rem; color: var(--ink-soft); }
+  .run { scroll-margin-top: var(--sm); }
+  .run .mode { font-family: "Barlow Condensed", sans-serif; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-size: .95rem; }
+  .run .tasks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .3rem; }
+  .run .tasks li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: center; padding: .4rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); min-height: 48px; }
+  .run .tasks li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .run .tasks li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .box { margin-top: .7rem; padding: .7rem .8rem; background: var(--bg-2); border: 1px solid var(--line); }
+  .box h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-size: 1rem; margin-bottom: .3rem; }
+  .box ul, .box ol { margin: .2rem 0 0; padding-left: 1.2rem; }
+  .box li + li { margin-top: .25rem; }
+  .ok { color: var(--green); font-weight: 700; } .no { color: var(--warn); font-weight: 700; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+
+  /* 100% guide */
+  .kinds { display: flex; gap: .35rem; flex-wrap: wrap; }
+  details.chapter { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); margin-bottom: .55rem; scroll-margin-top: var(--sm); }
+  details.chapter.full { border-left-color: var(--green); }
+  details.chapter > summary { list-style: none; cursor: pointer; padding: .7rem .8rem; display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; min-height: 56px; }
+  details.chapter > summary::-webkit-details-marker { display: none; }
+  .ch-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: .04em; text-transform: uppercase; }
+  .ch-count { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .15rem .7rem; font-size: .84rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta .kd { color: var(--ink); font-weight: 600; }
+  .ch-body { padding: 0 .6rem .6rem; }
+  .ch-obj { font-size: .9rem; color: var(--ink-soft); margin: 0 0 .4rem; }
+  .sec-h { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin: .9rem 0 .35rem; padding-bottom: .2rem; border-bottom: 1px solid var(--line); }
+  .sec-note { font-size: .9rem; color: var(--ink-soft); font-style: italic; }
+  .ci { display: grid; grid-template-columns: auto 1fr; gap: .6rem; padding: .55rem .35rem; border-top: 1px solid var(--line); scroll-margin-top: var(--sm); }
+  .ci.got { background: var(--done-bg); }
+  .ci.got .ci-title { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .ci.hidden { display: none; }
+  .ci > div { min-width: 0; }
+  .ci-head { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; }
+  .kind { font-family: "Barlow Condensed", sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 0 .4rem; border: 1px solid currentColor; line-height: 1.5; color: var(--ink-soft); }
+  .ci-title { font-weight: 700; flex: 1 1 100%; }
+  .shot { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-top: .45rem; background: #000; border: 1px solid var(--line); cursor: zoom-in; }
+  .shot.zoom { max-width: none; cursor: zoom-out; }
+  .maplink { display: inline-block; margin-top: .3rem; font-size: .88rem; font-weight: 600; min-height: 30px; }
+  .ci ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
+  .ci li + li { margin-top: .2rem; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .87rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
+
+
+  /* ---- parts: every element with data-p takes its part colour ---- */
+  [data-p="base"] { --pc: var(--c-base); }  
+  section.sheet, .runmap a { border-top-color: var(--pc, var(--accent)); }
+  .sheet-head h2 small { color: var(--pc, var(--accent)); }
+  .jump, details.chapter { border-left-color: var(--pc, var(--accent)); }
+  .guide { border-left-color: var(--pc, var(--accent)); }
+  .meter span { background: var(--pc, var(--accent)); }
+  .legend i { background: var(--pc, var(--accent)); }
+
+  /* header: title text shown only until a logo image is embedded */
+  .logo[src=""], .hero[src=""] { display: none; }
+  .logo:not([src=""]) ~ h1.title { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  h1.title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(2.2rem, 9vw, 3.6rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1; text-shadow: 0 3px 16px #000; }
+
+  /* 100% Guide item kinds and helpers */
+  .kind.k-ach { color: var(--warn); } .kind.k-story { color: var(--blue); } .kind.k-news { color: var(--ink); } .kind.k-comic { color: var(--violet); } .kind.k-card { color: var(--green); } .kind.k-schem { color: var(--orange); }
+  .kind.k-mclue, .kind.k-sclue, .kind.k-bclue { color: var(--gold); } .kind.k-job { color: var(--blue); } .kind.k-weapon { color: var(--warn); } .kind.k-ability { color: var(--green); }
+  .ci-loc { font-size: .85rem; color: var(--ink-soft); }
+  .ci-desc { margin-top: .3rem; font-size: .95rem; color: var(--desc-ink); }
+  .ci-desc > * + * { margin-top: .4rem; } .ci-desc p { margin: 0; }
+  .tablewrap { overflow-x: auto; margin-top: .4rem; }
+  .tablewrap table { min-width: 34rem; }
+  .guide table, .box table { font-size: .9rem; }
+  .guide .tablewrap table td:first-child { white-space: nowrap; }
+  details.more { margin-top: .7rem; background: var(--bg-2); border: 1px solid var(--line); }
+  details.more > summary { cursor: pointer; padding: .55rem .8rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); min-height: 44px; display: flex; align-items: center; }
+  details.more > .prose { padding: 0 .8rem .8rem; }
+  .prose h4 { margin-top: .8rem; }
+  .prose table td, .guide table td { overflow-wrap: anywhere; }
+
+  @media (max-width: 699px) {
+    :root { --nav-h: 62px; --sm: 70px; }
+    .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 20; margin: 0; padding: 0 0 env(safe-area-inset-bottom, 0px); background: var(--bg); }
+    .totop { width: 38px; height: 38px; right: .75rem; bottom: calc(var(--nav-h) + .7rem + env(safe-area-inset-bottom, 0px)); }
+    .totop svg { width: 17px; height: 17px; }
+    .tab { flex-direction: column; gap: .1rem; font-size: .8rem; min-height: var(--nav-h); border-bottom: 0; border-top: 3px solid transparent; }
+    .tab[aria-selected="true"] { border-top-color: var(--accent); }
+  }
+  @media (min-width: 700px) {
+    main { padding: 0 1.2rem 3rem; }
+    .topbar { margin: 0 -1.2rem; padding: 0 1.2rem; }
+    section.sheet { padding: 1.1rem 1.2rem .5rem; }
+    .title-line h3 { flex: 0 1 auto; }
+    .ci-title { flex: 0 1 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+#view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
+#view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
+#view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
+
+/* guide screenshots: full width, tap to enlarge; tables that hold screenshots stack as cards */
+img.shot { display: block; width: 100%; max-width: 560px; height: auto; aspect-ratio: auto; object-fit: contain; margin-top: .5rem; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
+.tablewrap.stack { overflow: visible; }
+.tablewrap.stack table, .tablewrap.stack tbody, .tablewrap.stack tr, .tablewrap.stack td { display: block; min-width: 0 !important; width: auto; }
+.tablewrap.stack thead { display: none; }
+.tablewrap.stack tr { border: 1px solid var(--line); background: var(--card); padding: .5rem .6rem; margin-bottom: .5rem; }
+.tablewrap.stack tr:has(th):not(:has(td)) { display: none; }
+.tablewrap.stack td { border: 0; padding: .2rem 0; white-space: normal !important; }
+.tablewrap.stack td:empty { display: none; }
+.tablewrap.stack td[data-label]::before { content: attr(data-label); display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.tablewrap.stack td img.shot { margin-top: .2rem; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .92); display: grid; place-items: center; padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
+
+/* spoilers: story text sits behind a bar until tapped; "Show all spoilers" in the settings reveals everything */
+.spoil { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body:not(.spoilers) .spoil:not(.shown) * { visibility: hidden; }
+div.spoil { display: block; border-radius: 4px; }
+body:not(.spoilers) div.spoil:not(.shown) { position: relative; max-height: 3rem; overflow: hidden; }
+body:not(.spoilers) div.spoil:not(.shown)::before { content: "Story spoiler · tap to reveal"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); font-size: .9rem; font-weight: 600; }
+
+</style>
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <img class="hero" src="../img/banners/mouse-pi-for-hire.webp" alt="" width="1600" height="516" onerror="this.onerror=null;this.setAttribute('src','')">
+  <img class="logo" src="../img/logos/mouse-pi-for-hire.webp" alt="Mouse: P.I. For Hire" width="800" height="300" onerror="this.onerror=null;this.setAttribute('src','')">
+  <h1 class="title">Mouse: P.I. For Hire</h1>
+  <div class="eyebrow">Steam · 100% checklist</div>
+  <p>All 34 achievements, a five-run plan from a blind first playthrough to the card table, and a 100% guide for all 24 chapters: every newspaper, comic strip, baseball card, schematic, case clue and side job, with a screenshot of each spot. Progress saves in this browser.</p>
+</header>
+
+<main>
+  <div class="topbar">
+  <div class="searchrow" role="search">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" class="topsearch" id="search" placeholder="Search achievements" aria-label="Search achievements" autocomplete="off" enterkeyhint="search">
+      <button class="clear-search" id="clear-search" aria-label="Clear search" hidden>×</button>
+    </div>
+    <span class="search-count" id="search-count" aria-live="polite"></span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
+    <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
+    <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
+    <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
+  </nav>
+  </div>
+
+  <div class="panel" role="region" aria-label="Progress">
+    <div class="panel-top"><h2>Completion</h2><span class="count" id="count"></span></div>
+    <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="row-tools">
+        <span class="save-status" id="save-status">Saved in this browser automatically. To move progress to your phone, Back up here and Restore there.</span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip" id="spoilers" aria-pressed="false">Show all spoilers</button>
+        <span class="seg" role="group" aria-label="Button prompts"><button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button></span>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="view-ach" role="tabpanel" aria-labelledby="tab-ach"></div>
+  <div id="view-runs" role="tabpanel" aria-labelledby="tab-runs" hidden></div>
+  <div id="view-coll" role="tabpanel" aria-labelledby="tab-coll" hidden></div>
+</main>
+
+<footer>
+  Achievement names and descriptions from Steam (MOUSE: P.I. For Hire, 34 achievements, none unlocked when this was made). Strategies, case clue lists, side jobs, collectable locations and screenshots come from the PSNProfiles trophy, side jobs and collectible guides by Grim-Uchiha_, armamac14, chisomo1206 and ryannumber3gamer, linked in every section, reworded. The PlayStation platinum isn't part of the Steam list.
+</footer>
+<button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function () {
+"use strict";
+const KEY = "mouse-pi-for-hire-checklist-v1";
+
+/* Game parts. Colours come from --c-<key> in the CSS. */
+const PARTS = [{"key": "base", "label": "Mouse: P.I. For Hire", "short": "Main game"}];
+
+/* Achievement categories. Each achievement object starts id, name, desc, pct (Steam sync reads these). */
+const SECTIONS = [
+{ id: "story", game: "base", title: "Story and one-offs", src: "https://psnprofiles.com/guide/25486-mouse-pi-for-hire-trophy-guide",
+  intro: "The story, the six movement abilities and nine weapons all come on their own. Two quick one-offs are missable: a ||punch outside the office|| and a ||kick on the pier||.",
+  items: [
+  { id: "cheeseberg", name: "Tip of the Cheeseberg", desc: "Rest easy, detective. Case closed… or is it?", pct: 46.96, tags: ["story"], runs: ["r1"] },
+  { id: "tricks", name: "Tricks of the Trade", desc: "Unlock all special abilities", pct: 47.48, tags: ["story"], runs: ["r1"] },
+  { id: "guns", name: "Guns, Lots of Guns", desc: "Collect all non-corporate-locked weapons", pct: 47.72, tags: ["story"], runs: ["r1"] },
+  { id: "whodunit", name: "So, Whodunit?", desc: "Pin every clue to your evidence board", pct: 47.93, tags: ["story"], runs: ["r1"] },
+  { id: "flick", name: "Herr Flick of the Wrist", desc: "Clock a BMP agitator right in the snout.", pct: 52.7, tags: ["missable"], runs: ["r1"] },
+  { id: "quint", name: "Quint’s Delight", desc: "Kick the Wallop Bay shark till it drops the license plate", pct: 42.66, tags: ["missable"], runs: ["r1"] }
+  ] },
+{ id: "cases", game: "base", title: "The three cases", src: "https://psnprofiles.com/guide/25486-mouse-pi-for-hire-trophy-guide",
+  intro: "Each case has a key-clue achievement (story, can't be missed) and a wrap-up for every clue. Missed clues can be picked up again with Level Revisit; pin everything on the board at the office.",
+  items: [
+  { id: "mkey", name: "Misfortunes of the Missing Magician", desc: "Find key clues in the Missing Magician case", pct: 41.79, tags: ["story"], runs: ["r1"] },
+  { id: "mwrap", name: "Smoked Cheese and Mirrors", desc: "Wrap up the Missing Magician case", pct: 36.18, tags: ["collect"], runs: ["r1", "r2"] },
+  { id: "skey", name: "Secrets of the Shrew Shortage", desc: "Find key clues in the Shrew Shortage case", pct: 46.49, tags: ["story"], runs: ["r1"] },
+  { id: "swrap", name: "Our Lesser Brothers", desc: "Wrap up the Shrew Shortage case", pct: 38.85, tags: ["collect"], runs: ["r1", "r2"] },
+  { id: "bkey", name: "Burdens of Blue Betty", desc: "Find key clues in the Blue Betty case.", pct: 47.25, tags: ["story"], runs: ["r1"] },
+  { id: "bwrap", name: "Tinsel Boulevard", desc: "Wrap up the Blue Betty case", pct: 43.29, tags: ["collect"], runs: ["r1", "r2"] }
+  ] },
+{ id: "coll", game: "base", title: "Collectables", src: "https://psnprofiles.com/guide/25487-mouse-pi-for-hire-collectible-guide",
+  intro: "38 newspapers, 29 comic strips and the baseball cards, found in levels or bought. Level Revisit shows what each level still hides.",
+  items: [
+  { id: "news5", name: "Paper Person", desc: "Collect 5 issues of the Mouseburg Herald", pct: 75.5, tags: ["collect"], runs: ["r1"] },
+  { id: "news10", name: "Cover to Cover", desc: "Collect 10 issues of the Mouseburg Herald", pct: 66.28, tags: ["collect"], runs: ["r1"] },
+  { id: "newsall", name: "Extra! Extra!", desc: "Collect all issues of the Mouseburg Herald. Even the weird ones", pct: 34.91, tags: ["collect"], runs: ["r2"] },
+  { id: "comic5", name: "Comic Relief", desc: "Collect 5 comic strips", pct: 75.1, tags: ["collect"], runs: ["r1"] },
+  { id: "comic10", name: "Extremely Graphic Novel", desc: "Collect 10 comic strips", pct: 63.49, tags: ["collect"], runs: ["r1"] },
+  { id: "comicall", name: "The Prequel", desc: "Collect all comic strips. Some things never change", pct: 35.31, tags: ["collect"], runs: ["r2"] },
+  { id: "card5", name: "Starter Deck", desc: "Collect 5 Baseball Cards", pct: 69.61, tags: ["collect"], runs: ["r1"] },
+  { id: "card10", name: "Babe Got Bat", desc: "Collect 10 Baseball Cards", pct: 58.49, tags: ["collect"], runs: ["r1"] },
+  { id: "cardall", name: "Card Shark", desc: "Collect all Baseball Cards. A real gathering, innit?", pct: 31.54, tags: ["collect"], runs: ["r2", "r4"] }
+  ] },
+{ id: "jobs", game: "base", title: "Side jobs", src: "https://psnprofiles.com/guide/25511-mouse-pi-for-hire-side-jobs-guide",
+  intro: "14 side jobs, each given at the office or bar before a job starts. Look at the compass before you leave: a side job giver shows up on it. These can't be redone with Level Revisit.",
+  items: [
+  { id: "jobs5", name: "Dime Novel Sleuth", desc: "Complete 5 side jobs", pct: 51.64, tags: ["missable"], runs: ["r1"] },
+  { id: "jobsall", name: "Real Deal Gumshoe", desc: "Complete every side job. Dot those i’s, detective", pct: 32.69, tags: ["missable"], runs: ["r1"] }
+  ] },
+{ id: "combat", game: "base", title: "Combat", src: "https://psnprofiles.com/guide/25486-mouse-pi-for-hire-trophy-guide",
+  intro: "Easy to farm in The Vanishing Act, where barrels and hanging weights first appear: reload the checkpoint until they pop. The three 'single playthrough' counts add up across the run.",
+  items: [
+  { id: "goudem", name: "Goud’em!", desc: "Kill 5 enemies within 10 seconds", pct: 75.31, tags: ["timed"], runs: ["r3"] },
+  { id: "trinity", name: "Hole-y Trinity", desc: "Kill 3 enemies with one shot.", pct: 71.3, tags: [], runs: ["r3"] },
+  { id: "muenster", name: "M-m-muenster Kill!", desc: "Kill 10 enemies within 20 seconds. M-m-muenster Kill!", pct: 66.01, tags: ["timed"], runs: ["r3"] },
+  { id: "boomtown", name: "Boom Town", desc: "Kill 20 enemies in a single playthrough by throwing/kicking explosive barrels", pct: 47.42, tags: [], runs: ["r3"] },
+  { id: "firestarter", name: "Firestarter", desc: "Blast 20 enemies in a single playthrough by shooting at explosive barrels.", pct: 56.98, tags: [], runs: ["r3"] },
+  { id: "spiked", name: "Spike-D 16 TONS", desc: "Crush 20 enemies with heavy objects in a single playthrough.", pct: 44.66, tags: [], runs: ["r3"] }
+  ] },
+{ id: "money", game: "base", title: "Cards, tokens and upgrades", src: "https://psnprofiles.com/guide/25486-mouse-pi-for-hire-trophy-guide",
+  intro: "The Baseball Cards minigame costs 50 per game and pays Prize Tokens, which open the safe in the Little & Big. Schematics pay for weapon upgrades at Tammy's workshop.",
+  items: [
+  { id: "pocket", name: "Pocket Aces", desc: "Win one Baseball Cards match", pct: 63.5, tags: [], runs: ["r4"] },
+  { id: "sall", name: "S’all in the Cards", desc: "Win 30 Baseball Card matches. Home Run!", pct: 32.53, tags: ["missable"], runs: ["r4"] },
+  { id: "rayguns", name: "Everybody Loves Rayguns", desc: "Unlock X1 D-Mousifier - Spike-D’s \"exclusive gun of sorts.\"", pct: 37.19, tags: ["missable"], runs: ["r4"] },
+  { id: "boomstick", name: "This is My Boomstick!", desc: "Upgrade one weapon to Tier 3", pct: 64.8, tags: [], runs: ["r4"] },
+  { id: "bang", name: "We’ll B.A.N.G., ok?", desc: "Upgrade every weapon to tier 3", pct: 33.32, tags: [], runs: ["r4"] }
+  ] }
+];
+
+/* Achievements already unlocked on Steam when this was made: ticked in a fresh save. */
+const PRE = [];
+
+/* Guide text per achievement (HTML). */
+const GUIDES = {"cheeseberg": "<p>Finish the story: it unlocks after the final boss. Any difficulty.</p>", "tricks": "<p>Six movement abilities, all given by the story: double jump, tail-copter, tail-hook, warp pipe, wall jump and the monkey vault, the last one in the final chapter. Each one is in the 100% Guide in the chapter where you get it.</p>", "guns": "<p>Pick up every weapon except the X1 D-Mousifier. You start with the Mitts and the Micer; the other nine are on the story path: Boomstick, D-namite, Devarnisher, James Gun, Loose Cannon, Kiss Kiss, Jar-Head, Hellrazor and Portable Freezer.</p>", "whodunit": "<p>Misleading: it pops when you pin the evidence that makes Jack sure he's cracked it, around One Flew. Pin every clue on the board each time you're back at the office, and it'll come with the story even if you missed some.</p>", "flick": "<p>Once <span class=\"spoil\">\"The Bookkeeper\" by Tinsel Bros.</span> becomes available, a BMP agitator stands right outside the Little & Big. Walk up and punch him at the prompt. Make a manual save before starting that job in case. <a href=\"https://www.youtube.com/watch?v=Uva_wRHSGnI\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "quint": "<p>At the very start of <span class=\"spoil\">Saltwater Cambozo</span>, walk towards the pier: there's a shark ahead. Kick it until it drops a licence plate. Level Revisit can bring you back if you miss it. <a href=\"https://www.youtube.com/watch?v=bOqEEcvxYrE\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "mkey": "<p>Story. Pops late, around the final ambush of <span class=\"spoil\">Glugging from the Deep</span>. Only unmissable clues count.</p>", "mwrap": "<p>All 23 Missing Magician clues. The last one comes in <span class=\"spoil\">Glugging from the Deep</span>, so it pops there if you have the rest. All 23 are tickable in the 100% Guide.</p>", "skey": "<p>Story. Pops around <span class=\"spoil\">It All Points Here, Right?</span> or <span class=\"spoil\">Swamp Oddity</span>, once the two key clues from different chapters are in.</p>", "swrap": "<p>All 21 Shrew Shortage clues; the last is in <span class=\"spoil\">To Catch a Mockingmouse</span>. Buggy: if you have them all and nothing pops, close the game and start it again.</p>", "bkey": "<p>Story. Pops with the last clue of the case in <span class=\"spoil\">\"Fatal Repulsion\" by Tinsel Bros.</span></p>", "bwrap": "<p>All 18 Blue Betty clues; the last is in <span class=\"spoil\">\"Fatal Repulsion\" by Tinsel Bros.</span></p>", "news5": "<p>Comes in the third chapter, the fifth one bought from the paperboy outside the office.</p>", "news10": "<p>Around <span class=\"spoil\">A Bit of a Scene</span> if you collect as you go.</p>", "newsall": "<p>All 38 issues of the Mouseburg Herald, including the strange one in <span class=\"spoil\">the chapter with the backwards title</span>. A few are bought from the paperboy near the office, and roadhouses sell any you missed. All are in the 100% Guide. <a href=\"https://www.youtube.com/watch?v=vBGGzc4-edE\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "comic5": "<p>Around the third chapter.</p>", "comic10": "<p>Around <span class=\"spoil\">A Bit of a Scene</span>.</p>", "comicall": "<p>All 29 comic strips; finishing them unlocks a readable prequel comic. The last one is in the finale. <a href=\"https://www.youtube.com/watch?v=gdql6ua_mjY\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "card5": "<p>Around the third chapter if you collect as you go.</p>", "card10": "<p>Around <span class=\"spoil\">Cheeseball Sub</span>.</p>", "cardall": "<p>Collect every baseball card. Cards found in levels are in the 100% Guide; one is a side job reward (Oh Yes… They Float). Any you miss can be bought from the ammo stores and roadhouses. Hold off on buying until S'all in the Cards is done if money is tight.</p>", "jobs5": "<p>The first five side jobs come by <span class=\"spoil\">A Bit of Curd and Pepper</span>.</p>", "jobsall": "<p>All 14 side jobs. Each is offered before a specific job, by Tammy, Wanda, John, Cornelius, Millie or Cameron; two are offered inside <span class=\"spoil\">To Catch a Mockingmouse</span> and can be refused, which locks them. If you leave for a job without accepting its side job, it's gone: reload a save. Steps for each are in the 100% Guide. <a href=\"https://www.youtube.com/watch?v=vb22z-liZ-U\" target=\"_blank\" rel=\"noopener\">All side jobs ↗</a></p>", "goudem": "<p>Five kills within 10 seconds. Lure a group to an explosive barrel and shoot it. The Vanishing Act, where barrels are introduced, is the place: reload the checkpoint until it pops. <a href=\"https://www.youtube.com/watch?v=JZ4vyPRRZpI\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "trinity": "<p>Three kills with one shot: an explosive barrel in a crowd does it. Same spot as Goud'em!.</p>", "muenster": "<p>Ten kills within 20 seconds. Barrels, D-namite and the Boomstick in a big fight; reload and retry. <a href=\"https://www.youtube.com/watch?v=Fwu3yFujN9s\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "boomtown": "<p>20 kills by throwing or kicking explosive barrels, in one playthrough. Pick a barrel up and throw it, or kick it into a group. Farm it in The Vanishing Act by reloading. <a href=\"https://www.youtube.com/watch?v=RuzAAv8Rb8Y\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "firestarter": "<p>20 kills by shooting explosive barrels, in one playthrough. Comes with Goud'em! and Boom Town if you lean on barrels.</p>", "spiked": "<p>20 kills by dropping heavy objects: shoot the weights hanging from ceilings when enemies stand under them. First seen in The Vanishing Act. <a href=\"https://www.youtube.com/watch?v=tEVcBbs96L8\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "pocket": "<p>Win any Baseball Cards match (50 a game) at a roadhouse or the bar.</p>", "sall": "<p>Win 30 matches: 1,500 coins if you never lose. Wins count even if you reload, so play ten, reload to get your money back, repeat. Do it late with a strong deck, and before the point of no return in the final chapter: roadhouses close after <span class=\"spoil\">Fair Enough</span> starts. Rules and tips are in the Baseball Cards box (Run 4). <a href=\"https://www.youtube.com/watch?v=_glgr0OZWPQ\" target=\"_blank\" rel=\"noopener\">Minigame guide ↗</a></p>", "rayguns": "<p>Open the vending safe in the Little & Big with 20 Prize Tokens (from card wins and side jobs) to get the X1 D-Mousifier. Last chance: when Jack goes to sleep before <span class=\"spoil\">Jack Squat</span>.</p>", "boomstick": "<p>Upgrade any weapon to tier 3 at Tammy's workshop: 1, then 3, then 5 schematics (9 in total).</p>", "bang": "<p>Every upgradeable weapon to tier 3: 9 schematics each. There are more than enough schematics; all are in the 100% Guide. Have them before the second half of <span class=\"spoil\">Fair Enough</span>, or use Level Revisit for the rest. <a href=\"https://www.youtube.com/watch?v=X65l36j6Gh4\" target=\"_blank\" rel=\"noopener\">Schematic locations ↗</a></p>"};
+
+/* Playthroughs. */
+const RUNS = [{"id": "r1", "game": "base", "n": "Run 1", "title": "Blind first playthrough", "mode": "New game · any difficulty", "summary": "Play the story blind, at whatever difficulty you like (none of the achievements need a specific one). Collect what you happen to find: Level Revisit cleans up the rest later. Only a few things can't be revisited, and the tasks below cover them without spoiling anything.", "tasks": [["Before every job, check the compass at the office for a side job giver and accept", "Side jobs can't be redone"], ["Inside the ||cruise ship|| job, accept both side jobs when asked", "Refusing locks them"], ["New manual save at the start of each chapter, in a new slot", "50 slots"], ["Pin every clue on the office board when you're back", ""], ["When a punchable agitator stands outside the bar, ||punch him||", "Herr Flick of the Wrist"], ["On the docks chapter's pier, ||kick the shark||", "Quint's Delight"], ["Dedicated save when Jack goes to sleep before the point of no return", "Cards and tokens later"], ["Finish the story", "Tip of the Cheeseberg"]], "body": [{"box": "tips"}]}, {"id": "r2", "game": "base", "n": "Run 2", "title": "Level Revisit cleanup", "mode": "After the story · Level Revisit", "summary": "Drive up to a finished level to see what it still hides, then replay it with the 100% Guide. In the Opera House, switch the level variant to replay it. Case clues picked up here finish the wrap-up achievements.", "tasks": [["All 38 newspapers", "Extra! Extra!"], ["All 29 comic strips", "The Prequel"], ["Every baseball card in the levels", ""], ["Every case clue", "Three wrap-ups"], ["Schematics for nine upgrades per weapon", "For Run 4"]]}, {"id": "r3", "game": "base", "n": "Run 3", "title": "Combat farm", "mode": "Level Revisit · The Vanishing Act", "summary": "Whatever didn't pop on the way. The Vanishing Act introduces barrels and hanging weights: kill groups with them and reload the checkpoint until everything is in.", "tasks": [["Five kills in 10 seconds, three with one shot", "Goud'em! and Hole-y Trinity"], ["Ten kills in 20 seconds", "M-m-muenster Kill!"], ["20 thrown or kicked barrel kills", "Boom Town"], ["20 shot barrel kills", "Firestarter"], ["20 kills with hanging weights", "Spike-D 16 TONS"]]}, {"id": "r4", "game": "base", "n": "Run 4", "title": "Cards, tokens and upgrades", "mode": "Post-game, or the save before the point of no return", "summary": "Farm money, win 30 card games, open the token safe and max every weapon. If the bar or roadhouses aren't open to you after the credits, load the save you made before the point of no return.", "tasks": [["Farm money", "Videos in the Money box"], ["Win a match", "Pocket Aces"], ["Win 30 matches", "S'all in the Cards"], ["20 Prize Tokens to the Little & Big safe", "Everybody Loves Rayguns"], ["Every weapon to tier 3", "This is My Boomstick! and We'll B.A.N.G., ok?"], ["Buy any baseball cards still missing", "Card Shark"]], "body": [{"box": "cards"}, {"box": "money"}]}, {"id": "r5", "game": "base", "n": "Run 5", "title": "Second playthrough (only if needed)", "mode": "New game · Rookie", "summary": "Only if you missed a side job or the agitator in Run 1 and have no save to fall back on. Play on Rookie straight to the missing chapter with the 100% Guide.", "tasks": [["Missing side jobs", "Real Deal Gumshoe"], ["The agitator outside the bar", "Herr Flick of the Wrist"]]}];
+
+/* Reference boxes. */
+const BOXES = {"tips": {"title": "Before you start", "html": "<ul><li>Difficulty: Rookie, Detective or Supersleuth; no achievement needs a particular one.</li><li>Save often in separate slots: there are 50.</li><li>Tail-pick every safe and locked door you see: they hold schematics and money.</li><li>Pick up every coin. The card game and the token safe need a lot of money.</li><li>Abilities you get later open paths in earlier levels, which is what Level Revisit is for.</li></ul>"}, "cards": {"title": "Baseball Cards", "html": "<ul><li>50 a game; wins pay Prize Tokens, not money.</li><li>Two halves: you bat (score) then pitch (defend). Higher number wins the face-off; beat the opponent by 3 or more for a home run.</li><li>The shield number decides how many bases you run: if they match or beat your shield, you only get one.</li><li>Buff cards raise your number or your shield. Played on a 7 to 9 they're near-certain wins.</li><li>Ties go to a coin flip.</li><li>You can ban five cards, but there are more strong cards than that.</li><li>Wins count even if you reload a save, so you can recycle your money.</li></ul><p><a href=\"https://www.reddit.com/r/MousePIForHire/comments/1swzy8u/in_depth_mini_game_guide_baseball/\" target=\"_blank\" rel=\"noopener\">In-depth rules on Reddit ↗</a> · <a href=\"https://www.youtube.com/watch?v=_glgr0OZWPQ\" target=\"_blank\" rel=\"noopener\">Minigame guide ↗</a></p>"}, "money": {"title": "Money", "html": "<p>Coins come from safes, hidden areas and enemies. Level Revisit lets you replay a rich level for more. <a href=\"https://www.youtube.com/watch?v=WSGDPocZ4Wo\" target=\"_blank\" rel=\"noopener\">Money farm with Level Revisit ↗</a> · <a href=\"https://www.youtube.com/watch?v=4liaPpOMdu4\" target=\"_blank\" rel=\"noopener\">Older method ↗</a></p><p>Upgrade costs: 1, 3 and 5 schematics per weapon.</p>"}};
+
+/* 100% Guide chapters: collectables, clues, side jobs and achievements in story order. */
+const COLL = [{"key": "ch01", "game": "base", "title": "Big Mouse, Little Hope (prologue)", "obj": "", "sections": [{"title": "Collectables", "items": [{"key": "comic1", "k": "comic", "title": "Comic strip 1", "loc": "Casino: after the giant roulette room, go upstairs, turn round and take the vent behind the counter to its end (use the flashlight).", "html": "<img data-img=\"s0\" alt=\"Comic strip 1\">"}, {"key": "comic2", "k": "comic", "title": "Comic strip 2", "loc": "Where your target rides an elevator down: up the stairs to the right of it.", "html": "<img data-img=\"s1\" alt=\"Comic strip 2\">"}, {"key": "schem1", "k": "schem", "title": "Schematic 1", "loc": "Floor D1, down the stairs from the comic: tail-pick the safe in the left corner.", "html": "<img data-img=\"s2\" alt=\"Schematic 1\">"}]}]}, {"key": "ch02", "game": "base", "title": "The Vanishing Act", "obj": "", "sections": [{"title": "Collectables", "items": [{"key": "news1", "k": "news", "title": "Newspaper 1", "loc": "Wanda gives you an ID at the start; past the lieutenant, check the lockers on the right.", "html": "<img data-img=\"s3\" alt=\"Newspaper 1\">"}, {"key": "comic3", "k": "comic", "title": "Comic strip 3", "loc": "Backstage, pull the curtain lever on the left; the comic is on the seats in front.", "html": "<img data-img=\"s4\" alt=\"Comic strip 3\">"}, {"key": "card1", "k": "card", "title": "Baseball card 1", "loc": "After the first group of enemies, go up the stairs they came from; the card is on a table.", "html": "<img data-img=\"s6\" alt=\"Baseball card 1\">"}, {"key": "card2", "k": "card", "title": "Baseball card 2", "loc": "Apartment building: up the first stairs, smash the window on the right on to the balcony, then the next window. The card is on a stool.", "html": "<img data-img=\"s7\" alt=\"Baseball card 2\">"}, {"key": "schem2", "k": "schem", "title": "Schematic 2", "loc": "Apartment: take the loft key, blow the barrels out of the way and unlock the loft. On the table.", "html": "<img data-img=\"s8\" alt=\"Schematic 2\">"}, {"key": "comic4", "k": "comic", "title": "Comic strip 4", "loc": "Back street after the apartments, before the subway: on a bench on the far right.", "html": "<img data-img=\"s9\" alt=\"Comic strip 4\">"}, {"key": "schem3", "k": "schem", "title": "Schematic 3", "loc": "Subway station, by the next typewriter: on the table to the right.", "html": "<img data-img=\"s10\" alt=\"Schematic 3\">"}, {"key": "schem4", "k": "schem", "title": "Schematic 4", "loc": "Subway: after the enemies, go through the open train door on the left and follow the tracks to a safe.", "html": "<img data-img=\"s11\" alt=\"Schematic 4\">"}, {"key": "schem5", "k": "schem", "title": "Schematic 5", "loc": "Same area: the bathroom on the right, on the table.", "html": "<img data-img=\"s12\" alt=\"Schematic 5\">"}, {"key": "news2", "k": "news", "title": "Newspaper 2", "loc": "Betty Deux-Fiddle's apartment: on the kitchen counter.", "html": "<img data-img=\"s13\" alt=\"Newspaper 2\">"}, {"key": "card3", "k": "card", "title": "Baseball card 3", "loc": "Back at the P.I. Office: Jack's bedroom, in the chest of drawers on the right.", "html": "<img data-img=\"s15\" alt=\"Baseball card 3\">"}]}, {"title": "Case clues", "items": [{"key": "cm1", "k": "mclue", "title": "Bandel's Address Book", "loc": "Unlock Bandel's Green Room with the key: the address book is in the drawer, the poster on the wall to the right.", "html": "<img data-img=\"s5\" alt=\"Clue location\">"}, {"key": "cm2", "k": "mclue", "title": "Bandel's Poster", "loc": "Unlock Bandel's Green Room with the key: the address book is in the drawer, the poster on the wall to the right.", "html": "<img data-img=\"s5\" alt=\"Clue location\">"}, {"key": "cm3", "k": "mclue", "title": "Stage Designer?", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch03", "game": "base", "title": "Gumshoe in the Opera", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "ab1", "k": "ability", "title": "Double jump", "loc": "The Old Rat Stuntman, during the rescue"}, {"key": "wp1", "k": "weapon", "title": "Boomstick", "loc": "Shotgun"}, {"key": "wp2", "k": "weapon", "title": "D-namite", "loc": "Throwable; also breaks weak walls"}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_show", "k": "job", "title": "Show Some Culture, Jack", "loc": "Before the job: Tammy, to the right of the P.I. Office. On the burning Opera House escape, photograph the fire from the balcony, then report back.", "html": "<img data-img=\"s26\" alt=\"Show Some Culture, Jack location\"><p><a href=\"https://www.youtube.com/watch?v=FTocTA-Iq0Q\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "schem6", "k": "schem", "title": "Schematic 6", "loc": "Outside the Opera House at the start: climb the vent on the left.", "html": "<img data-img=\"s16\" alt=\"Schematic 6\">"}, {"key": "news3", "k": "news", "title": "Newspaper 3", "loc": "Just inside the Opera House: a table on the right.", "html": "<img data-img=\"s17\" alt=\"Newspaper 3\">"}, {"key": "card4", "k": "card", "title": "Baseball card 4", "loc": "After the stage designer, tail-pick the door and blow the weak wall with D-namite. On the table to its right.", "html": "<img data-img=\"s19\" alt=\"Baseball card 4\">"}, {"key": "comic5", "k": "comic", "title": "Comic strip 5", "loc": "Past that wall, look under the small wooden plank you cross.", "html": "<img data-img=\"s20\" alt=\"Comic strip 5\">"}, {"key": "news4", "k": "news", "title": "Newspaper 4", "loc": "On the chair beside the Old Rat Stuntman, who teaches the double jump.", "html": "<img data-img=\"s21\" alt=\"Newspaper 4\">"}, {"key": "card5", "k": "card", "title": "Baseball card 5", "loc": "With the double jump, go back and climb the ledge you couldn't reach. On boxes to the right.", "html": "<img data-img=\"s22\" alt=\"Baseball card 5\">"}, {"key": "schem7", "k": "schem", "title": "Schematic 7", "loc": "From the stuntman, drop to the platform below and hug the left wall into a secret area with a safe.", "html": "<img data-img=\"s23\" alt=\"Schematic 7\">"}, {"key": "schem8", "k": "schem", "title": "Schematic 8", "loc": "Up the ladder and double-jump across the platforms on the story path. In the barrel on the left.", "html": "<img data-img=\"s24\" alt=\"Schematic 8\">"}, {"key": "schem9", "k": "schem", "title": "Schematic 9", "loc": "Escaping the burning Opera House: up the stairs, in a wardrobe on the left of a room.", "html": "<img data-img=\"s25\" alt=\"Schematic 9\">"}, {"key": "comic6", "k": "comic", "title": "Comic strip 6", "loc": "At the wooden plank on the escape you get Tammy's photo prompt (only if you took her job). Then through the next door, hop the fire to the right: the comic is on a table in the end room.", "html": "<img data-img=\"s26\" alt=\"Comic strip 6\">"}, {"key": "news5", "k": "news", "title": "Newspaper 5", "loc": "After the fire, buy a paper from the paperboy on the left of the P.I. Office. He stays until the point of no return, so you can buy it later.", "html": "<img data-img=\"s27\" alt=\"Newspaper 5\">"}]}, {"title": "Case clues", "items": [{"key": "cm4", "k": "mclue", "title": "Party in the Opera", "loc": "In the kitchen, by the double doors on the right: take the photo.", "html": "<img data-img=\"s18\" alt=\"Clue location\">"}, {"key": "cm5", "k": "mclue", "title": "Assassination Attempt", "loc": "Story: on the main path, can't be missed."}, {"key": "cm6", "k": "mclue", "title": "Secret Lab", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch04", "game": "base", "title": "Bandel's Laboratory", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "wp3", "k": "weapon", "title": "Devarnisher", "loc": "On the story path."}]}, {"title": "Collectables", "items": [{"key": "schem10", "k": "schem", "title": "Schematic 10", "loc": "Up the ladder to the first typewriter: under a pallet to the left.", "html": "<img data-img=\"s28\" alt=\"Schematic 10\">"}, {"key": "news6", "k": "news", "title": "Newspaper 6", "loc": "Giant octopus room: upstairs and through the open door. The clue is on the left wall, the paper on a stack of books.", "html": "<img data-img=\"s29\" alt=\"Newspaper 6\">"}, {"key": "card6", "k": "card", "title": "Baseball card 6", "loc": "Giant head room: after the fight, take the stairs on the left, crouch under them and follow the passage.", "html": "<img data-img=\"s30\" alt=\"Baseball card 6\">"}, {"key": "news7", "k": "news", "title": "Newspaper 7", "loc": "After the first of three bosses: the room under the caged man. Paper on the desk to the right, schematic on the table to the left.", "html": "<img data-img=\"s31\" alt=\"Newspaper 7\">"}, {"key": "schem11", "k": "schem", "title": "Schematic 11", "loc": "After the first of three bosses: the room under the caged man. Paper on the desk to the right, schematic on the table to the left."}, {"key": "comic7", "k": "comic", "title": "Comic strip 7", "loc": "Projector light lever room: tail-pick the door on the left; on a chair.", "html": "<img data-img=\"s32\" alt=\"Comic strip 7\">"}, {"key": "comic8", "k": "comic", "title": "Comic strip 8", "loc": "Train-raising lever room: tail-pick the door on the left; on a table to the right.", "html": "<img data-img=\"s33\" alt=\"Comic strip 8\">"}, {"key": "card7", "k": "card", "title": "Baseball card 7", "loc": "After switching off the electric fence, turn round and double-jump to the platform behind you instead of taking the ladder.", "html": "<img data-img=\"s34\" alt=\"Baseball card 7\">"}, {"key": "schem12", "k": "schem", "title": "Schematic 12", "loc": "After switching off the electric fence, turn round and double-jump to the platform behind you instead of taking the ladder."}, {"key": "news8", "k": "news", "title": "Newspaper 8", "loc": "In the next room, in the bin on the right.", "html": "<img data-img=\"s35\" alt=\"Newspaper 8\">"}, {"key": "schem13", "k": "schem", "title": "Schematic 13", "loc": "Down the stairs before the boss: underneath them.", "html": "<img data-img=\"s36\" alt=\"Schematic 13\">"}]}, {"title": "Case clues", "items": [{"key": "cm7", "k": "mclue", "title": "Cultists?", "loc": "Story: on the main path, can't be missed."}, {"key": "cm8", "k": "mclue", "title": "Ze Research Deal", "loc": "Giant octopus room: upstairs and through the open door. The clue is on the left wall, the paper on a stack of books.", "html": "<img data-img=\"s29\" alt=\"Clue location\">"}, {"key": "cm9", "k": "mclue", "title": "Robo-Betty?", "loc": "Story: on the main path, can't be missed."}, {"key": "cm10", "k": "mclue", "title": "Ze Arrival Card", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch05", "game": "base", "title": "A Bit of a Scene", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "wp4", "k": "weapon", "title": "James Gun", "loc": "Tommy gun"}]}, {"title": "Collectables", "items": [{"key": "schem14", "k": "schem", "title": "Schematic 14", "loc": "Up the ladder into the building: on the floor to the left.", "html": "<img data-img=\"s37\" alt=\"Schematic 14\">"}, {"key": "card8", "k": "card", "title": "Baseball card 8", "loc": "After the police ambush outside: a side path on the left by the cards, down the stairs.", "html": "<img data-img=\"s38\" alt=\"Baseball card 8\">"}, {"key": "news9", "k": "news", "title": "Newspaper 9", "loc": "Down from the train platform, double-jump the brick wall: in the bin ahead.", "html": "<img data-img=\"s40\" alt=\"Newspaper 9\">"}, {"key": "news10", "k": "news", "title": "Newspaper 10", "loc": "Bounce on the trampoline into the apartment window: on a chair to the left.", "html": "<img data-img=\"s41\" alt=\"Newspaper 10\">"}, {"key": "schem15", "k": "schem", "title": "Schematic 15", "loc": "Shoot the target to drop pipes, cross them: on a dress.", "html": "<img data-img=\"s42\" alt=\"Schematic 15\">"}, {"key": "comic9", "k": "comic", "title": "Comic strip 9", "loc": "Take the right-hand route into the police station: through the left door, out to the alley, up the small roof and pipes to the back of the station. On the sofa.", "html": "<img data-img=\"s43\" alt=\"Comic strip 9\">"}, {"key": "schem16", "k": "schem", "title": "Schematic 16", "loc": "In the Good Cop's cell, under the bunk bed.", "html": "<img data-img=\"s45\" alt=\"Schematic 16\">"}, {"key": "card9", "k": "card", "title": "Baseball card 9", "loc": "The cell opposite: kill the officer; the card is by the bed.", "html": "<img data-img=\"s46\" alt=\"Baseball card 9\">"}, {"key": "schem17", "k": "schem", "title": "Schematic 17", "loc": "Small room on the right: set the three-gear machine to 35 (middle 6 times, left once, right twice) and open the gate.", "html": "<img data-img=\"s47\" alt=\"Schematic 17\">"}, {"key": "comic10", "k": "comic", "title": "Comic strip 10", "loc": "Police Station Office: over the boxes, on the desk on the left.", "html": "<img data-img=\"s48\" alt=\"Comic strip 10\">"}]}, {"title": "Case clues", "items": [{"key": "cs1", "k": "sclue", "title": "Shrew Roundup", "loc": "Story: on the main path, can't be missed."}, {"key": "cs2", "k": "sclue", "title": "Police Brutality", "loc": "Follow the fence on the left to the officers with batons: photo prompt.", "html": "<img data-img=\"s39\" alt=\"Clue location\">"}, {"key": "cs3", "k": "sclue", "title": "Cops Divided?", "loc": "Blow the wall by the barrel, take the prison key from the room on the left, open the far-right cell and talk to the Good Cop.", "html": "<img data-img=\"s44\" alt=\"Clue location\">"}, {"key": "cs4", "k": "sclue", "title": "Sewers Map", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch06", "game": "base", "title": "Cheeseball Sub", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "ab2", "k": "ability", "title": "Tail-copter", "loc": "Skillbook after the boss"}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_blueprints", "k": "job", "title": "Blueprints Please", "loc": "Before the job: Tammy in her workshop (alley right of the office). Find the blueprints in the train near the end of the level; she pays 2 schematics.", "html": "<img data-img=\"s57\" alt=\"Blueprints Please location\"><img data-img=\"s59\" alt=\"Blueprints Please location\"><p><a href=\"https://www.youtube.com/watch?v=u6OGSZwQZfU\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "news11", "k": "news", "title": "Newspaper 11", "loc": "Take the Ticket Booth Key by the first train, follow the tracks through the door on the right to the lit room (paper), then the room opposite: schematic on a bunk bed.", "html": "<img data-img=\"s50\" alt=\"Newspaper 11\">"}, {"key": "schem18", "k": "schem", "title": "Schematic 18", "loc": "Take the Ticket Booth Key by the first train, follow the tracks through the door on the right to the lit room (paper), then the room opposite: schematic on a bunk bed."}, {"key": "news12", "k": "news", "title": "Newspaper 12", "loc": "After the little hat clue, climb the boxes in the next room past the wooden fence: paper on a box to the right.", "html": "<img data-img=\"s51\" alt=\"Newspaper 12\">"}, {"key": "card10", "k": "card", "title": "Baseball card 10", "loc": "Drop down, up the stairs to a door, tail-pick the door on the left, down the planks and over the boxes into a secret room by the lockers.", "html": "<img data-img=\"s52\" alt=\"Baseball card 10\">"}, {"key": "schem19", "k": "schem", "title": "Schematic 19", "loc": "Train with a ladder: shoot the window to its left, blow the wall, up the stairs, into the train and through the crawlspace, then out and up through the gap.", "html": "<img data-img=\"s53\" alt=\"Schematic 19\">"}, {"key": "news13", "k": "news", "title": "Newspaper 13", "loc": "Ladder with a typewriter on top: through the far-right door in the next room; on boxes to the left.", "html": "<img data-img=\"s54\" alt=\"Newspaper 13\">"}, {"key": "comic11", "k": "comic", "title": "Comic strip 11", "loc": "After the alligator boss: climb the containers outside the save room and bunny-hop up to the gap on the far stack. On the right.", "html": "<img data-img=\"s55\" alt=\"Comic strip 11\">"}, {"key": "schem20", "k": "schem", "title": "Schematic 20", "loc": "After the flying enemies, on the second updraft glide under the landing platform.", "html": "<img data-img=\"s56\" alt=\"Schematic 20\">"}, {"key": "schem21", "k": "schem", "title": "Schematic 21", "loc": "From the blueprints, drop into the water and dive: a ladder leads up to a secret safe.", "html": "<img data-img=\"s58\" alt=\"Schematic 21\">"}]}, {"title": "Case clues", "items": [{"key": "cs5", "k": "sclue", "title": "Lots of Cheeseleggers", "loc": "Story: on the main path, can't be missed."}, {"key": "cs6", "k": "sclue", "title": "Shrew-sized Hat", "loc": "After the little hat clue, climb the boxes in the next room past the wooden fence: paper on a box to the right.", "html": "<img data-img=\"s51\" alt=\"Clue location\">"}, {"key": "cs7", "k": "sclue", "title": "Crooked Cops in the Mix", "loc": "Story: on the main path, can't be missed."}, {"key": "cs8", "k": "sclue", "title": "Wallop Bay, but Where?", "loc": "Story: on the main path, can't be missed."}, {"key": "cs9", "k": "sclue", "title": "Briny Britches", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch07", "game": "base", "title": "\"Once Upon a Time…\" by Tinsel Bros.", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "ab3", "k": "ability", "title": "Tail-hook", "loc": "Rocky Ford, on the adventure film set"}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_things", "k": "job", "title": "The Things We Keep", "loc": "Before the job: Wanda outside the bar. After the movie-set shootout, Wanda's letter is in one of three spots: behind the counter on the left in the next room, on the bookshelf on the right, or by the camera rolls on the left in the room after.", "html": "<img data-img=\"s60\" alt=\"The Things We Keep location\"><p><a href=\"https://www.youtube.com/watch?v=e769HtACfHg\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "news14", "k": "news", "title": "Newspaper 14", "loc": "The bar: tail-pick the door; behind the counter on the left.", "html": "<img data-img=\"s62\" alt=\"Newspaper 14\">"}, {"key": "schem22", "k": "schem", "title": "Schematic 22", "loc": "Across the hole in the ground and upstairs: on a table to the left.", "html": "<img data-img=\"s63\" alt=\"Schematic 22\">"}, {"key": "card11", "k": "card", "title": "Baseball card 11", "loc": "After meeting Gabe Clarke, blow the wall on the right in the next room: under boxes by a skeleton.", "html": "<img data-img=\"s64\" alt=\"Baseball card 11\">"}, {"key": "news15", "k": "news", "title": "Newspaper 15", "loc": "Outside and up the stairs: the first bathroom on the left.", "html": "<img data-img=\"s65\" alt=\"Newspaper 15\">"}, {"key": "card12", "k": "card", "title": "Baseball card 12", "loc": "After the sitcom-set shootout, out the back door: shoot the hanging piano and box to make steps, then jump over the crates.", "html": "<img data-img=\"s70\" alt=\"Baseball card 12\">"}, {"key": "schem23", "k": "schem", "title": "Schematic 23", "loc": "Second set: drop down a level; on a table.", "html": "<img data-img=\"s71\" alt=\"Schematic 23\">"}, {"key": "comic12", "k": "comic", "title": "Comic strip 12", "loc": "Medieval set: after clearing the entrance, in the small wooden shelter on the left, pinned to the wall.", "html": "<img data-img=\"s72\" alt=\"Comic strip 12\">"}, {"key": "schem24", "k": "schem", "title": "Schematic 24", "loc": "Swinging across the top of the drawing room: on one of the tables.", "html": "<img data-img=\"s73\" alt=\"Schematic 24\">"}, {"key": "schem25", "k": "schem", "title": "Schematic 25", "loc": "After taking the key from Betty's dressing room, go outside, through the door on the right and tail-pick the door on the left. Safe at the bottom.", "html": "<img data-img=\"s74\" alt=\"Schematic 25\">"}]}, {"title": "Case clues", "items": [{"key": "cm11", "k": "mclue", "title": "Sub at Wallop Bay", "loc": "Story: on the main path, can't be missed."}, {"key": "cb1", "k": "bclue", "title": "Truckload of Blue", "loc": "At the very start: photograph the tipped-over truck.", "html": "<img data-img=\"s61\" alt=\"Clue location\">"}, {"key": "cb2", "k": "bclue", "title": "Betty & Soyer?", "loc": "Story: on the main path, can't be missed."}, {"key": "cb3", "k": "bclue", "title": "Tinsel Scrub", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch08", "game": "base", "title": "A Bit of Curd and Pepper", "obj": "", "sections": [{"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_azurro", "k": "job", "title": "They Call It \"Azurro Burgerro\"", "loc": "Before the job: John Brown at the bar counter. Go upstairs, past the locked door and along the grapple points to a platform with a hole in the wall; cook the patty on the fire downstairs.", "html": "<img data-img=\"s75\" alt=\"They Call It \"Azurro Burgerro\" location\"><img data-img=\"s77\" alt=\"They Call It \"Azurro Burgerro\" location\"><p><a href=\"https://www.youtube.com/watch?v=HClEQOBBlF4\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "schem26", "k": "schem", "title": "Schematic 26", "loc": "At the very start, in the chest in the left corner.", "html": "<img data-img=\"s76\" alt=\"Schematic 26\">"}, {"key": "comic13", "k": "comic", "title": "Comic strip 13", "loc": "After cooking the patty, up the stairs and right by the boxes.", "html": "<img data-img=\"s78\" alt=\"Comic strip 13\">"}, {"key": "card13", "k": "card", "title": "Baseball card 13", "loc": "Through the gap past the sweeper: stand on the barrier, jump and glide across.", "html": "<img data-img=\"s79\" alt=\"Baseball card 13\">"}]}, {"title": "Case clues", "items": [{"key": "cb4", "k": "bclue", "title": "Curd Hates Betty?", "loc": "Story clues, can't be missed.", "html": "<img data-img=\"s80\" alt=\"Clue location\">"}, {"key": "cb5", "k": "bclue", "title": "Betty & Soyer: Dead End", "loc": "Story clues, can't be missed.", "html": "<img data-img=\"s80\" alt=\"Clue location\">"}]}]}, {"key": "ch09", "game": "base", "title": "Saltwater Cambozo", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "quint", "note": "Kick the shark on the pier at the very start."}]}, {"title": "Abilities and weapons", "items": [{"key": "wp5", "k": "weapon", "title": "Loose Cannon", "loc": "On the story path."}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_fishy", "k": "job", "title": "Fishy Business", "loc": "Before the job: John Brown in the bar. In the building with the anchor, look down through the collapsed floor and grab the Marina 8-ED Herring from the toxic waste quickly.", "html": "<img data-img=\"s87\" alt=\"Fishy Business location\"><p><a href=\"https://www.youtube.com/watch?v=FCJJqB82I8A\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}, {"key": "job_imported", "k": "job", "title": "Imported Goods", "loc": "Before the job: Cornelius Stilton, right of John in the bar. The cheese sticks are on a desk past the yard door after you talk to Cameron Bozo.", "html": "<img data-img=\"s88\" alt=\"Imported Goods location\"><p><a href=\"https://www.youtube.com/watch?v=FCJJqB82I8A\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "news16", "k": "news", "title": "Newspaper 16", "loc": "At the very start, on one of the tables on the right.", "html": "<img data-img=\"s82\" alt=\"Newspaper 16\">"}, {"key": "schem27", "k": "schem", "title": "Schematic 27", "loc": "At the pier, drop on to the rock on the right and walk into a secret area.", "html": "<img data-img=\"s83\" alt=\"Schematic 27\">"}, {"key": "card14", "k": "card", "title": "Baseball card 14", "loc": "Drop into the water below: on a box underwater.", "html": "<img data-img=\"s84\" alt=\"Baseball card 14\">"}, {"key": "schem28", "k": "schem", "title": "Schematic 28", "loc": "Out of the water, climb the small roof of the house ahead, cross the planks on the left and go in through the window. On boxes.", "html": "<img data-img=\"s85\" alt=\"Schematic 28\">"}, {"key": "news17", "k": "news", "title": "Newspaper 17", "loc": "Building with an anchor on the wall: blow the wall up high, grapple across, tail-pick the gate. On the left.", "html": "<img data-img=\"s86\" alt=\"Newspaper 17\">"}, {"key": "card15", "k": "card", "title": "Baseball card 15", "loc": "After talking to Cameron Bozo, drop into the yard and tail-pick the far-right door past the water tower. Card by the window on the right; the cheese sticks are on the desk in the next room.", "html": "<img data-img=\"s88\" alt=\"Baseball card 15\">"}, {"key": "schem29", "k": "schem", "title": "Schematic 29", "loc": "Far end of the area by the fence under the watchtower: kick the second set of boxes, then climb the ladder behind you.", "html": "<img data-img=\"s89\" alt=\"Schematic 29\">"}, {"key": "comic14", "k": "comic", "title": "Comic strip 14", "loc": "After shooting the three circuits, climb the boxes on the left into a secret area and kick the barrel by the wall.", "html": "<img data-img=\"s90\" alt=\"Comic strip 14\">"}, {"key": "schem30", "k": "schem", "title": "Schematic 30", "loc": "Break the box blocking the vent, go down the ladder and crawl to the end.", "html": "<img data-img=\"s91\" alt=\"Schematic 30\">"}, {"key": "news18", "k": "news", "title": "Newspaper 18", "loc": "Out of the vent, blow the wall: clue on the table ahead, paper on a table in the left corner.", "html": "<img data-img=\"s92\" alt=\"Newspaper 18\">"}]}, {"title": "Case clues", "items": [{"key": "cm12", "k": "mclue", "title": "Mal de mer scripts", "loc": "Story: the pharmacy investigation.", "html": "<img data-img=\"s93\" alt=\"Clue location\">"}, {"key": "cm13", "k": "mclue", "title": "||Ze Crooked Collab||", "loc": "Story: on the main path, can't be missed."}, {"key": "cs11", "k": "sclue", "title": "Cops v Pepper", "loc": "Story: on the main path, can't be missed."}, {"key": "cs12", "k": "sclue", "title": "Trade Deal Extension", "loc": "Out of the vent, blow the wall: clue on the table ahead, paper on a table in the left corner.", "html": "<img data-img=\"s92\" alt=\"Clue location\">"}, {"key": "cs13", "k": "sclue", "title": "Trafficking Manifest", "loc": "Story: on a table in the workshop.", "html": "<img data-img=\"s94\" alt=\"Clue location\">"}]}]}, {"key": "ch10", "game": "base", "title": "White Lies and Dark Secrets", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "wp6", "k": "weapon", "title": "Kiss Kiss", "loc": "Double-barrelled shotgun"}]}, {"title": "Collectables", "items": [{"key": "schem31", "k": "schem", "title": "Schematic 31", "loc": "After getting the Kiss Kiss, pass the shack with the hole (don't drop) into the next room. On the wall.", "html": "<img data-img=\"s95\" alt=\"Schematic 31\">"}, {"key": "card16", "k": "card", "title": "Baseball card 16", "loc": "At the manor sign, go right to the windmill and barn, then along the left of the barn to the end.", "html": "<img data-img=\"s96\" alt=\"Baseball card 16\">"}, {"key": "schem32", "k": "schem", "title": "Schematic 32", "loc": "Jump across the roof to the next house: on the ground. The ring next to it is a story item.", "html": "<img data-img=\"s98\" alt=\"Schematic 32\">"}, {"key": "comic15", "k": "comic", "title": "Comic strip 15", "loc": "Past the barn and the gap: crawl under the stairs ahead (comic), then go far left; the schematic is pinned to the fence.", "html": "<img data-img=\"s99\" alt=\"Comic strip 15\">"}, {"key": "schem33", "k": "schem", "title": "Schematic 33", "loc": "Past the barn and the gap: crawl under the stairs ahead (comic), then go far left; the schematic is pinned to the fence."}, {"key": "card17", "k": "card", "title": "Baseball card 17", "loc": "After the third wife, go right through the open gate into a cave. Just inside on the right.", "html": "<img data-img=\"s100\" alt=\"Baseball card 17\">"}, {"key": "schem34", "k": "schem", "title": "Schematic 34", "loc": "Back up those stairs, tail-pick the door on the left: tail-pick the safe.", "html": "<img data-img=\"s102\" alt=\"Schematic 34\">"}]}, {"title": "Case clues", "items": [{"key": "cs10", "k": "sclue", "title": "Old Sewer System", "loc": "Inside the mansion after the fight: one under the stairs on the right, the other on the fireplace in the next room.", "html": "<img data-img=\"s101\" alt=\"Clue location\">"}, {"key": "cb6", "k": "bclue", "title": "Cultists' Dossier", "loc": "Downstairs again, take the stairs on the right of the fireplace room: on a table.", "html": "<img data-img=\"s103\" alt=\"Clue location\">"}, {"key": "cb7", "k": "bclue", "title": "Betty Lynch's Diploma", "loc": "Talk to the caretaker, then the Old Shrew behind you; after the fight, upstairs and right in the middle house, pinned to the wall.", "html": "<img data-img=\"s97\" alt=\"Clue location\">"}, {"key": "cb8", "k": "bclue", "title": "Curd: Millie's Dad", "loc": "Inside the mansion after the fight: one under the stairs on the right, the other on the fireplace in the next room.", "html": "<img data-img=\"s101\" alt=\"Clue location\">"}, {"key": "cb9", "k": "bclue", "title": "||Death of Miles Curd||", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch11", "game": "base", "title": "Damp Evidence", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "ab4", "k": "ability", "title": "Warp pipe", "loc": "Skillbook"}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_bog", "k": "job", "title": "Perfect Bog Fondue", "loc": "Before the job: John Brown. The Old Cheeselegger in the swamp shack wants three items: left of the elevator in the second mine section, in the mansion room with the blow-up wall, and on top of a crashed boat in the swamp. Hand them over after you escape the hideout.", "html": "<img data-img=\"s109\" alt=\"Perfect Bog Fondue location\"><img data-img=\"s117\" alt=\"Perfect Bog Fondue location\"><p><a href=\"https://www.youtube.com/watch?v=bX4xQgLDsfk\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "news19", "k": "news", "title": "Newspaper 19", "loc": "At the start: up the stairs, room on the right, on a chair by the bed.", "html": "<img data-img=\"s105\" alt=\"Newspaper 19\">"}, {"key": "schem35", "k": "schem", "title": "Schematic 35", "loc": "After the Crooked Cop, on the rooftop jumps: across on stairs to your right.", "html": "<img data-img=\"s106\" alt=\"Schematic 35\">"}, {"key": "card18", "k": "card", "title": "Baseball card 18", "loc": "Out of the mines when you search the swamp: the Old Cheeselegger's shack on the left, on the furnace.", "html": "<img data-img=\"s108\" alt=\"Baseball card 18\">"}, {"key": "schem36", "k": "schem", "title": "Schematic 36", "loc": "Second mine section by the elevator: jump into the small gap on its left. The first of the Cheeselegger's three items is on the boxes; the schematic is here too.", "html": "<img data-img=\"s109\" alt=\"Schematic 36\">"}, {"key": "news20", "k": "news", "title": "Newspaper 20", "loc": "After the Mad Cultist, outside: left and left again, on a bench.", "html": "<img data-img=\"s112\" alt=\"Newspaper 20\">"}, {"key": "schem37", "k": "schem", "title": "Schematic 37", "loc": "Where the police cars are: keep right until you find a chest.", "html": "<img data-img=\"s114\" alt=\"Schematic 37\">"}, {"key": "card19", "k": "card", "title": "Baseball card 19", "loc": "Stairs on the right, through the warp pipe; it's where you come out.", "html": "<img data-img=\"s116\" alt=\"Baseball card 19\">"}, {"key": "comic16", "k": "comic", "title": "Comic strip 16", "loc": "Out of the hideout, right to the end to hand the items to the Old Cheeselegger. The comic is to the right.", "html": "<img data-img=\"s117\" alt=\"Comic strip 16\">"}]}, {"title": "Case clues", "items": [{"key": "cm14", "k": "mclue", "title": "Stick Figure", "loc": "Story: on the main path, can't be missed."}, {"key": "cs14", "k": "sclue", "title": "Dirty Note", "loc": "From that schematic, face back and jump into the broken house: pinned to the wall.", "html": "<img data-img=\"s107\" alt=\"Clue location\">"}, {"key": "cs15", "k": "sclue", "title": "Cheese-Stained Badge", "loc": "Then turn left into the building for the badge.", "html": "<img data-img=\"s115\" alt=\"Clue location\">"}, {"key": "cs16", "k": "sclue", "title": "Miceguffin's Notes", "loc": "Story: on the boat after the boss.", "html": "<img data-img=\"s118\" alt=\"Clue location\">"}, {"key": "cs17", "k": "sclue", "title": "Shrew Route: Depths", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch12", "game": "base", "title": "Shrewd Shrews", "obj": "", "sections": [{"title": "Collectables", "items": [{"key": "schem38", "k": "schem", "title": "Schematic 38", "loc": "Down the waterfall, photograph the cages. Then go back through the waterfall into a secret area; the schematic is on a table at the end.", "html": "<img data-img=\"s119\" alt=\"Schematic 38\">"}, {"key": "schem39", "k": "schem", "title": "Schematic 39", "loc": "Lever room: after the second lever, squeeze through the gap in the fence by the gears.", "html": "<img data-img=\"s120\" alt=\"Schematic 39\">"}, {"key": "card20", "k": "card", "title": "Baseball card 20", "loc": "Shrew area: at 'Spike-D is Mice' go up the stairs, climb the wall on the right and glide over the fence. On a box.", "html": "<img data-img=\"s121\" alt=\"Baseball card 20\">"}, {"key": "news21", "k": "news", "title": "Newspaper 21", "loc": "After the old shrew lady, tail-pick the door on the right.", "html": "<img data-img=\"s122\" alt=\"Newspaper 21\">"}, {"key": "comic17", "k": "comic", "title": "Comic strip 17", "loc": "Blow the wall for the cape, continue right, then the door on the left with 'Dead Mice Tell No Tales': comic on the skeleton, card in the closet.", "html": "<img data-img=\"s123\" alt=\"Comic strip 17\">"}, {"key": "card21", "k": "card", "title": "Baseball card 21", "loc": "Blow the wall for the cape, continue right, then the door on the left with 'Dead Mice Tell No Tales': comic on the skeleton, card in the closet."}, {"key": "schem40", "k": "schem", "title": "Schematic 40", "loc": "Chasing the magnetic hand past the clothing store: trampoline on the far left, flip the switch for a ladder. On a table.", "html": "<img data-img=\"s124\" alt=\"Schematic 40\">"}, {"key": "news22", "k": "news", "title": "Newspaper 22", "loc": "When the hand drops the valve, leave it: trampoline on the right up to the pipes and across into a secret area.", "html": "<img data-img=\"s125\" alt=\"Newspaper 22\">"}, {"key": "news23", "k": "news", "title": "Newspaper 23", "loc": "After the ambush, through the gate: clue on the right; then up the stairs and left by the sofa for the paper.", "html": "<img data-img=\"s126\" alt=\"Newspaper 23\">"}, {"key": "schem41", "k": "schem", "title": "Schematic 41", "loc": "After the next ambush, hug the right side to the end: tail-pick the safe.", "html": "<img data-img=\"s127\" alt=\"Schematic 41\">"}]}, {"title": "Case clues", "items": [{"key": "cm15", "k": "mclue", "title": "Magician's Cape", "loc": "Blow the wall for the cape, continue right, then the door on the left with 'Dead Mice Tell No Tales': comic on the skeleton, card in the closet.", "html": "<img data-img=\"s123\" alt=\"Clue location\">"}, {"key": "cm16", "k": "mclue", "title": "Shrew Route: Quagmire", "loc": "After the ambush, through the gate: clue on the right; then up the stairs and left by the sofa for the paper.", "html": "<img data-img=\"s126\" alt=\"Clue location\">"}, {"key": "cs18", "k": "sclue", "title": "Lab Stuff & Cages?", "loc": "Down the waterfall, photograph the cages. Then go back through the waterfall into a secret area; the schematic is on a table at the end.", "html": "<img data-img=\"s119\" alt=\"Clue location\">"}, {"key": "cs19", "k": "sclue", "title": "Old Shrew, again?", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch13", "game": "base", "title": "It All Points Here, Right?", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "skey", "note": "Key clues."}]}, {"title": "Abilities and weapons", "items": [{"key": "ab5", "k": "ability", "title": "Wall jump", "loc": "A janitor at the crime scene"}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_float", "k": "job", "title": "Oh Yes… They Float", "loc": "Before the job: Millie Curd. Behind the four-ticket door, keep left to a kiosk and buy the deflated balloons for 25 coins. Reward includes a baseball card.", "html": "<img data-img=\"s128\" alt=\"Oh Yes… They Float location\"><img data-img=\"s136\" alt=\"Oh Yes… They Float location\"><p><a href=\"https://www.youtube.com/watch?v=syMMr-oclT4\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "schem42", "k": "schem", "title": "Schematic 42", "loc": "After blowing the wall and dropping down: crates on the far left up to a small platform.", "html": "<img data-img=\"s129\" alt=\"Schematic 42\">"}, {"key": "comic18", "k": "comic", "title": "Comic strip 18", "loc": "After the backstage key, crawl through the next vent on the left to its end.", "html": "<img data-img=\"s130\" alt=\"Comic strip 18\">"}, {"key": "news24", "k": "news", "title": "Newspaper 24", "loc": "From the murder scene, up the stairs on the right and through the door left of the four-ticket machine. On a stool.", "html": "<img data-img=\"s132\" alt=\"Newspaper 24\">"}, {"key": "news25", "k": "news", "title": "Newspaper 25", "loc": "After Francesco the Elefanto, up the platform above him: paper on a crate, and photograph the bucket next to it.", "html": "<img data-img=\"s133\" alt=\"Newspaper 25\">"}, {"key": "schem43", "k": "schem", "title": "Schematic 43", "loc": "Take the dressing room key from the balcony seat's windowsill, open the dressing room from the bar and take the warp pipe to a safe.", "html": "<img data-img=\"s134\" alt=\"Schematic 43\">"}, {"key": "news26", "k": "news", "title": "Newspaper 26", "loc": "Behind the four-ticket door, climb the crates on the left to a rooftop: paper on the picnic table; schematic pinned to a crate top right.", "html": "<img data-img=\"s135\" alt=\"Newspaper 26\">"}, {"key": "schem44", "k": "schem", "title": "Schematic 44", "loc": "Behind the four-ticket door, climb the crates on the left to a rooftop: paper on the picnic table; schematic pinned to a crate top right."}, {"key": "card22", "k": "card", "title": "Baseball card 22", "loc": "Facing the 'T.N.T. Watch It Explode' sign, jump through the building's window. On a crate.", "html": "<img data-img=\"s137\" alt=\"Baseball card 22\">"}, {"key": "card23", "k": "card", "title": "Baseball card 23", "loc": "After using two secret tickets, tail-pick the door ahead and blow the barrels to open a vent.", "html": "<img data-img=\"s138\" alt=\"Baseball card 23\">"}, {"key": "schem45", "k": "schem", "title": "Schematic 45", "loc": "Open the giant mouth after taking the hot pepper: at the back.", "html": "<img data-img=\"s139\" alt=\"Schematic 45\">"}]}, {"title": "Case clues", "items": [{"key": "cm20", "k": "mclue", "title": "||Strange Keycard||", "loc": "Story: on the main path, can't be missed."}, {"key": "cs20", "k": "sclue", "title": "||Steamboat Ticket||", "loc": "Story: after the boss.", "html": "<img data-img=\"s140\" alt=\"Clue location\">"}, {"key": "cb10", "k": "bclue", "title": "Murder Scene", "loc": "Story: photograph Curd's murder scene.", "html": "<img data-img=\"s131\" alt=\"Clue location\">"}, {"key": "cb11", "k": "bclue", "title": "Bucket of Blue", "loc": "After Francesco the Elefanto, up the platform above him: paper on a crate, and photograph the bucket next to it.", "html": "<img data-img=\"s133\" alt=\"Clue location\">"}, {"key": "cb12", "k": "bclue", "title": "||\"Dame\" at the Show||", "loc": "Story: on the main path, can't be missed."}, {"key": "cb13", "k": "bclue", "title": "||Dirty Bookkeeper||", "loc": "Story: after the boss.", "html": "<img data-img=\"s140\" alt=\"Clue location\">"}]}]}, {"key": "ch14", "game": "base", "title": "Swamp Oddity", "obj": "", "sections": [{"title": "Collectables", "items": [{"key": "news27", "k": "news", "title": "Newspaper 27", "loc": "Across the wooden walkway into the shack: on the right-hand wall.", "html": "<img data-img=\"s141\" alt=\"Newspaper 27\">"}, {"key": "schem46", "k": "schem", "title": "Schematic 46", "loc": "After lowering the bridge, climb the cages on the left into a wooden room.", "html": "<img data-img=\"s142\" alt=\"Schematic 46\">"}, {"key": "comic19", "k": "comic", "title": "Comic strip 19", "loc": "After the Old Shrew, the next room on the right leads to the music room: on the piano.", "html": "<img data-img=\"s143\" alt=\"Comic strip 19\">"}, {"key": "card24", "k": "card", "title": "Baseball card 24", "loc": "Play A C E G on the piano to open a secret area back where the Old Shrew was: card on the wall, schematic in the safe.", "html": "<img data-img=\"s144\" alt=\"Baseball card 24\">"}, {"key": "schem47", "k": "schem", "title": "Schematic 47", "loc": "Play A C E G on the piano to open a secret area back where the Old Shrew was: card on the wall, schematic in the safe."}, {"key": "schem48", "k": "schem", "title": "Schematic 48", "loc": "Main hall, door to the office: through the hole on the left and over the desk.", "html": "<img data-img=\"s145\" alt=\"Schematic 48\">"}, {"key": "news28", "k": "news", "title": "Newspaper 28", "loc": "Through the wall the enemy came from, take the dark room key; the paper is behind it.", "html": "<img data-img=\"s146\" alt=\"Newspaper 28\">"}, {"key": "schem49", "k": "schem", "title": "Schematic 49", "loc": "Out of the vent, turn right to the back of the building; pinned to the wall.", "html": "<img data-img=\"s148\" alt=\"Schematic 49\">"}]}, {"title": "Case clues", "items": [{"key": "cm17", "k": "mclue", "title": "Crooked Blockade", "loc": "Story: on the main path, can't be missed."}, {"key": "cm18", "k": "mclue", "title": "Bandel's Snuffbox", "loc": "Inside the dark room.", "html": "<img data-img=\"s147\" alt=\"Clue location\">"}, {"key": "cm19", "k": "mclue", "title": "Shrew Route: Nuthouse", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch15", "game": "base", "title": "To Catch a Mockingmouse", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "swrap", "note": "Last Shrew Shortage clue."}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_alpha", "k": "job", "title": "Between Alpha and Omega", "loc": "In Cigar Room 2 (use the vent in the door to the right of the guarded entrance), talk to the BMP Yes-Man and accept: refusing locks it. With the membership card, go to Deck 1 and photograph him through the window by the shortcut, then report back.", "html": "<p><a href=\"https://www.youtube.com/watch?v=JwRCkeClX30\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}, {"key": "job_confidential", "k": "job", "title": "Mouseburg Confidential", "loc": "On Deck 2, talk to the Undercover Agent and accept (refusing locks it). On Deck 3, photograph the BMP agents in the left corner of the band area, then report back.", "html": "<p><a href=\"https://www.youtube.com/watch?v=JwRCkeClX30\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "comic20", "k": "comic", "title": "Comic strip 20", "loc": "Left of the bouncer, down the stairs beside the boat and grapple across: in the toilets on the left.", "html": "<img data-img=\"s150\" alt=\"Comic strip 20\">"}, {"key": "schem50", "k": "schem", "title": "Schematic 50", "loc": "Banquet Hall where the band plays: behind the curtains on a back table.", "html": "<img data-img=\"s153\" alt=\"Schematic 50\">"}, {"key": "schem51", "k": "schem", "title": "Schematic 51", "loc": "Kitchen 2: take the storage key by the door and use the pipe in the storage room.", "html": "<img data-img=\"s154\" alt=\"Schematic 51\">"}, {"key": "schem52", "k": "schem", "title": "Schematic 52", "loc": "Open Cabin IX with its key, take the vent down to the Captain's key, then tail-pick the safe in the Captain's Room.", "html": "<img data-img=\"s155\" alt=\"Schematic 52\">"}, {"key": "schem53", "k": "schem", "title": "Schematic 53", "loc": "Escaping after the boss: inside a cage on the path.", "html": "<img data-img=\"s156\" alt=\"Schematic 53\">"}]}, {"title": "Case clues", "items": [{"key": "cs21", "k": "sclue", "title": "||Simms and BMP||", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch16", "game": "base", "title": "\"The Bookkeeper\" by Tinsel Bros.", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "ach", "ach": "flick", "note": "Punch the agitator outside the bar once this job is offered."}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_poster", "k": "job", "title": "Poster Girl", "loc": "Before the job: Tammy. After the parkour on the bottomless film set you meet an extra; find the poster on the wall nearby and photograph it.", "html": "<img data-img=\"s162\" alt=\"Poster Girl location\"><p><a href=\"https://www.youtube.com/watch?v=WPl_RmlN9wg\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "news29", "k": "news", "title": "Newspaper 29", "loc": "After unlocking the door with the Bookkeeper's key: on his chair.", "html": "<img data-img=\"s158\" alt=\"Newspaper 29\">"}, {"key": "schem54", "k": "schem", "title": "Schematic 54", "loc": "After dropping down to the ground floor, break the crates on the right and follow the path to a safe.", "html": "<img data-img=\"s159\" alt=\"Schematic 54\">"}, {"key": "comic21", "k": "comic", "title": "Comic strip 21", "loc": "After climbing the train, enter the building above, drop into the locker on the left and go up to the balcony. On the shelf to the right.", "html": "<img data-img=\"s160\" alt=\"Comic strip 21\">"}, {"key": "card25", "k": "card", "title": "Baseball card 25", "loc": "After your target escapes, ride the rotating platform, go through the door and jump the box right of the ladder.", "html": "<img data-img=\"s161\" alt=\"Baseball card 25\">"}, {"key": "card26", "k": "card", "title": "Baseball card 26", "loc": "Outside after the train set: behind the gravestones on the left.", "html": "<img data-img=\"s163\" alt=\"Baseball card 26\">"}, {"key": "schem55", "k": "schem", "title": "Schematic 55", "loc": "After the Bookkeeper's letter, shoot the targets to lower a hook and swing to the distant safe on the left.", "html": "<img data-img=\"s164\" alt=\"Schematic 55\">"}, {"key": "schem56", "k": "schem", "title": "Schematic 56", "loc": "Drop down the cliff and into a small hole leading to a cave: pinned to the wall.", "html": "<img data-img=\"s165\" alt=\"Schematic 56\">"}, {"key": "schem57", "k": "schem", "title": "Schematic 57", "loc": "On the way to the key for the story clue: blow the wall, and lift the plank on a box on the left.", "html": "<img data-img=\"s166\" alt=\"Schematic 57\">"}]}, {"title": "Case clues", "items": [{"key": "cb14", "k": "bclue", "title": "Bookkeeper's Letter", "loc": "Story: on the main path, can't be missed."}, {"key": "cb15", "k": "bclue", "title": "||Mob Ledger||", "loc": "Story: on the main path, can't be missed."}, {"key": "cb16", "k": "bclue", "title": "||Vivian Slipped Away||", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch17", "game": "base", "title": "One Flew", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "whodunit", "note": "Pins the evidence that cracks the case."}]}, {"title": "Abilities and weapons", "items": [{"key": "wp7", "k": "weapon", "title": "Jar-Head", "loc": "On the story path."}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_nuts", "k": "job", "title": "Behind the Nuts", "loc": "Before the job: Tammy. On the second floor after talking to Millie, play C A G E on the piano on the left, cross the lowered bridge, turn right and photograph Gloria in her cell. It completes after the two chapters that follow.", "html": "<img data-img=\"s171\" alt=\"Behind the Nuts location\"><p><a href=\"https://www.youtube.com/watch?v=cKZrHYAQx2s\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "schem58", "k": "schem", "title": "Schematic 58", "loc": "Room with the talking brain: on the right-hand wall.", "html": "<img data-img=\"s169\" alt=\"Schematic 58\">"}, {"key": "comic22", "k": "comic", "title": "Comic strip 22", "loc": "After the Jar-Head, through the door to a warp pipe: comic in a wheelchair, schematic on a box up the ladder.", "html": "<img data-img=\"s170\" alt=\"Comic strip 22\">"}, {"key": "schem59", "k": "schem", "title": "Schematic 59", "loc": "After the Jar-Head, through the door to a warp pipe: comic in a wheelchair, schematic on a box up the ladder."}, {"key": "card27", "k": "card", "title": "Baseball card 27", "loc": "After speaking to Millie again: take the pipe on the left, the door on the left, cross the pipes, warp and drop down. Second cabinet on the right.", "html": "<img data-img=\"s172\" alt=\"Baseball card 27\">"}, {"key": "schem60", "k": "schem", "title": "Schematic 60", "loc": "Top-floor balcony: jump to the roof for a safe.", "html": "<img data-img=\"s173\" alt=\"Schematic 60\">"}]}, {"title": "Case clues", "items": [{"key": "cm21", "k": "mclue", "title": "Ze Orders", "loc": "Cell block control room: on the desk.", "html": "<img data-img=\"s168\" alt=\"Clue location\">"}]}]}, {"key": "ch18", "game": "base", "title": "?lednaB evetS si lleH eht erehW", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "wp8", "k": "weapon", "title": "Hellrazor", "loc": "On the story path."}]}, {"title": "Collectables", "items": [{"key": "schem61", "k": "schem", "title": "Schematic 61", "loc": "On the roof: on a table to the left.", "html": "<img data-img=\"s174\" alt=\"Schematic 61\">"}, {"key": "comic23", "k": "comic", "title": "Comic strip 23", "loc": "Past the giant fallen pillar, follow the broken road left: on a chair.", "html": "<img data-img=\"s175\" alt=\"Comic strip 23\">"}, {"key": "schem62", "k": "schem", "title": "Schematic 62", "loc": "Drop down from the boat, turn round and go upstairs: on a crate.", "html": "<img data-img=\"s176\" alt=\"Schematic 62\">"}, {"key": "schem63", "k": "schem", "title": "Schematic 63", "loc": "In hell: cross the platforms and the wall run, then jump right to a small rock ledge with a safe.", "html": "<img data-img=\"s177\" alt=\"Schematic 63\">"}, {"key": "news30", "k": "news", "title": "Newspaper 30", "loc": "In the bar: on the counter.", "html": "<img data-img=\"s178\" alt=\"Newspaper 30\">"}, {"key": "schem64", "k": "schem", "title": "Schematic 64", "loc": "After turning the gears, climb to the typewriter and follow the jumps on the left to a secret area. On the wall.", "html": "<img data-img=\"s179\" alt=\"Schematic 64\">"}]}, {"title": "Case clues", "items": [{"key": "cm22", "k": "mclue", "title": "||Bandel's Confession||", "loc": "Story: after the fight.", "html": "<img data-img=\"s180\" alt=\"Clue location\">"}]}]}, {"key": "ch19", "game": "base", "title": "\"Fatal Repulsion\" by Tinsel Bros.", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "bkey", "note": "Key clues."}, {"k": "ach", "ach": "bwrap", "note": "Last Blue Betty clue."}]}, {"title": "Collectables", "items": [{"key": "comic24", "k": "comic", "title": "Comic strip 24", "loc": "First room: after the enemies, jump the haystack on the right.", "html": "<img data-img=\"s181\" alt=\"Comic strip 24\">"}, {"key": "card28", "k": "card", "title": "Baseball card 28", "loc": "After the Pyrotechnist, follow the yellow brick road to a crate and barrel, then through the trees on the right into a secret area.", "html": "<img data-img=\"s182\" alt=\"Baseball card 28\">"}, {"key": "schem65", "k": "schem", "title": "Schematic 65", "loc": "Back out, left through the door; on the left side of the room.", "html": "<img data-img=\"s183\" alt=\"Schematic 65\">"}, {"key": "card29", "k": "card", "title": "Baseball card 29", "loc": "Same room, right-hand path to the next area: in the fridge in the right corner.", "html": "<img data-img=\"s184\" alt=\"Baseball card 29\">"}, {"key": "news31", "k": "news", "title": "Newspaper 31", "loc": "When the room floods, look behind the steam pipe that lifts you.", "html": "<img data-img=\"s185\" alt=\"Newspaper 31\">"}, {"key": "schem66", "k": "schem", "title": "Schematic 66", "loc": "Upstairs, step on the plate to open the gate, then the vent on the left: tail-pick the chest.", "html": "<img data-img=\"s186\" alt=\"Schematic 66\">"}, {"key": "news32", "k": "news", "title": "Newspaper 32", "loc": "After the first boss: on a table in the office.", "html": "<img data-img=\"s187\" alt=\"Newspaper 32\">"}, {"key": "schem67", "k": "schem", "title": "Schematic 67", "loc": "From the office, break the crate in the bathroom and follow the path; a small secret area on the right after the fight.", "html": "<img data-img=\"s188\" alt=\"Schematic 67\">"}, {"key": "schem68", "k": "schem", "title": "Schematic 68", "loc": "After the second boss, warp through the pipe: schematic on the table to the right, then the letter just ahead.", "html": "<img data-img=\"s189\" alt=\"Schematic 68\">"}]}, {"title": "Case clues", "items": [{"key": "cb17", "k": "bclue", "title": "Bad Press for BMP", "loc": "Story: on the main path, can't be missed."}, {"key": "cb18", "k": "bclue", "title": "||Vivian's Letter||", "loc": "After the second boss, warp through the pipe: schematic on the table to the right, then the letter just ahead.", "html": "<img data-img=\"s189\" alt=\"Clue location\">"}]}]}, {"key": "ch20", "game": "base", "title": "Glugging from the Deep", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "mkey", "note": "Key clues."}, {"k": "ach", "ach": "mwrap", "note": "Last Missing Magician clue."}]}, {"title": "Side jobs (accept before leaving the office)", "items": [{"key": "job_slugs", "k": "job", "title": "Slugs in the Shell", "loc": "Before the job: John Brown. At the port, turn left for the can of sea slugs.", "html": "<p><a href=\"https://www.youtube.com/watch?v=Rz8uDyvo2JA\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}, {"key": "job_friends", "k": "job", "title": "Friends in Deep Places", "loc": "Before the job: Cameron Bozo, after John. Underwater, by the submarine on the right, climb the ladder and follow the path to the dog.", "html": "<p><a href=\"https://www.youtube.com/watch?v=Rz8uDyvo2JA\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}, {"title": "Collectables", "items": [{"key": "card30", "k": "card", "title": "Baseball card 30", "loc": "Trampoline room: through the vent to its end.", "html": "<img data-img=\"s191\" alt=\"Baseball card 30\">"}, {"key": "schem69", "k": "schem", "title": "Schematic 69", "loc": "Back out and through the door on the left: warp through the pipe and enter the room behind you. On the table.", "html": "<img data-img=\"s192\" alt=\"Schematic 69\">"}, {"key": "schem70", "k": "schem", "title": "Schematic 70", "loc": "Flip the switch in the middle of the port, grapple to the roof, double-jump and glide over, then crawl into the vent.", "html": "<img data-img=\"s194\" alt=\"Schematic 70\">"}, {"key": "news33", "k": "news", "title": "Newspaper 33", "loc": "Back down at the port by the stair railings: blow the wall and take the pipe across. On a crate.", "html": "<img data-img=\"s195\" alt=\"Newspaper 33\">"}, {"key": "comic25", "k": "comic", "title": "Comic strip 25", "loc": "Inside the train car Eddy opens.", "html": "<img data-img=\"s196\" alt=\"Comic strip 25\">"}, {"key": "card31", "k": "card", "title": "Baseball card 31", "loc": "After the rubber suit and the fight: jump the gap to the container on the right and go in.", "html": "<img data-img=\"s197\" alt=\"Baseball card 31\">"}, {"key": "schem71", "k": "schem", "title": "Schematic 71", "loc": "After talking to the dog, cross the bridge back: tail-pick the safe.", "html": "<img data-img=\"s199\" alt=\"Schematic 71\">"}, {"key": "schem72", "k": "schem", "title": "Schematic 72", "loc": "After the boss, outside past your car: under the dead fish.", "html": "<img data-img=\"s200\" alt=\"Schematic 72\">"}]}, {"title": "Case clues", "items": [{"key": "cm23", "k": "mclue", "title": "||Ze Professor & BMP||", "loc": "Story: on the main path, can't be missed."}]}]}, {"key": "ch21", "game": "base", "title": "Jack Squat", "obj": "", "sections": [{"title": "Collectables", "items": [{"key": "schem73", "k": "schem", "title": "Schematic 73", "loc": "Pinned to the wall in Tammy's building.", "html": "<img data-img=\"s201\" alt=\"Schematic 73\">"}, {"key": "schem74", "k": "schem", "title": "Schematic 74", "loc": "In the burning Little & Big Bar: on the floor on the left.", "html": "<img data-img=\"s202\" alt=\"Schematic 74\">"}, {"key": "schem75", "k": "schem", "title": "Schematic 75", "loc": "After the pipe and the fight, take the right exit: on the wall.", "html": "<img data-img=\"s203\" alt=\"Schematic 75\">"}, {"key": "comic26", "k": "comic", "title": "Comic strip 26", "loc": "Fleeing the first waves, at the next typewriter: on the pallet to the left.", "html": "<img data-img=\"s204\" alt=\"Comic strip 26\">"}, {"key": "schem76", "k": "schem", "title": "Schematic 76", "loc": "From the comic, jump across to the platform on the right (don't drop down or the flood starts): in the safe.", "html": "<img data-img=\"s205\" alt=\"Schematic 76\">"}]}]}, {"key": "ch22", "game": "base", "title": "The House of the Empty Mouse", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "wp9", "k": "weapon", "title": "Portable Freezer", "loc": "On the story path."}]}, {"title": "Collectables", "items": [{"key": "comic27", "k": "comic", "title": "Comic strip 27", "loc": "After the switch for the front balcony and the fight: crouch under the fireplace.", "html": "<img data-img=\"s206\" alt=\"Comic strip 27\">"}, {"key": "schem77", "k": "schem", "title": "Schematic 77", "loc": "Just past where you take the Freeze Gun.", "html": "<img data-img=\"s207\" alt=\"Schematic 77\">"}, {"key": "schem78", "k": "schem", "title": "Schematic 78", "loc": "After the police shootout outside: under the wooden planks.", "html": "<img data-img=\"s208\" alt=\"Schematic 78\">"}, {"key": "schem79", "k": "schem", "title": "Schematic 79", "loc": "Put the stone head on the hand to open a path at the shootout area: tail-pick the chest at the bottom.", "html": "<img data-img=\"s209\" alt=\"Schematic 79\">"}]}]}, {"key": "ch23", "game": "base", "title": "Fair Enough", "obj": "", "sections": [{"title": "Abilities and weapons", "items": [{"key": "ab6", "k": "ability", "title": "Monkey vault", "loc": "A construction worker on the way to the fair"}]}, {"title": "Collectables", "items": [{"key": "schem80", "k": "schem", "title": "Schematic 80", "loc": "Boats area: blow the wall of the building on the right, shoot the target and take the warp pipe.", "html": "<img data-img=\"s211\" alt=\"Schematic 80\">"}, {"key": "comic28", "k": "comic", "title": "Comic strip 28", "loc": "Building B8: the door on the left, then tail-pick the next door. On the floor.", "html": "<img data-img=\"s212\" alt=\"Comic strip 28\">"}, {"key": "news34", "k": "news", "title": "Newspaper 34", "loc": "After learning to climb: next to the typewriter.", "html": "<img data-img=\"s213\" alt=\"Newspaper 34\">"}, {"key": "news35", "k": "news", "title": "Newspaper 35", "loc": "Courtyard with the elephant plants: up the stairs and left to a bench.", "html": "<img data-img=\"s214\" alt=\"Newspaper 35\">"}, {"key": "schem81", "k": "schem", "title": "Schematic 81", "loc": "After Wanda, up the stairs on the left: in a display.", "html": "<img data-img=\"s215\" alt=\"Schematic 81\">"}, {"key": "schem82", "k": "schem", "title": "Schematic 82", "loc": "Second courtyard fight: from the cannon, climb up on the left and drop into a crate.", "html": "<img data-img=\"s216\" alt=\"Schematic 82\">"}, {"key": "schem83", "k": "schem", "title": "Schematic 83", "loc": "Next room: take the path on the left, then right: behind a truck, tail-pick the safe.", "html": "<img data-img=\"s217\" alt=\"Schematic 83\">"}, {"key": "news36", "k": "news", "title": "Newspaper 36", "loc": "Tape room: on the desk on the right.", "html": "<img data-img=\"s218\" alt=\"Newspaper 36\">"}]}]}, {"key": "ch24", "game": "base", "title": "Big Mouse, Little Hope (finale)", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "cheeseberg", "note": "The final boss."}]}, {"title": "Collectables", "items": [{"key": "comic29", "k": "comic", "title": "Comic strip 29", "loc": "Chasing Soyer: up the ladder, shoot the target across to lower the grapples, wall-run to the fan, shoot its target and enter the room behind. On the left.", "html": "<img data-img=\"s219\" alt=\"Comic strip 29\">"}, {"key": "news37", "k": "news", "title": "Newspaper 37", "loc": "Room with the customer service sign: drop down right of it and kick the crate (paper), then break the window behind you (schematic).", "html": "<img data-img=\"s220\" alt=\"Newspaper 37\">"}, {"key": "schem84", "k": "schem", "title": "Schematic 84", "loc": "Room with the customer service sign: drop down right of it and kick the crate (paper), then break the window behind you (schematic)."}, {"key": "news38", "k": "news", "title": "Newspaper 38", "loc": "On the stairs up, next to barrels on the right.", "html": "<img data-img=\"s221\" alt=\"Newspaper 38\">"}, {"key": "schem85", "k": "schem", "title": "Schematic 85", "loc": "After Soyer's elevator: down the stairs on the right to a ladder; at the top.", "html": "<img data-img=\"s222\" alt=\"Schematic 85\">"}, {"key": "schem86", "k": "schem", "title": "Schematic 86", "loc": "Down the last stairs, next room: the safe on the left.", "html": "<img data-img=\"s223\" alt=\"Schematic 86\">"}]}]}];
+
+/* Collectable totals that tick an achievement automatically. */
+const AUTO = [{"ach": "news5", "kind": "news", "label": "Newspapers", "min": 5}, {"ach": "news10", "kind": "news", "label": "Newspapers", "min": 10}, {"ach": "newsall", "kind": "news", "label": "Newspapers"}, {"ach": "comic5", "kind": "comic", "label": "Comic strips", "min": 5}, {"ach": "comic10", "kind": "comic", "label": "Comic strips", "min": 10}, {"ach": "comicall", "kind": "comic", "label": "Comic strips"}, {"ach": "card5", "kind": "card", "label": "Baseball cards", "min": 5}, {"ach": "card10", "kind": "card", "label": "Baseball cards", "min": 10}, {"ach": "jobs5", "kind": "job", "label": "Side jobs", "min": 5}, {"ach": "jobsall", "kind": "job", "label": "Side jobs"}, {"ach": "mwrap", "kind": "mclue", "label": "Missing Magician clues"}, {"ach": "swrap", "kind": "sclue", "label": "Shrew Shortage clues"}, {"ach": "bwrap", "kind": "bclue", "label": "Blue Betty clues"}, {"ach": "guns", "kind": "weapon", "label": "Weapons"}, {"ach": "tricks", "kind": "ability", "label": "Abilities"}];
+
+/* Guide images (WebP files in ../img/guides/mouse-pi-for-hire/). */
+const IMGS = {"s0": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch01-big-mouse-little-hope-01-comic-1.webp", "s1": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch01-big-mouse-little-hope-02-comic-2.webp", "s2": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch01-big-mouse-little-hope-03-schematics.webp", "s3": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-01-newspaper-1.webp", "s4": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-02-comic-1.webp", "s5": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-03-address-book-clue-1-and-steve-bandels-po.webp", "s6": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-04-baseball-card.webp", "s7": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-05-baseball-card.webp", "s8": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-06-schematic.webp", "s9": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-07-comic.webp", "s10": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-08-schematic.webp", "s11": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-09-schematic.webp", "s12": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-10-schematic.webp", "s13": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-11-newspaper.webp", "s15": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch02-vanishing-act-13-baseball-card.webp", "s16": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-01-schematic.webp", "s17": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-02-newspaper.webp", "s18": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-03-party-in-the-opera-clue.webp", "s19": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-04-baseball-card.webp", "s20": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-05-comic.webp", "s21": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-06-newspaper.webp", "s22": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-07-baseball-card.webp", "s23": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-08-schematic.webp", "s24": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-09-schematic.webp", "s25": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-10-schematic.webp", "s26": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-11-clue-for-tammy.webp", "s27": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch03-gumshoe-in-the-opera-12-newspaper.webp", "s28": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-01-schematic.webp", "s29": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-02-ze-research-deal-clue-and-newspaper.webp", "s30": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-03-baseball-card.webp", "s31": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-04-newspaper-and-schematic.webp", "s32": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-05-comic.webp", "s33": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-06-comic.webp", "s34": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-07-baseball-schematic.webp", "s35": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-08-newspaper.webp", "s36": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch04-bandels-laboratory-09-schematic.webp", "s37": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-01-schematic.webp", "s38": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-02-baseball-card.webp", "s39": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-03-police-brutality-clue.webp", "s40": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-04-newspaper.webp", "s41": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-05-newspaper.webp", "s42": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-06-schematic.webp", "s43": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-07-comic.webp", "s44": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-08-cops-divided-clue.webp", "s45": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-09-schematic.webp", "s46": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-10-baseball-card.webp", "s47": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-11-schematic.webp", "s48": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch05-a-bit-of-a-scene-12-comic.webp", "s50": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-01-newspaper-and-schematic.webp", "s51": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-02-the-little-hat-clue-and-newspaper.webp", "s52": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-03-baseball-card.webp", "s53": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-04-schematic.webp", "s54": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-05-newspaper.webp", "s55": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-06-comic.webp", "s56": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-07-schematic.webp", "s57": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-08-blueprints-please-side-jobs.webp", "s58": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-09-schematic.webp", "s59": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch06-cheeseball-sub-10-speak-to-tammy-to-complete-side-job-2-sc.webp", "s60": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-01-things-we-keep-side-job.webp", "s61": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-02-truckload-of-blue-clue.webp", "s62": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-03-newspaper.webp", "s63": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-04-schematic.webp", "s64": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-05-baseball-card.webp", "s65": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-06-newspaper.webp", "s70": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-07-baseball-card.webp", "s71": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-08-schematic.webp", "s72": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-09-comic.webp", "s73": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-10-schematic.webp", "s74": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch07-once-upon-a-time-11-clue-picture-of-betty-and-schematic.webp", "s75": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch08-a-bit-of-curd-and-pepper-01-they-call-it-azurro-burgerro-side-job.webp", "s76": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch08-a-bit-of-curd-and-pepper-02-schematic.webp", "s77": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch08-a-bit-of-curd-and-pepper-03-they-call-it-azurro-burgerro-side-job.webp", "s78": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch08-a-bit-of-curd-and-pepper-04-comic.webp", "s79": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch08-a-bit-of-curd-and-pepper-05-baseball-card.webp", "s80": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch08-a-bit-of-curd-and-pepper-06-curd-hates-betty-and-betty-dead-end.webp", "s82": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-01-newspaper.webp", "s83": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-02-schematic.webp", "s84": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-03-baseball-card.webp", "s85": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-04-schematic.webp", "s86": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-05-newspaper.webp", "s87": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-06-fishy-business-side-job.webp", "s88": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-07-baseball-card-imported-goods-side-job.webp", "s89": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-08-schematic.webp", "s90": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-09-comic.webp", "s91": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-10-schematic.webp", "s92": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-11-newspaper-and-trade-renewal-agreement-cl.webp", "s93": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-12-prescription-clue.webp", "s94": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch09-saltwater-cambozo-13-shipment-note-clue.webp", "s95": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-01-schematic.webp", "s96": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-02-baseball-card.webp", "s97": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-03-becky-lynch-diploma-clue.webp", "s98": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-04-schematic-and-ring.webp", "s99": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-05-comic-and-schematic.webp", "s100": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-06-baseball-card.webp", "s101": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-07-mouseburg-map-and-millie-picture-clues.webp", "s102": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-08-schematic.webp", "s103": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch10-white-lies-and-dark-secrets-09-cultists-surveillance-clue.webp", "s105": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-01-newspaper.webp", "s106": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-02-schematic.webp", "s107": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-03-dirty-note-clue.webp", "s108": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-04-baseball-card.webp", "s109": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-05-perfect-bog-fondue-side-job-and-schemati.webp", "s112": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-06-newspaper.webp", "s114": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-07-schematic.webp", "s115": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-08-clue-badge.webp", "s116": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-09-baseball-card.webp", "s117": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-10-perfect-bog-fondue-side-job-and-comic.webp", "s118": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch11-damp-evidence-11-notes-clue.webp", "s119": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-01-lab-stuff-and-cages-clue-and-schematic.webp", "s120": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-02-schematic.webp", "s121": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-03-baseball-card.webp", "s122": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-04-newspaper.webp", "s123": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-05-magician-s-cape-clue-comic-and-baseball.webp", "s124": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-06-schematic.webp", "s125": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-07-newspaper.webp", "s126": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-08-map-clue-and-newspaper.webp", "s127": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch12-shrewd-shrews-09-schematic.webp", "s128": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-01-oh-yes-they-float-side-job.webp", "s129": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-02-schematic.webp", "s130": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-03-comic.webp", "s131": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-04-curd-s-murder-scene-clue.webp", "s132": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-05-newspaper.webp", "s133": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-06-newspaper-and-clue.webp", "s134": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-07-schematic.webp", "s135": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-08-newspaper-and-schematic.webp", "s136": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-09-oh-yes-they-float-side-job.webp", "s137": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-10-baseball-card.webp", "s138": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-11-baseball-card.webp", "s139": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-12-schematic.webp", "s140": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch13-it-all-points-here-13-dirty-bookeeper-and-steamboat-ticket-clu.webp", "s141": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-01-newspaper.webp", "s142": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-02-schematic.webp", "s143": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-03-comic.webp", "s144": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-04-baseball-card-and-schematic.webp", "s145": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-05-schematic.webp", "s146": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-06-newspaper.webp", "s147": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-07-bandels-snuffbox-clue.webp", "s148": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch14-swamp-oddity-08-schematic.webp", "s150": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch15-to-catch-a-mockingmouse-01-comic.webp", "s153": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch15-to-catch-a-mockingmouse-02-schematic.webp", "s154": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch15-to-catch-a-mockingmouse-03-schematic.webp", "s155": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch15-to-catch-a-mockingmouse-04-schematic.webp", "s156": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch15-to-catch-a-mockingmouse-05-schematic.webp", "s158": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-01-newspaper.webp", "s159": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-02-schematic.webp", "s160": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-03-comic.webp", "s161": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-04-baseball-card.webp", "s162": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-05-poster-girl-side-job.webp", "s163": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-06-baseball-card.webp", "s164": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-07-schematic.webp", "s165": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-08-schematic.webp", "s166": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch16-the-bookkeeper-09-schematic.webp", "s168": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch17-one-flew-01-ze-orders-clue.webp", "s169": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch17-one-flew-02-schematic.webp", "s170": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch17-one-flew-03-comic-and-schematic.webp", "s171": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch17-one-flew-04-behind-the-nuts-side-job.webp", "s172": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch17-one-flew-05-baseball-card.webp", "s173": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch17-one-flew-06-schematic.webp", "s174": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-01-schematic.webp", "s175": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-02-comic.webp", "s176": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-03-schematic.webp", "s177": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-04-schematic.webp", "s178": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-05-newspaper.webp", "s179": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-06-schematic.webp", "s180": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch18-where-the-hell-is-steve-bandel-07-clue-bandel-s-confession.webp", "s181": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-01-comic.webp", "s182": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-02-baseball-card.webp", "s183": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-03-schematic.webp", "s184": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-04-baseball-card.webp", "s185": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-05-newspaper.webp", "s186": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-06-schematic.webp", "s187": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-07-newspaper.webp", "s188": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-08-schematic.webp", "s189": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch19-fatal-repulsion-09-schematic-and-a-letter-from-vivian-clue.webp", "s191": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-01-baseball-card.webp", "s192": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-02-schematic.webp", "s194": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-03-schematic.webp", "s195": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-04-newspaper.webp", "s196": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-05-comic.webp", "s197": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-06-baseball-card.webp", "s199": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-07-schematic.webp", "s200": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch20-glugging-from-the-deep-08-schematic.webp", "s201": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch21-jack-squat-01-schematic.webp", "s202": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch21-jack-squat-02-schematic.webp", "s203": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch21-jack-squat-03-schematic.webp", "s204": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch21-jack-squat-04-comic.webp", "s205": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch21-jack-squat-05-schematic.webp", "s206": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch22-house-of-the-empty-mouse-01-comic.webp", "s207": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch22-house-of-the-empty-mouse-02-schematic.webp", "s208": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch22-house-of-the-empty-mouse-03-schematic.webp", "s209": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch22-house-of-the-empty-mouse-04-schematic.webp", "s211": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-01-schematic.webp", "s212": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-02-comic.webp", "s213": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-03-newspaper.webp", "s214": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-04-newspaper.webp", "s215": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-05-schematic.webp", "s216": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-06-schematic.webp", "s217": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-07-schematic.webp", "s218": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch23-fair-enough-08-newpaper.webp", "s219": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch24-big-mouse-little-hope-finale-01-comic.webp", "s220": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch24-big-mouse-little-hope-finale-02-newspaper-and-schematic.webp", "s221": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch24-big-mouse-little-hope-finale-03-newspaper.webp", "s222": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch24-big-mouse-little-hope-finale-04-schematic.webp", "s223": "../img/guides/mouse-pi-for-hire/mouse-pi-for-hire-ch24-big-mouse-little-hope-finale-05-schematic.webp"};
+
+const PADS = {
+  ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], ST: ["Options", "sh"] },
+  xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], ST: ["Menu", "sh"] }
+};
+const TAGS = { story: "Story", missable: "Missable", collect: "Collectable", timed: "Time limited" };
+const KIND_LABEL = { ach: "Achievement", story: "Story", news: "Newspaper", comic: "Comic strip", card: "Baseball card", schem: "Schematic", mclue: "Magician clue", sclue: "Shrew clue", bclue: "Betty clue", job: "Side job", weapon: "Weapon", ability: "Ability" };
+const KIND_PLURAL = { ach: "Achievements", story: "Story", news: "Newspapers", comic: "Comic strips", card: "Baseball cards", schem: "Schematics", mclue: "Magician clues", sclue: "Shrew clues", bclue: "Betty clues", job: "Side jobs", weapon: "Weapons", ability: "Abilities" };
+const PART_BY = Object.fromEntries(PARTS.map(p => [p.key, p]));
+const RUN_BY_ID = Object.fromEntries(RUNS.map(r => [r.id, r]));
+const ALL = SECTIONS.flatMap(s => s.items.map(a => Object.assign(a, { game: s.game })));
+const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
+const CITEMS = COLL.flatMap(ch => ch.sections.flatMap(s => s.items.map(it => Object.assign(it, { ch: ch.key }))));
+const CBY = Object.fromEntries(CITEMS.filter(i => i.key).map(i => [i.key, i]));
+
+/* ---------------- state ---------------- */
+function blank() { return { got: {}, open: {}, tasks: {}, coll: {}, pad: "ps", tab: "ach", spoil: false }; }
+function clean(src) {
+  const out = blank();
+  if (!src || typeof src !== "object") return out;
+  for (const k of ["got", "open", "tasks", "coll"]) if (src[k] && typeof src[k] === "object") for (const x in src[k]) if (src[k][x] === true) out[k][x] = true;
+  if (src.pad === "xb") out.pad = "xb";
+  if (src.spoil === true) out.spoil = true;
+  if (["runs", "coll"].includes(src.tab)) out.tab = src.tab;
+  return out;
+}
+let state;
+try { const raw = localStorage.getItem(KEY); state = raw ? clean(JSON.parse(raw)) : fresh(); } catch (e) { state = fresh(); }
+function fresh() { const s = blank(); PRE.forEach(id => { s.got[id] = true; }); return s; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let filter = "all", game = "all", runFilter = "all", query = "", kindFilter = "all", hideGot = false;
+
+/* ---------------- helpers ---------------- */
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function targetId(id) {
+  if (BY_ID[id]) return "a-" + id;
+  if (RUN_BY_ID[id]) return "run-" + id;
+  if (id === "coll") return "coll-top";
+  if (id === "runs") return "runs-top";
+  return id;
+}
+function buttons(t) { return t.replace(/\[(X|SQ|O|TR|L1|L2|R1|R2|L3|R3|ST)\]/g, (_, k) => { const [g, c] = PADS[state.pad][k]; return `<kbd class="b ${state.pad}-${k} ${c}">${g}</kbd>`; }); }
+/* spoilers: ||text|| in data strings, <span class="spoil"> in guide HTML, sp: "n" | "d" | "g" on achievements */
+const SP = h => `<span class="spoil" tabindex="0">${h}</span>`;
+const nm = a => a.sp === "n" ? SP(esc(a.name)) : esc(a.name);
+const ds = a => a.sp === "n" || a.sp === "d" ? SP(esc(a.desc)) : esc(a.desc);
+const plain = s => String(s).replace(/\|\|/g, "");
+function fmt(s) {
+  let t = esc(s);
+  t = t.replace(/\|\|(.+?)\|\|/g, (_, x) => SP(x));
+  t = t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\{\{([\w-]+)\|([^}]+)\}\}/g, (_, id, label) => `<a href="#${targetId(id)}" data-jump="${id}">${label}</a>`);
+  return buttons(t);
+}
+function blocks(list) {
+  return list.map(b => typeof b === "string" ? `<p>${fmt(b)}</p>` : b.h ? `<h4>${esc(b.h)}</h4>` : b.ul ? `<ul>${b.ul.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : b.box ? `<details class="more"><summary>${esc(BOXES[b.box].title)}</summary><div class="prose">${rich(BOXES[b.box].html)}</div></details>` : "").join("");
+}
+/* PSN guide HTML: button tokens, trophy lists as jump chips, wide tables scroll inside their box */
+function rich(h) {
+  return buttons(h)
+    .replace(/<div class="achrefs" data-ids="([^"]*)"><\/div>/g, (_, ids) => `<div class="tlinks">${ids.split(",").filter(id => BY_ID[id]).map(id => `<a class="tlink" href="#a-${id}" data-jump="${id}" data-tl="${id}">${nm(BY_ID[id])}</a>`).join("")}</div>`)
+    .replace(/<(span|div) class="spoil">/g, '<$1 class="spoil" tabindex="0">')
+    .replace(/<img data-img="(\w+)" alt="([^"]*)">/g, (_, k, alt) => IMGS[k] ? `<img class="${k[0] === "c" ? "card" : "shot"}" src="${IMGS[k]}" alt="${alt}" loading="lazy" decoding="async">` : "")
+    .replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, "</table></div>");
+}
+/* after inserting guide HTML: tables holding screenshots become labelled cards */
+function enhance(root) {
+  root.querySelectorAll(".tablewrap").forEach(w => {
+    if (w.classList.contains("stack") || !w.querySelector("img.shot")) return;
+    w.classList.add("stack");
+    const rows = [...w.querySelectorAll("tr")];
+    const head = rows.find(r => r.querySelector("th") && !r.querySelector("td"));
+    const labels = head ? [...head.cells].map(c => c.textContent.trim()) : [];
+    rows.forEach(r => [...r.cells].forEach((c, i) => {
+      if (c.tagName === "TD" && labels[i] && !/^image$/i.test(labels[i]) && !c.querySelector("img.shot")) c.dataset.label = labels[i];
+    }));
+  });
+}
+const runBadge = id => { const r = RUN_BY_ID[id]; return `<a class="run-badge" data-p="${r.game}" href="#run-${id}" data-jump="${id}">${esc(r.n)}</a>`; };
+const autoGot = rule => CITEMS.filter(i => [].concat(rule.kind).includes(i.k) && i.ch !== undefined && (!rule.ch || rule.ch.includes(i.ch)) && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part) && state.coll[i.key]).length;
+const autoTotal = rule => CITEMS.filter(i => [].concat(rule.kind).includes(i.k) && (!rule.ch || rule.ch.includes(i.ch)) && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part)).length;
+
+/* ---------------- progress & auto ticks ---------------- */
+function snapshot() { return AUTO.map(autoGot); }
+function applyAuto(before) {
+  AUTO.forEach((r, i) => {
+    const now = autoGot(r), need = r.min || autoTotal(r);
+    if (now >= need && before[i] < need) state.got[r.ach] = true;
+  });
+}
+function change(fn) { const b = snapshot(); fn(); applyAuto(b); save(); update(); }
+
+/* ---------------- render: achievements ---------------- */
+function renderItem(a) {
+  const auto = AUTO.find(r => r.ach === a.id && !r.min);
+  return `<li class="item" id="a-${a.id}"><div class="row">
+    <input type="checkbox" class="check" id="c-${a.id}" data-ach="${a.id}" aria-label="Mark ${a.sp === "n" ? "this achievement" : esc(a.name)} as unlocked">
+    <div>
+      <div class="title-line">
+        <h3><label for="c-${a.id}">${nm(a)}</label></h3>
+        ${a.runs.map(runBadge).join("")}
+        ${(a.tags || []).map(t => `<span class="tag ${t}">${TAGS[t]}</span>`).join("")}
+      </div>
+      <p class="desc">${ds(a)}</p>
+      ${auto ? `<div class="summary-line" data-autoline="${a.id}"></div>` : ""}
+      ${GUIDES[a.id] ? `<button class="guide-btn" aria-expanded="false" aria-controls="g-${a.id}">Show guide</button>
+      <div class="guide" id="g-${a.id}" data-p="${a.game}" hidden></div>` : ""}
+    </div></div></li>`;
+}
+function renderAch() {
+  const runOpts = RUNS.map(r => `<option value="${r.id}">${esc(r.n + ": " + r.title)}</option>`).join("");
+  document.getElementById("view-ach").innerHTML = `
+    <div class="row-tools" style="margin-bottom:.6rem">
+      <span class="seg" role="group" aria-label="Status"><button data-filter="all" aria-pressed="true">All</button><button data-filter="todo" aria-pressed="false">To do</button><button data-filter="done" aria-pressed="false">Unlocked</button><button data-filter="missable" aria-pressed="false">Missable</button></span>
+      <span class="seg" role="group" aria-label="Game or DLC"><button data-game="all" aria-pressed="true">All</button>${PARTS.map(p => `<button data-game="${p.key}" aria-pressed="false">${esc(p.short)}</button>`).join("")}</span>
+      <select class="select" id="run-filter" aria-label="Filter by playthrough"><option value="all">Any playthrough</option>${runOpts}</select>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+    </div>
+    <nav class="jumps" aria-label="Categories">${SECTIONS.map(s => `<a class="jump" data-p="${s.game}" href="#sec-${s.id}">${esc(s.title)} <span data-jcount="${s.id}"></span></a>`).join("")}</nav>
+    ${SECTIONS.map(sec => `<section class="sheet" data-p="${sec.game}" id="sec-${sec.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[sec.game].label)}</small>${esc(sec.title)}</h2><span class="sub" data-sub="${sec.id}"></span></div>
+      <p class="intro">${fmt(sec.intro)}${sec.src ? ` <a href="${sec.src}" target="_blank" rel="noopener">Guide source ↗</a>` : ""}</p>
+      <ul class="items">${sec.items.map(renderItem).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden>Nothing here for this filter.</p>
+    </section>`).join("")}`;
+}
+
+/* ---------------- render: runs ---------------- */
+function renderRuns() {
+  const achFor = id => ALL.filter(a => a.runs.includes(id));
+  document.getElementById("view-runs").innerHTML = `
+    <section class="sheet" id="runs-top"><div class="sheet-head"><h2><small>Your plan</small>Playthroughs</h2><span class="sub" id="runs-count"></span></div>
+      <p class="intro">One blind playthrough with a few safeguards for what can't be revisited, then Level Revisit for the collectables and combat counts, and the card table and upgrades last. Each run's tasks are tickable, and its chips show which achievements it should unlock.</p>
+      <div class="runmap">${RUNS.map(r => `<a href="#run-${r.id}" data-jump="${r.id}" data-p="${r.game}" data-runcard="${r.id}"><b>${esc(r.n)}</b><span>${esc(r.title)}</span><br><span data-runprog="${r.id}"></span></a>`).join("")}</div>
+    </section>
+    ${RUNS.map(r => `<section class="sheet run" data-p="${r.game}" id="run-${r.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[r.game].label)} · ${esc(r.n)}</small>${esc(r.title)}</h2><span class="sub" data-runsub="${r.id}"></span></div>
+      <div class="mode">${esc(r.mode)}</div>
+      <p class="intro">${fmt(r.summary)}</p>
+      <ul class="tasks">${r.tasks.map((t, i) => `<li data-task="${r.id}:${i}"><input type="checkbox" class="check small" id="t-${r.id}-${i}" data-taskcheck="${r.id}:${i}"><label for="t-${r.id}-${i}"><span class="st-name">${fmt(t[0])}</span>${t[1] ? `<span class="st-desc">${fmt(t[1])}</span>` : ""}</label></li>`).join("")}</ul>
+      ${achFor(r.id).length ? `<div class="tlinks">${achFor(r.id).map(a => `<a class="tlink" href="#a-${a.id}" data-jump="${a.id}" data-tl="${a.id}">${nm(a)}</a>`).join("")}</div>` : ""}
+      ${r.body ? `<div class="prose" style="margin-top:.7rem">${blocks(r.body)}</div>` : ""}
+      <p></p>
+    </section>`).join("")}`;
+  enhance(document.getElementById("view-runs"));
+}
+
+/* ---------------- render: 100% guide ---------------- */
+function renderColl() {
+  const kinds = [...new Set(CITEMS.map(i => i.k))];
+  document.getElementById("view-coll").innerHTML = `
+    <section class="sheet" id="coll-top"><div class="sheet-head"><h2><small>Run 2 onwards</small>100% Guide</h2><span class="sub" id="coll-count"></span></div>
+      <p class="intro">All 24 chapters in story order: abilities and weapons, the side jobs to accept before leaving the office, then every newspaper, comic strip, baseball card and schematic with a screenshot strip, and the case clues. Ticking items here counts towards their achievements, and the last one ticks the achievement for you.</p>
+      <div class="row-tools">
+        <span class="seg" role="group" aria-label="Show"><button data-kind="all" aria-pressed="true">All</button>${kinds.map(k => `<button data-kind="${k}" aria-pressed="false">${esc(KIND_PLURAL[k])}</button>`).join("")}</span>
+        <button class="chip" id="hide-got" aria-pressed="false">Hide ticked</button>
+      </div>
+      <div class="summary-line" id="coll-kinds"></div><p></p>
+    </section>
+    ${COLL.map(ch => `<details class="chapter" id="ch-${ch.key}" data-ch="${ch.key}" data-p="${ch.game}">
+      <summary><span class="ch-title">${fmt(ch.title)}</span><span class="ch-count" data-chcount="${ch.key}"></span><span class="ch-meta" data-chmeta="${ch.key}"></span></summary>
+      <div class="ch-body" data-chbody="${ch.key}"></div></details>`).join("")}`;
+  document.querySelector("#coll-top .intro").innerHTML = fmt(document.querySelector("#coll-top .intro").textContent);
+}
+function ciHtml(it) {
+  if (it.k === "ach" || it.k === "story") {
+    const a = BY_ID[it.ach];
+    return `<div class="ci" data-ciach="${a.id}" data-k="${it.k}">
+      <input type="checkbox" class="check small" id="cca-${a.id}-${it.ch}" data-ach="${a.id}" aria-label="Unlocked: ${a.sp === "n" ? "this achievement" : esc(a.name)}">
+      <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cca-${a.id}-${it.ch}">${nm(a)}</label></div>
+      <div class="ci-loc">${ds(a)}</div>
+      ${it.note ? `<div class="ci-desc"><p>${fmt(it.note)}</p></div>` : ""}
+      <a class="maplink" href="#a-${a.id}" data-jump="${a.id}">Open its guide ›</a></div></div>`;
+  }
+  return `<div class="ci" id="ci-${it.key}" data-ci="${it.key}" data-k="${it.k}">
+    <input type="checkbox" class="check small" id="cc-${it.key}" data-coll="${it.key}" aria-label="Collected: ${esc(plain(it.title))}">
+    <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cc-${it.key}">${fmt(it.title)}</label></div>
+    ${it.loc ? `<div class="ci-loc">${fmt(it.loc)}</div>` : ""}
+    ${it.html ? `<div class="ci-desc">${rich(it.html)}</div>` : ""}</div></div>`;
+}
+function renderChapter(key) {
+  const ch = COLL.find(c => c.key === key), body = document.querySelector(`[data-chbody="${key}"]`);
+  if (body.dataset.done) return;
+  body.dataset.done = "1";
+  body.innerHTML = (ch.obj ? `<p class="ch-obj">${fmt(ch.obj)}</p>` : "") +
+    ch.sections.map(s => `${s.title ? `<div class="sec-h">${esc(s.title)}</div>` : ""}${s.items.map(ciHtml).join("")}`).join("");
+  enhance(body);
+  updateColl();
+}
+
+function render() {
+  renderAch(); renderRuns(); renderColl();
+  document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
+  setTab(state.tab, true);
+  syncChips(); syncPad(); syncSpoil();
+  update();
+}
+
+/* ---------------- behaviour ---------------- */
+function toggleGuide(btn, force) {
+  const id = btn.getAttribute("aria-controls").slice(2), panel = document.getElementById("g-" + id);
+  const open = force !== undefined ? force : panel.hidden;
+  if (open && !panel.dataset.done) { panel.innerHTML = BY_ID[id].sp ? `<div class="spoil" tabindex="0">${rich(GUIDES[id])}</div>` : rich(GUIDES[id]); panel.dataset.done = "1"; enhance(panel); update(); }
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
+  if (open) state.open[id] = true; else delete state.open[id];
+}
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
+function setTab(t, quiet) {
+  state.tab = t;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
+  if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
+}
+function jumpTo(id) {
+  const el = document.getElementById(targetId(id));
+  if (!el) return;
+  const view = el.closest("[role=tabpanel]").id.slice(5);
+  if (view !== state.tab) setTab(view, true), save();
+  if (el.classList.contains("hidden") || (el.closest("section.sheet") || {}).hidden) { filter = "all"; game = "all"; runFilter = "all"; query = ""; searchEl.value = ""; clearEl.hidden = true; document.getElementById("run-filter").value = "all"; syncChips(); update(); }
+  const btn = el.querySelector(":scope > .row .guide-btn");
+  if (btn && btn.getAttribute("aria-expanded") !== "true") { toggleGuide(btn, true); save(); }
+  requestAnimationFrame(() => {
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+  });
+}
+
+const mainEl = document.querySelector("main");
+mainEl.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.ach) change(() => { if (t.checked) state.got[t.dataset.ach] = true; else delete state.got[t.dataset.ach]; });
+  else if (t.dataset.taskcheck) { if (t.checked) state.tasks[t.dataset.taskcheck] = true; else delete state.tasks[t.dataset.taskcheck]; save(); update(); }
+  else if (t.dataset.coll) change(() => { if (t.checked) state.coll[t.dataset.coll] = true; else delete state.coll[t.dataset.coll]; });
+  else if (t.id === "run-filter") { runFilter = t.value; update(); }
+});
+const searchEl = document.getElementById("search"), clearEl = document.getElementById("clear-search");
+function runSearch(v) {
+  query = v.trim().toLowerCase();
+  clearEl.hidden = !v;
+  if (query && state.tab !== "ach") setTab("ach", true);
+  if (query) { filter = "all"; game = "all"; runFilter = "all"; const rf = document.getElementById("run-filter"); if (rf) rf.value = "all"; syncChips(); }
+  update();
+  if (query) {
+    const first = document.querySelector("#view-ach li.item:not(.hidden)");
+    const top = (first || document.getElementById("view-ach")).getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 12;
+    window.scrollTo({ top, behavior: "auto" });
+  }
+}
+searchEl.addEventListener("input", () => runSearch(searchEl.value));
+searchEl.addEventListener("keydown", e => { if (e.key === "Enter") searchEl.blur(); if (e.key === "Escape") { searchEl.value = ""; runSearch(""); } });
+clearEl.addEventListener("click", () => { searchEl.value = ""; runSearch(""); searchEl.focus(); });
+const toTop = document.getElementById("totop");
+let ticking = false;
+window.addEventListener("scroll", () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 500); ticking = false; }); }, { passive: true });
+toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+mainEl.addEventListener("toggle", e => { const d = e.target; if (d.matches && d.matches("details.chapter") && d.open) renderChapter(d.dataset.ch); }, true);
+function reveal(e) {
+  const sp = e.target.closest && e.target.closest(".spoil");
+  if (!sp || state.spoil || sp.classList.contains("shown")) return false;
+  e.preventDefault(); e.stopPropagation(); sp.classList.add("shown"); return true;
+}
+mainEl.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("spoil")) reveal(e); });
+mainEl.addEventListener("click", e => {
+  if (reveal(e)) return;
+  if (e.target.matches("img.shot")) { openShot(e.target); return; }
+  const t = e.target.closest("button, a[data-jump]");
+  if (!t) return;
+  if (t.classList.contains("tab")) setTab(t.dataset.tab);
+  else if (t.dataset.filter) { filter = t.dataset.filter; syncChips(); update(); }
+  else if (t.dataset.game) { game = t.dataset.game; syncChips(); update(); }
+  else if (t.dataset.kind) { kindFilter = t.dataset.kind; syncChips(); updateColl(); }
+  else if (t.id === "hide-got") { hideGot = !hideGot; syncChips(); updateColl(); }
+  else if (t.id === "expand") { const open = t.getAttribute("aria-pressed") !== "true"; t.setAttribute("aria-pressed", String(open)); t.textContent = open ? "Hide all guides" : "Show all guides"; document.querySelectorAll("#view-ach .guide-btn").forEach(b => toggleGuide(b, open)); save(); }
+  else if (t.classList.contains("guide-btn")) { toggleGuide(t); save(); }
+  else if (t.id === "spoilers") { state.spoil = !state.spoil; save(); syncSpoil(); }
+  else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); render(); }
+  else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
+});
+
+/* tap a screenshot to see it full size */
+const lb = document.createElement("div");
+lb.className = "lightbox"; lb.hidden = true; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Screenshot, tap to close");
+lb.innerHTML = '<img alt="">';
+document.body.appendChild(lb);
+function openShot(img) { lb.firstChild.src = img.src; lb.firstChild.alt = img.alt; lb.hidden = false; }
+lb.addEventListener("click", () => { lb.hidden = true; lb.firstChild.removeAttribute("src"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) lb.click(); });
+
+function syncChips() {
+  document.querySelectorAll("[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
+  document.querySelectorAll("[data-game]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.game === game)));
+  document.querySelectorAll("[data-kind]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kindFilter)));
+  const h = document.getElementById("hide-got"); if (h) h.setAttribute("aria-pressed", String(hideGot));
+}
+function syncSpoil() {
+  document.body.classList.toggle("spoilers", state.spoil);
+  const b = document.getElementById("spoilers"); if (b) { b.setAttribute("aria-pressed", String(state.spoil)); b.textContent = state.spoil ? "Hide spoilers" : "Show all spoilers"; }
+}
+function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
+
+const flat = h => String(h || "").replace(/<[^>]+>/g, " ");
+function matches(a) {
+  const d = !!state.got[a.id];
+  if (filter === "todo" && d) return false;
+  if (filter === "done" && !d) return false;
+  if (filter === "missable" && !(a.tags || []).some(t => t === "missable" || t === "timed")) return false;
+  if (game !== "all" && a.game !== game) return false;
+  if (runFilter !== "all" && !a.runs.includes(runFilter)) return false;
+  if (query && ![a.name, a.desc, flat(GUIDES[a.id])].join(" ").toLowerCase().includes(query)) return false;
+  return true;
+}
+
+const isGot = it => it.ach ? !!state.got[it.ach] : !!state.coll[it.key];
+function updateColl() {
+  const got = CITEMS.filter(isGot).length;
+  const cc = document.getElementById("coll-count"); if (cc) cc.textContent = `${got} / ${CITEMS.length}`;
+  const totals = {};
+  CITEMS.forEach(i => { (totals[i.k] = totals[i.k] || [0, 0])[1]++; if (isGot(i)) totals[i.k][0]++; });
+  const ck = document.getElementById("coll-kinds");
+  if (ck) ck.innerHTML = Object.keys(KIND_LABEL).filter(k => totals[k]).map(k => `${KIND_PLURAL[k]} <b>${totals[k][0]}/${totals[k][1]}</b>`).join(" · ");
+  COLL.forEach(ch => {
+    const items = ch.sections.flatMap(s => s.items), g = items.filter(isGot).length, kc = {};
+    items.forEach(i => { (kc[i.k] = kc[i.k] || [0, 0])[1]++; if (isGot(i)) kc[i.k][0]++; });
+    document.querySelector(`[data-chcount="${ch.key}"]`).textContent = `${g} / ${items.length}`;
+    document.querySelector(`[data-chmeta="${ch.key}"]`).innerHTML = Object.keys(KIND_LABEL).filter(k => kc[k]).map(k => `<span>${KIND_PLURAL[k]} <span class="kd">${kc[k][0]}/${kc[k][1]}</span></span>`).join("");
+    document.getElementById("ch-" + ch.key).classList.toggle("full", g === items.length);
+  });
+  document.querySelectorAll(".ci").forEach(el => {
+    const on = el.dataset.ci ? !!state.coll[el.dataset.ci] : !!state.got[el.dataset.ciach];
+    el.classList.toggle("got", on);
+    const cb = el.querySelector("input.check"); if (cb) cb.checked = on;
+    el.classList.toggle("hidden", (kindFilter !== "all" && el.dataset.k !== kindFilter) || (hideGot && on));
+  });
+}
+
+function update() {
+  const per = Object.fromEntries(PARTS.map(p => [p.key, [0, 0]]));
+  SECTIONS.forEach(sec => {
+    let sd = 0, vis = 0;
+    sec.items.forEach(a => {
+      const d = !!state.got[a.id];
+      per[a.game][1]++; if (d) { per[a.game][0]++; sd++; }
+      const li = document.getElementById("a-" + a.id);
+      li.classList.toggle("done", d);
+      const cb = document.getElementById("c-" + a.id);
+      cb.checked = d;
+      const rule = AUTO.find(r => r.ach === a.id && !r.min);
+      cb.indeterminate = !d && !!rule && autoGot(rule) > 0;
+      const al = li.querySelector("[data-autoline]");
+      if (al && rule) al.innerHTML = `${esc(rule.label)} ticked in the <a href="#coll-top" data-jump="coll">100% Guide</a>: <b>${autoGot(rule)} / ${autoTotal(rule)}</b>`;
+      const show = matches(a); li.classList.toggle("hidden", !show); if (show) vis++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sd} / ${sec.items.length}`;
+    document.querySelector(`[data-jcount="${sec.id}"]`).textContent = `${sd}/${sec.items.length}`;
+    document.querySelector(`[data-empty="${sec.id}"]`).hidden = vis > 0;
+    document.getElementById("sec-" + sec.id).hidden = vis === 0 && (game !== "all" || runFilter !== "all" || !!query);
+  });
+  const sc = document.getElementById("search-count");
+  if (sc) { const n = ALL.filter(matches).length; sc.textContent = query ? `${n} found` : ""; let nm = document.getElementById("no-match"); if (!nm) { nm = document.createElement("p"); nm.id = "no-match"; nm.className = "empty"; document.getElementById("view-ach").appendChild(nm); } nm.hidden = !(query && n === 0); nm.textContent = "No achievements match that search."; }
+  let runsDone = 0;
+  RUNS.forEach(r => {
+    let g = 0;
+    r.tasks.forEach((_, i) => { const on = !!state.tasks[`${r.id}:${i}`]; if (on) g++; document.getElementById(`t-${r.id}-${i}`).checked = on; document.querySelector(`[data-task="${r.id}:${i}"]`).classList.toggle("got", on); });
+    const ach = ALL.filter(a => a.runs.includes(r.id)), ag = ach.filter(a => state.got[a.id]).length;
+    const full = g === r.tasks.length; if (full) runsDone++;
+    document.querySelector(`[data-runsub="${r.id}"]`).textContent = `${g} / ${r.tasks.length} tasks`;
+    document.querySelector(`[data-runprog="${r.id}"]`).textContent = `${g}/${r.tasks.length} tasks · ${ag}/${ach.length} achievements`;
+    document.querySelector(`[data-runcard="${r.id}"]`).classList.toggle("full", full);
+  });
+  document.getElementById("runs-count").textContent = `${runsDone} / ${RUNS.length} done`;
+  document.querySelectorAll("[data-tl]").forEach(l => l.classList.toggle("done", !!state.got[l.dataset.tl]));
+  updateColl();
+  const done = Object.values(per).reduce((s, v) => s + v[0], 0), total = Object.values(per).reduce((s, v) => s + v[1], 0), pct = Math.round(done / total * 100);
+  document.getElementById("count").innerHTML = `${done} / ${total} <small>unlocked · ${pct}%</small>`;
+  document.getElementById("bar").innerHTML = PARTS.map(p => `<span data-p="${p.key}" style="width:${per[p.key][0] / total * 100}%"></span>`).join("");
+  document.getElementById("legend").innerHTML = PARTS.map(p => `<span data-p="${p.key}"><i></i>${esc(p.label)} ${per[p.key][0]}/${per[p.key][1]}</span>`).join("");
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+/* ---------------- panel ---------------- */
+let statusTimer = null;
+function status(msg) { const el = document.getElementById("save-status"), d = el.dataset.d || (el.dataset.d = el.textContent); el.textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { el.textContent = d; }, 4500); }
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "mouse-pi-for-hire-progress.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Backup saved as mouse-pi-for-hire-progress.json.");
+});
+const fileInput = document.getElementById("import-file");
+document.getElementById("import").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const f = fileInput.files[0]; if (!f) return;
+  f.text().then(txt => { const d = JSON.parse(txt); if (!d || typeof d !== "object" || !d.got || typeof d.got !== "object") throw new Error(); state = clean(d); save(); render(); status("Backup restored."); })
+    .catch(() => status("That file isn't a checklist backup. Choose a mouse-pi-for-hire-progress.json file."));
+  fileInput.value = "";
+});
+
+render();
+})();
+
+</script>
+<!-- hub:body -->
+<script src="../sync.js" defer></script>
+<script src="../steam-sync.js" defer></script>
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

@@ -1524,6 +1524,38 @@
   },
   "shape": "got"
  },
+ "unpacking.html": {
+  "appid": 1135690,
+  "key": "unpacking-checklist-v1",
+  "map": {
+   "initial": "memories",
+   "sticker_blocks": "blocks",
+   "sticker_brain": "puzzle",
+   "sticker_coffee": "coffee",
+   "sticker_cookie": "cookie",
+   "sticker_dab": "pose",
+   "sticker_dog": "poster",
+   "sticker_fashion": "hat",
+   "sticker_gaming": "gameon",
+   "sticker_graduation": "smart",
+   "sticker_guitar": "toocool",
+   "sticker_house": "home",
+   "sticker_independence": "independence",
+   "sticker_lightbulb": "magnets",
+   "sticker_love": "love",
+   "sticker_microwave": "clock",
+   "sticker_music": "tunes",
+   "sticker_plant": "plants",
+   "sticker_plushToys": "fuzzy",
+   "sticker_returningHome": "cooking",
+   "sticker_roleplaying": "fellowship",
+   "sticker_skeleton": "hazard",
+   "sticker_star": "beginning",
+   "sticker_toilet": "flush",
+   "sticker_undies": "tidy"
+  },
+  "shape": "got"
+ },
  "vanquish.html": {
   "appid": 460810,
   "key": "vanquish-checklist-v1",

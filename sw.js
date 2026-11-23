@@ -1,5 +1,5 @@
 // Bump CACHE (a version like 1.3.0) whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v1.4.15";
+const CACHE = "checklists-v1.4.16";
 const FILES = [
   "./",
   "manifest.json",
@@ -60,7 +60,22 @@ const FILES = [
   "img/guides/borderlands-1/borderlands-1-base-map-treachers-landing-boat.webp",
   "img/guides/borderlands-1/borderlands-1-ned-map-jakobs-cove.webp",
   "img/guides/borderlands-1/borderlands-1-ned-map-tk-baha.webp",
-  "img/cards/mouse-pi-for-hire.webp"
+  "img/cards/mouse-pi-for-hire.webp",
+  "img/cards/unpacking.webp",
+  "img/guides/unpacking/unpacking-1997-music-player.webp",
+  "img/guides/unpacking/unpacking-1997-rubiks-cube.webp",
+  "img/guides/unpacking/unpacking-2004-cookie-jar.webp",
+  "img/guides/unpacking/unpacking-2004-mannequin.webp",
+  "img/guides/unpacking/unpacking-2004-toaster-in-tub.webp",
+  "img/guides/unpacking/unpacking-2007-console.webp",
+  "img/guides/unpacking/unpacking-2007-hat-on-mannequin.webp",
+  "img/guides/unpacking/unpacking-2010-coffee-equipment.webp",
+  "img/guides/unpacking/unpacking-2010-underwear-drawer.webp",
+  "img/guides/unpacking/unpacking-2012-unicorn-poster.webp",
+  "img/guides/unpacking/unpacking-2013-fridge-magnets.webp",
+  "img/guides/unpacking/unpacking-2013-microwave.webp",
+  "img/guides/unpacking/unpacking-2015-tiger-and-pig.webp",
+  "img/guides/unpacking/unpacking-2018-baby-blocks.webp"
 ];
 
 self.addEventListener("install", e => {

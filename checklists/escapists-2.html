@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.85, viewport-fit=cover">
+<meta name="theme-color" content="#130d0b">
+<title>The Escapists 2 100%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    /* ---- game palette: the only block that changes per game ---- */
+    --bg: #130d0b; --bg-2: #19110e; --card: #1f1613; --card-2: #2a1e1a; --ink: #f6efe8; --ink-soft: #c1b0a4;
+    --accent: #ff9a45; --accent-ink: #1c0d03; --gold: #ffd27a; --green: #a5d98e; --blue: #8fc6ff; --violet: #bfa6ff; --orange: #ff9a45; --warn: #ff8a8f;
+    --line: rgba(193, 176, 164, .2); --done-bg: rgba(165, 217, 142, .08);
+    --check-line: #5c4a40; --task-line: #3b2c25; --kbd-bg: #2a1e1a; --kbd-line: #4d3c33; --header-ink: #f2e8df; --desc-ink: #e6dcd3; --totop-bg: rgba(42, 30, 26, .92);
+    /* from the card: jumpsuit orange, circus red, haunted purple, the logo's ice cyan for the castle */
+    --c-base: var(--accent); --c-bigtop: #ff8a8f; --c-wicked: #bfa6ff; --c-dungeons: #8fd8e6;
+    /* ---- layout (do not change) ---- */
+    --nav-h: 0px; --sm: 116px;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 16px; line-height: 1.55;
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px)); -webkit-tap-highlight-color: transparent; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+  .cond, h2, .tab, .count, .tag, .run-badge { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; }
+  h3 { font-weight: 700; font-size: 1.07rem; line-height: 1.3; }
+  a { color: var(--gold); }
+  button { font: inherit; }
+
+  /* header */
+  header { position: relative; overflow: hidden; padding: calc(1.6rem + env(safe-area-inset-top, 0px)) 1rem 2.6rem; text-align: center; background: #000; }
+  .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: brightness(.38) saturate(.8); }
+  header::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.45), transparent 75%), linear-gradient(180deg, rgba(0,0,0,.2), transparent 40%, rgba(11,10,9,.7) 80%, var(--bg)); }
+  header > :not(.hero) { position: relative; z-index: 1; }
+  .logo { display: block; width: min(560px, 88vw); height: auto; margin: 0 auto; filter: drop-shadow(0 4px 14px #000); }
+  .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .eyebrow { margin-top: .9rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-size: .85rem; }
+  header p { max-width: 38rem; margin: .5rem auto 0; color: var(--header-ink); text-shadow: 0 1px 3px #000; font-size: .97rem; }
+
+  main { max-width: 56rem; margin: 0 auto; padding: 0 .75rem 3rem; }
+
+  /* tabs: top on wide screens, fixed bottom bar on phones */
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -.75rem; padding: 0 .75rem; border-bottom: 1px solid var(--line); }
+  .searchrow { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; }
+  .searchbox { position: relative; flex: 1; min-width: 0; }
+  .searchbox svg { position: absolute; left: .65rem; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--ink-soft); pointer-events: none; }
+  .topsearch { width: 100%; min-height: 42px; font: inherit; font-size: 16px; padding: .3rem 2.4rem .3rem 2.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); color: var(--ink); }
+  .topsearch::-webkit-search-cancel-button { display: none; }
+  .topsearch:focus { border-color: var(--accent); outline: none; }
+  .clear-search { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--ink-soft); font-size: 1.2rem; cursor: pointer; }
+  .search-count { flex: none; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 0; border-top: 1px solid var(--line); }
+  .totop { position: fixed; right: max(1rem, env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 19; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--totop-bg); color: var(--ink); display: grid; place-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .totop.show { opacity: 1; transform: none; pointer-events: auto; }
+  .totop svg { width: 20px; height: 20px; }
+  .tab { flex: 1; min-height: 48px; font-weight: 700; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: .45rem; padding: 0 .4rem; }
+  .tab svg { width: 20px; height: 20px; flex: none; }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .panel { margin: 1rem 0; padding: .85rem .9rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
+  .panel-top { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; flex-wrap: wrap; }
+  .panel-top h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .count { font-weight: 700; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+  .count small { font-family: "Source Sans 3", sans-serif; font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  .meter { margin-top: .45rem; height: 10px; background: #000; border: 1px solid var(--line); display: flex; overflow: hidden; }
+  .meter span { display: block; height: 100%; transition: width .4s ease; }
+  .legend { display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin-top: .35rem; font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .legend i { display: inline-block; width: .65rem; height: .65rem; margin-right: .3rem; vertical-align: -.05rem; }
+  .row-tools { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; }
+  .chip { min-height: 38px; font-weight: 600; font-size: .9rem; cursor: pointer; padding: .2rem .75rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip.reset { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .chip.reset.armed { background: var(--warn); color: var(--accent-ink); }
+  .select, .search { min-height: 38px; font: inherit; font-size: 16px; padding: .2rem .6rem; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .search { flex: 1 1 12rem; min-width: 0; }
+  .select { flex: 1 1 12rem; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+  .seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; flex-wrap: wrap; }
+  .seg button { min-height: 36px; font-size: .88rem; font-weight: 600; padding: .2rem .65rem; border: 0; background: var(--card-2); color: var(--ink-soft); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  details.settings { margin-top: .7rem; border-top: 1px solid var(--line); padding-top: .55rem; }
+  details.settings > summary { cursor: pointer; font-weight: 600; color: var(--ink-soft); font-size: .92rem; min-height: 32px; display: flex; align-items: center; }
+  .save-status { color: var(--ink-soft); font-size: .88rem; flex: 1 1 100%; }
+  button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, .spoil:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .jumps { display: flex; gap: .35rem; overflow-x: auto; margin: 0 -.75rem 1rem; padding: 0 .75rem .3rem; scrollbar-width: thin; }
+  .jump { flex: none; font-size: .88rem; font-weight: 600; color: var(--ink); text-decoration: none; padding: .35rem .65rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .jump span { color: var(--ink-soft); }
+
+  section.sheet { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .9rem .85rem .4rem; margin-bottom: 1.3rem; scroll-margin-top: var(--sm); }
+  .sheet-head { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; }
+  .sheet-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; line-height: 1.05; }
+  .sheet-head h2 small { display: block; font-size: .55em; letter-spacing: .16em; color: var(--accent); }
+  .sheet-head .sub { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .intro { margin: .3rem 0 .5rem; color: var(--ink-soft); font-size: .96rem; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  li.item { border-top: 1px solid var(--line); padding: .55rem 0; scroll-margin-top: var(--sm); }
+  li.item.hidden { display: none; }
+  .row { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: start; padding: .35rem .3rem; }
+  .row > div { min-width: 0; }
+  li.item.done > .row { background: var(--done-bg); }
+  .flash { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .check { appearance: none; -webkit-appearance: none; margin: 0; width: 30px; height: 30px; cursor: pointer; border: 2px solid var(--check-line); background: var(--bg-2); border-radius: 3px; display: grid; place-content: center; flex: none; }
+  .check.small { width: 24px; height: 24px; }
+  .check::before { content: ""; width: 17px; height: 17px; clip-path: polygon(14% 44%, 0 59%, 40% 100%, 100% 22%, 85% 8%, 39% 69%); background: #08130a; transform: scale(0); transition: transform .12s; }
+  .check.small::before { width: 13px; height: 13px; }
+  .check:checked { background: var(--green); border-color: var(--green); }
+  .check:checked::before { transform: scale(1); }
+  .check:indeterminate { border-color: var(--gold); }
+  .check:indeterminate::before { clip-path: none; height: 3px; width: 13px; background: var(--gold); transform: scale(1); }
+
+  .title-line { display: flex; align-items: center; gap: .25rem .45rem; flex-wrap: wrap; }
+  .title-line h3 { flex: 1 1 100%; }
+  .title-line h3 label { cursor: pointer; }
+  li.item.done .title-line h3 { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 0 .4rem; letter-spacing: .06em; text-transform: uppercase; border: 1px solid currentColor; line-height: 1.5; }
+  .tag.story { color: var(--blue); } .tag.missable { color: var(--warn); } .tag.collect { color: var(--green); } .tag.timed { color: var(--orange); }
+  .run-badge { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; padding: 0 .45rem; line-height: 1.55; background: var(--pc, var(--accent)); color: var(--accent-ink); text-decoration: none; }
+  .desc { margin: .15rem 0 0; color: var(--desc-ink); }
+
+  .steps { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .3rem; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: center; padding: .35rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); font-size: .94rem; min-height: 44px; }
+  .steps li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .steps li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .steps label { cursor: pointer; min-width: 0; }
+  .st-name { font-weight: 600; }
+  .st-desc { display: block; color: var(--ink-soft); font-size: .84rem; }
+  details.steps-wrap { margin-top: .5rem; }
+  details.steps-wrap > summary { cursor: pointer; font-weight: 600; color: var(--gold); font-size: .95rem; min-height: 36px; display: flex; align-items: center; }
+  .mini { min-height: 34px; font-size: .85rem; font-weight: 600; cursor: pointer; padding: .1rem .6rem; border: 1px solid var(--line); background: var(--card-2); color: var(--ink-soft); }
+  .step-tools { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .45rem; }
+
+  .counter { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .step-btn { font-weight: 700; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+  .count-input { font: inherit; font-size: 16px; font-weight: 700; width: 4.2rem; height: 42px; text-align: center; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink); }
+  .counter .of { color: var(--ink-soft); }
+  .summary-line { margin-top: .45rem; font-size: .93rem; font-weight: 600; color: var(--ink-soft); }
+  .summary-line b { color: var(--ink); }
+
+  .guide-btn { min-height: 36px; font-weight: 600; font-size: .93rem; margin-top: .25rem; cursor: pointer; background: none; border: none; padding: .1rem 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .guide { margin: .4rem 0 0; padding: .7rem .8rem; border-left: 2px solid var(--accent); background: var(--bg-2); font-size: .97rem; }
+  .guide > * + *, .prose > * + * { margin-top: .5rem; }
+  .guide p, .prose p { margin: 0; }
+  .guide h4, .prose h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-top: .8rem; }
+  .guide ul, .prose ul { margin: 0; padding-left: 1.1rem; }
+  .guide li + li, .prose li + li { margin-top: .3rem; }
+  .note { color: var(--ink-soft); font-style: italic; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .spoil { background: var(--kbd-line); color: transparent; border-radius: 2px; cursor: pointer; user-select: none; }
+  .spoil.shown, body.spoilers .spoil { background: transparent; color: inherit; user-select: auto; cursor: auto; }
+
+  kbd.b { display: inline-flex; align-items: center; justify-content: center; min-width: 1.45em; height: 1.45em; padding: 0 .3em; margin: 0 .05em; border-radius: 999px; font: 700 .78em/1 "Source Sans 3", sans-serif; vertical-align: .08em; background: var(--kbd-bg); color: var(--ink); border: 1px solid var(--kbd-line); }
+  kbd.b.sh { border-radius: 3px; }
+  kbd.ps-X { color: #8ab8ff; } kbd.ps-SQ { color: #f29ac8; } kbd.ps-O { color: #ff7676; } kbd.ps-TR { color: #5fd6aa; }
+  kbd.xb-X { color: #7bd67b; } kbd.xb-SQ { color: #6aa8ff; } kbd.xb-O { color: #ff7676; } kbd.xb-TR { color: #f4cf55; }
+
+  .tlinks { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+  .tlink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .15rem .5rem; border: 1px solid var(--line); color: var(--ink); background: var(--bg-2); }
+  .tlink.done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
+
+  /* runs */
+  .runmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr)); gap: .4rem; margin-bottom: 1rem; }
+  .runmap a { display: block; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: .45rem .55rem; }
+  .runmap a.full { background: var(--done-bg); }
+  .runmap b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.05rem; letter-spacing: .03em; }
+  .runmap span { font-size: .82rem; color: var(--ink-soft); }
+  .run { scroll-margin-top: var(--sm); }
+  .run .mode { font-family: "Barlow Condensed", sans-serif; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-size: .95rem; }
+  .run .tasks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .3rem; }
+  .run .tasks li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: center; padding: .4rem .5rem; background: var(--bg-2); border-left: 2px solid var(--task-line); min-height: 48px; }
+  .run .tasks li.got { border-left-color: var(--green); background: var(--done-bg); }
+  .run .tasks li.got .st-name { text-decoration: line-through; color: var(--ink-soft); }
+  .box { margin-top: .7rem; padding: .7rem .8rem; background: var(--bg-2); border: 1px solid var(--line); }
+  .box h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-size: 1rem; margin-bottom: .3rem; }
+  .box ul, .box ol { margin: .2rem 0 0; padding-left: 1.2rem; }
+  .box li + li { margin-top: .25rem; }
+  .ok { color: var(--green); font-weight: 700; } .no { color: var(--warn); font-weight: 700; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+
+  /* 100% guide */
+  .kinds { display: flex; gap: .35rem; flex-wrap: wrap; }
+  details.chapter { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); margin-bottom: .55rem; scroll-margin-top: var(--sm); }
+  details.chapter.full { border-left-color: var(--green); }
+  details.chapter > summary { list-style: none; cursor: pointer; padding: .7rem .8rem; display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; min-height: 56px; }
+  details.chapter > summary::-webkit-details-marker { display: none; }
+  .ch-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: .04em; text-transform: uppercase; }
+  .ch-count { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .15rem .7rem; font-size: .84rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .ch-meta .kd { color: var(--ink); font-weight: 600; }
+  .ch-body { padding: 0 .6rem .6rem; }
+  .ch-obj { font-size: .9rem; color: var(--ink-soft); margin: 0 0 .4rem; }
+  .sec-h { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin: .9rem 0 .35rem; padding-bottom: .2rem; border-bottom: 1px solid var(--line); }
+  .sec-note { font-size: .9rem; color: var(--ink-soft); font-style: italic; }
+  .ci { display: grid; grid-template-columns: auto 1fr; gap: .6rem; padding: .55rem .35rem; border-top: 1px solid var(--line); scroll-margin-top: var(--sm); }
+  .ci.got { background: var(--done-bg); }
+  .ci.got .ci-title { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+  .ci.hidden { display: none; }
+  .ci > div { min-width: 0; }
+  .ci-head { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; }
+  .kind { font-family: "Barlow Condensed", sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 0 .4rem; border: 1px solid currentColor; line-height: 1.5; color: var(--ink-soft); }
+  .ci-title { font-weight: 700; flex: 1 1 100%; }
+  .shot { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-top: .45rem; background: #000; border: 1px solid var(--line); cursor: zoom-in; }
+  .shot.zoom { max-width: none; cursor: zoom-out; }
+  .maplink { display: inline-block; margin-top: .3rem; font-size: .88rem; font-weight: 600; min-height: 30px; }
+  .ci ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .95rem; }
+  .ci li + li { margin-top: .2rem; }
+
+  .empty { text-align: center; color: var(--ink-soft); font-weight: 600; padding: .5rem 0 1rem; }
+  footer { text-align: center; padding: 0 1rem 2rem; font-size: .87rem; color: var(--ink-soft); max-width: 50rem; margin: 0 auto; }
+
+
+  /* ---- parts: every element with data-p takes its part colour ---- */
+  [data-p="base"] { --pc: var(--c-base); } [data-p="bigtop"] { --pc: var(--c-bigtop); } [data-p="wicked"] { --pc: var(--c-wicked); } [data-p="dungeons"] { --pc: var(--c-dungeons); }  
+  section.sheet, .runmap a { border-top-color: var(--pc, var(--accent)); }
+  .sheet-head h2 small { color: var(--pc, var(--accent)); }
+  .jump, details.chapter { border-left-color: var(--pc, var(--accent)); }
+  .guide { border-left-color: var(--pc, var(--accent)); }
+  .meter span { background: var(--pc, var(--accent)); }
+  .legend i { background: var(--pc, var(--accent)); }
+
+  /* header: title text shown only until a logo image is embedded */
+  .logo[src=""], .hero[src=""] { display: none; }
+  .logo:not([src=""]) ~ h1.title { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  h1.title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(2.2rem, 9vw, 3.6rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1; text-shadow: 0 3px 16px #000; }
+
+  /* 100% Guide item kinds and helpers */
+  .kind.k-ach { color: var(--warn); } .kind.k-story { color: var(--blue); } .kind.k-job { color: var(--gold); } .kind.k-escape { color: var(--green); } .kind.k-transport { color: var(--violet); }
+  .ci-loc { font-size: .85rem; color: var(--ink-soft); }
+  .ci-desc { margin-top: .3rem; font-size: .95rem; color: var(--desc-ink); }
+  .ci-desc > * + * { margin-top: .4rem; } .ci-desc p { margin: 0; }
+  .tablewrap { overflow-x: auto; margin-top: .4rem; }
+  .tablewrap table { min-width: 34rem; }
+  .guide table, .box table { font-size: .9rem; }
+  .guide .tablewrap table td:first-child { white-space: nowrap; }
+  details.more { margin-top: .7rem; background: var(--bg-2); border: 1px solid var(--line); }
+  details.more > summary { cursor: pointer; padding: .55rem .8rem; font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); min-height: 44px; display: flex; align-items: center; }
+  details.more > .prose { padding: 0 .8rem .8rem; }
+  .prose h4 { margin-top: .8rem; }
+  .prose table td, .guide table td { overflow-wrap: anywhere; }
+
+  @media (max-width: 699px) {
+    :root { --nav-h: 62px; --sm: 70px; }
+    .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 20; margin: 0; padding: 0 0 env(safe-area-inset-bottom, 0px); background: var(--bg); }
+    .totop { width: 38px; height: 38px; right: .75rem; bottom: calc(var(--nav-h) + .7rem + env(safe-area-inset-bottom, 0px)); }
+    .totop svg { width: 17px; height: 17px; }
+    .tab { flex-direction: column; gap: .1rem; font-size: .8rem; min-height: var(--nav-h); border-bottom: 0; border-top: 3px solid transparent; }
+    .tab[aria-selected="true"] { border-top-color: var(--accent); }
+  }
+  @media (min-width: 700px) {
+    main { padding: 0 1.2rem 3rem; }
+    .topbar { margin: 0 -1.2rem; padding: 0 1.2rem; }
+    section.sheet { padding: 1.1rem 1.2rem .5rem; }
+    .title-line h3 { flex: 0 1 auto; }
+    .ci-title { flex: 0 1 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter span, .check::before { transition: none; } }
+
+/* Filter buttons stretch to fill the row; text stays centred with equal padding either side */
+#view-ach .row-tools > .seg { flex: 1 1 auto; display: flex; }
+#view-ach .row-tools > .seg > button { flex: 1 1 auto; text-align: center; }
+#view-ach .row-tools > .chip, #view-ach .row-tools > .select { flex: 1 1 auto; text-align: center; }
+
+/* guide screenshots: full width, tap to enlarge; tables that hold screenshots stack as cards */
+img.shot { display: block; width: 100%; max-width: 560px; height: auto; aspect-ratio: auto; object-fit: contain; margin-top: .5rem; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+img.card { display: block; width: 64px; height: auto; border-radius: 4px; }
+.tablewrap.stack { overflow: visible; }
+.tablewrap.stack table, .tablewrap.stack tbody, .tablewrap.stack tr, .tablewrap.stack td { display: block; min-width: 0 !important; width: auto; }
+.tablewrap.stack thead { display: none; }
+.tablewrap.stack tr { border: 1px solid var(--line); background: var(--card); padding: .5rem .6rem; margin-bottom: .5rem; }
+.tablewrap.stack tr:has(th):not(:has(td)) { display: none; }
+.tablewrap.stack td { border: 0; padding: .2rem 0; white-space: normal !important; }
+.tablewrap.stack td:empty { display: none; }
+.tablewrap.stack td[data-label]::before { content: attr(data-label); display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.tablewrap.stack td img.shot { margin-top: .2rem; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .92); display: grid; place-items: center; padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* ---- phone tab bar: floating pill with a sliding highlight (iOS tab bar style) ---- */
+.tab-glow { display: none; }
+@media (max-width: 699px) {
+  :root { --nav-h: 70px; }
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px; gap: 0;
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05); isolation: isolate; }
+  .tab { position: relative; z-index: 1; min-height: 46px; border: 0; border-radius: 999px; gap: .05rem; padding: 0 .3rem;
+    font-family: "Source Sans 3", system-ui, sans-serif; font-weight: 600; font-size: .74rem; letter-spacing: .01em; line-height: 1.1; text-transform: none; color: var(--ink-soft); transition: color .25s; }
+  .tab svg { width: 19px; height: 19px; }
+  .tab[aria-selected="true"] { color: var(--ink); border: 0; }
+  .tab[aria-selected="true"] svg { color: var(--accent); }
+  .tab:active { transform: scale(.96); }
+  .tab-glow { display: block; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1); }
+  .totop { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)); }
+  /* the hub only lifts its "All games" pill over bars touching the bottom edge; this bar floats, so place the pill above it */
+  .hub-back { bottom: calc(var(--nav-h) + .6rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 699px) {
+  /* drag the highlight along the bar; it snaps to the nearest tab on release */
+  .tabs { touch-action: none; -webkit-user-select: none; user-select: none; }
+  .tabs.ready .tab-glow { transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), scale .2s ease, background-color .2s ease; }
+  .tabs.dragging .tab-glow { transition: scale .2s ease, background-color .2s ease; scale: 1.06 1.12; background: rgba(255, 255, 255, .15); }
+  .tabs.dragging .tab:active { transform: none; }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) { color: var(--ink-soft); }
+  .tabs.dragging .tab[aria-selected="true"]:not(.near) svg { color: inherit; }
+  .tabs.dragging .tab.near { color: var(--ink); }
+  .tabs.dragging .tab.near svg { color: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) { .tabs.ready .tab-glow, .tabs.dragging .tab-glow { transition: none; scale: none; } .tab:active { transform: none; } }
+
+/* spoilers: story text sits behind a bar until tapped; "Show all spoilers" in the settings reveals everything */
+.spoil { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body:not(.spoilers) .spoil:not(.shown) * { visibility: hidden; }
+div.spoil { display: block; border-radius: 4px; }
+body:not(.spoilers) div.spoil:not(.shown) { position: relative; max-height: 3rem; overflow: hidden; }
+body:not(.spoilers) div.spoil:not(.shown)::before { content: "Story spoiler · tap to reveal"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); font-size: .9rem; font-weight: 600; }
+
+
+</style>
+<!-- hub:head -->
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<style>
+.hub-back{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px + var(--hub-lift,0px));z-index:2147483000;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(14,16,22,.85);color:#fff!important;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 10px rgba(0,0,0,.35);font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent}
+.hub-back:hover{background:rgba(30,34,44,.95)}
+.hub-back:focus-visible{outline:3px solid #7cc4ff;outline-offset:2px}
+.hub-spacer{height:60px}
+@media print{.hub-back,.hub-spacer{display:none}}
+</style>
+<!-- /hub:head -->
+</head>
+<body>
+<header>
+  <img class="hero" src="../img/banners/escapists-2.webp" alt="" width="1600" height="516" onerror="this.onerror=null;this.setAttribute('src','')">
+  <img class="logo" src="../img/logos/escapists-2.webp" alt="The Escapists 2" width="800" height="300" onerror="this.onerror=null;this.setAttribute('src','')">
+  <h1 class="title">The Escapists 2</h1>
+  <div class="eyebrow">Steam · 100% checklist</div>
+  <p>All 58 achievements for the base game and the three DLC prisons with achievements (Big Top Breakout, Wicked Ward and Dungeons and Duct Tape), an eight-run plan from a blind first escape to online Versus, and a 100% guide by prison with every unique escape, the 12 job quotas and the transport escapes. Progress saves in this browser.</p>
+</header>
+
+<main>
+  <div class="topbar">
+  <div class="searchrow" role="search">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" class="topsearch" id="search" placeholder="Search achievements" aria-label="Search achievements" autocomplete="off" enterkeyhint="search">
+      <button class="clear-search" id="clear-search" aria-label="Clear search" hidden>×</button>
+    </div>
+    <span class="search-count" id="search-count" aria-live="polite"></span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections"><span class="tab-glow" aria-hidden="true"></span>
+    <button class="tab" role="tab" id="tab-ach" data-tab="ach" aria-controls="view-ach" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Achievements</button>
+    <button class="tab" role="tab" id="tab-runs" data-tab="runs" aria-controls="view-runs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Playthroughs</button>
+    <button class="tab" role="tab" id="tab-coll" data-tab="coll" aria-controls="view-coll" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>100% Guide</button>
+  </nav>
+  </div>
+
+  <div class="panel" role="region" aria-label="Progress">
+    <div class="panel-top"><h2>Completion</h2><span class="count" id="count"></span></div>
+    <div class="meter" role="progressbar" aria-label="Achievement progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <details class="settings">
+      <summary>Save, back up and settings</summary>
+      <div class="row-tools">
+        <span class="save-status" id="save-status">Saved in this browser automatically. To move progress to your phone, Back up here and Restore there.</span>
+        <button class="chip" id="export">Back up</button>
+        <button class="chip" id="import">Restore</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <button class="chip" id="spoilers" aria-pressed="false">Show all spoilers</button>
+        <span class="seg" role="group" aria-label="Button prompts"><button data-pad="ps" aria-pressed="true">PlayStation</button><button data-pad="xb" aria-pressed="false">Xbox</button></span>
+        <button class="chip reset" id="reset" data-steam-reset>Reset to Steam data</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="view-ach" role="tabpanel" aria-labelledby="tab-ach"></div>
+  <div id="view-runs" role="tabpanel" aria-labelledby="tab-runs" hidden></div>
+  <div id="view-coll" role="tabpanel" aria-labelledby="tab-coll" hidden></div>
+</main>
+
+<footer>
+  Achievement names and descriptions from Steam (The Escapists 2, app 641990, 58 achievements; none ticked, as the Steam page was saved signed out). Strategies, routes and videos come from the PSNProfiles trophy guides for the base game and the three DLCs, and PC tips and job lists from a Steam community guide by Прими таблетки, linked in every section, reworded. The PlayStation platinum isn't part of the Steam list.
+</footer>
+<button class="totop" id="totop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function () {
+"use strict";
+const KEY = "escapists-2-checklist-v1";
+
+/* Game parts, in display order. Colours come from --c-<key> in the CSS. */
+const PARTS = [{"key": "base", "label": "The Escapists 2", "short": "Base"}, {"key": "bigtop", "label": "Big Top Breakout", "short": "Big Top"}, {"key": "wicked", "label": "Wicked Ward", "short": "Wicked Ward"}, {"key": "dungeons", "label": "Dungeons and Duct Tape", "short": "Dungeons"}];
+
+/* Achievement categories. Each achievement object starts id, name, desc, pct (Steam sync reads these). */
+const SECTIONS = [
+{ id: "escapes", game: "base", title: "Classic prison escapes", src: "https://psnprofiles.com/guide/6468-the-escapists-2-trophy-guide",
+  intro: "Seven Classic prisons, each with a perimeter escape and unique ones. Any escape counts for the prison's own achievement; I've Got A Cunning Plan wants a unique one in each. Every prison can be replayed from the menu, so nothing is missable.",
+  items: [
+  { id: "great", name: "The Great Escape", desc: "Escape all Classic prisons.", pct: 4.81, tags: ["story"], runs: ["r1", "r2"] },
+  { id: "cunning", name: "I've Got A Cunning Plan", desc: "Perform 7 unique escapes across the Classic prisons.", pct: 4.65, tags: [], runs: ["r2"] },
+  { id: "holiday", name: "Holiday Blues", desc: "Escape the Centre Perks 2.0 prison.", pct: 55.01, tags: ["story"], runs: ["r1"] },
+  { id: "forte", name: "Escaping Is My Forte", desc: "Escape the Rattlesnake Springs prison.", pct: 30.3, tags: ["story"], runs: ["r1"] },
+  { id: "camp", name: "A Camp Departure", desc: "Escape the K.A.P.O.W Camp prison.", pct: 17.09, tags: ["story"], runs: ["r1"] },
+  { id: "drying", name: "Drying Out", desc: "Escape the H.M.P Offshore prison.", pct: 10.26, tags: ["story"], runs: ["r1"] },
+  { id: "chilled", name: "Chilled Out", desc: "Escape the Fort Tundra prison.", pct: 8.26, tags: ["story"], runs: ["r1"] },
+  { id: "believe", name: "I want to Believe", desc: "Escape the Area 17 prison.", pct: 8.09, tags: ["story"], runs: ["r1"] },
+  { id: "pixel", name: "One Pixellated Step...", desc: "Escape the U.S.S Anomaly prison.", pct: 6.87, tags: ["story"], runs: ["r1"] },
+  { id: "snooty", name: "Call Of Snooty", desc: "Escape H.M.P. Offshore on Snooty the Dolphin.", pct: 3.9, tags: [], runs: ["r2"] }
+  ] },
+{ id: "transport", game: "base", title: "Transport prisons", src: "https://psnprofiles.com/guide/6468-the-escapists-2-trophy-guide",
+  intro: "Three short prisons on the move, each a quick solo escape.",
+  items: [
+  { id: "mobile", name: "The Mobile Escapist", desc: "Escape from all 3 of the base game transport prisons", pct: 11.26, tags: ["story"], runs: ["r1"] }
+  ] },
+{ id: "stats", game: "base", title: "Jobs, stats and crafting", src: "https://psnprofiles.com/guide/6468-the-escapists-2-trophy-guide",
+  intro: "Stats must be maxed within one prison. Jobs count across prisons, so fill each quota where it's easiest.",
+  items: [
+  { id: "crook", name: "Crook Of All Trades", desc: "Complete the quota once for each of the jobs over multiple prisons/sessions.", pct: 2.46, tags: [], runs: ["r2"] },
+  { id: "statistician", name: "Statistician", desc: "Max out all 3 character statistics.", pct: 28.72, tags: [], runs: ["r2"] },
+  { id: "mastermind", name: "Criminal Mastermind", desc: "Max out the Intellect statistic.", pct: 34.18, tags: [], runs: ["r2"] },
+  { id: "ripped", name: "Ripped on the Inside", desc: "Max out the Strength statistic.", pct: 45.6, tags: [], runs: ["r2"] },
+  { id: "olympian", name: "The Olympian", desc: "Max out the Fitness statistic.", pct: 44.32, tags: [], runs: ["r2"] },
+  { id: "artisan", name: "Artisan", desc: "Craft 50 unique items.", pct: 6.02, tags: [], runs: ["r3"] },
+  { id: "dodger", name: "Artful Dodger", desc: "Craft an item.", pct: 71.0, tags: [], runs: ["r1"] }
+  ] },
+{ id: "life", game: "base", title: "Prison life", src: "https://psnprofiles.com/guide/6468-the-escapists-2-trophy-guide",
+  intro: "Odd jobs and long grinds. Most come on their own; the time-based ones are best left running in a quiet prison.",
+  items: [
+  { id: "drlove", name: "Dr. Love", desc: "Get whisked away by a hunky medic.", pct: 85.82, tags: [], runs: ["r1"] },
+  { id: "worstfriend", name: "Man's Worst Friend", desc: "Get mauled by a guard dog.", pct: 74.05, tags: [], runs: ["r1"] },
+  { id: "bestfriend", name: "Man's Best Friend", desc: "Gain a high enough opinion from a dog.", pct: 5.81, tags: [], runs: ["r2"] },
+  { id: "nakedlunch", name: "Naked Lunch", desc: "Attend dinner whilst being naked.", pct: 17.5, tags: [], runs: ["r3"] },
+  { id: "nakedchef", name: "The Naked Chef", desc: "Complete a quota of the Kitchen job whilst being naked.", pct: 3.34, tags: [], runs: ["r2"] },
+  { id: "tea", name: "Pour Us A Brew Will Yer, Love?", desc: "Make a cup of tea and gift it to another inmate or guard.", pct: 7.53, tags: [], runs: ["r3"] },
+  { id: "cake", name: "The Cake Is A Lie?", desc: "Attack a guard with a cake.", pct: 5.01, tags: [], runs: ["r2"] },
+  { id: "music", name: "Music Maestro", desc: "Play on the instruments for 1 hour of in-game time.", pct: 20.71, tags: [], runs: ["r3"] },
+  { id: "tag", name: "Keep It Clean!", desc: "Tag 200 places throughout any prison.", pct: 10.35, tags: [], runs: ["r3"] },
+  { id: "allmod", name: "All Mod Cons", desc: "Use a customised character in-game.", pct: 67.6, tags: [], runs: ["r1"] },
+  { id: "daddy", name: "I'm The Daddy", desc: "Knock out every inmate at least once in a single prison.", pct: 5.22, tags: [], runs: ["r3"] },
+  { id: "bad100", name: "Bad Intentions", desc: "Knock out 100 inmates.", pct: 5.92, tags: [], runs: ["r3"] },
+  { id: "bad50", name: "Bad Intentions Part 2", desc: "Knock out 50 guards.", pct: 17.63, tags: [], runs: ["r3"] },
+  { id: "favours", name: "Tell Me What's Your Favour", desc: "Complete 100 favours.", pct: 6.45, tags: [], runs: ["r3"] },
+  { id: "good", name: "Good Intentions", desc: "Go 3 consecutive days without raising your Guard Heat above 0 in a single session.", pct: 3.54, tags: [], runs: ["r3"] },
+  { id: "lonesome", name: "Are You Lonesome Tonight?", desc: "Spend 3 days total time in solitary over multiple prisons/sessions.", pct: 5.21, tags: [], runs: ["r3"] },
+  { id: "soap", name: "Soap On A Rope", desc: "Spend 3 days total time in the showers over multiple prisons/sessions.", pct: 2.88, tags: [], runs: ["r3"] }
+  ] },
+{ id: "multi", game: "base", title: "Multiplayer", src: "https://psnprofiles.com/guide/6468-the-escapists-2-trophy-guide",
+  intro: "The local ones work with a second controller in split screen. The online three need other players in Classic and Versus matchmaking.",
+  items: [
+  { id: "tome", name: "To Me, To You", desc: "Enter a multiplayer only area.", pct: 52.8, tags: [], runs: ["r7"] },
+  { id: "father", name: "I Am Your Father...", desc: "Fight another player in the U.S.S Anomaly, when you are both armed with energy swords.", pct: 2.56, tags: [], runs: ["r7"] },
+  { id: "openprison", name: "Open Prison", desc: "Play a Classic Game Online.", pct: 59.36, tags: [], runs: ["r8"] },
+  { id: "riot", name: "Riot Act", desc: "Play a Versus Game Online.", pct: 15.95, tags: [], runs: ["r8"] },
+  { id: "enforcer", name: "Online Enforcer", desc: "Win 10 Online Versus Games.", pct: 2.62, tags: [], runs: ["r8"] }
+  ] },
+{ id: "bigtop", game: "bigtop", title: "Big Top Breakout", src: "https://psnprofiles.com/guide/7123-the-escapists-2-big-top-breakout-dlc-trophy-guide",
+  intro: "A circus prison: a cannon escape, a co-op elephant ride and two favours.",
+  items: [
+  { id: "bt_escape", name: "Are You Not Entertained?!", desc: "Escape Big Top Breakout by any means.", pct: 15.27, tags: ["story"], runs: ["r4"] },
+  { id: "bt_solo", name: "It’s A Long Shot", desc: "Complete the unique single player escape.", pct: 9.18, tags: [], runs: ["r4"] },
+  { id: "bt_multi", name: "Wind Up Merchant", desc: "Complete the unique multiplayer escape.", pct: 11.81, tags: [], runs: ["r7"] },
+  { id: "bt_mirrors", name: "It’s An Illusion, Not A Trick", desc: "Complete the ‘Smoke and Mirrors’ Quest.", pct: 8.04, tags: [], runs: ["r4"] },
+  { id: "bt_laughing", name: "Clowning Around", desc: "Complete the ‘No Laughing Matter’ quest.", pct: 6.41, tags: [], runs: ["r4"] },
+  { id: "bt_stage", name: "Stage Fright", desc: "Avoid going to the Show Time routine for 3 days in a row.", pct: 7.15, tags: [], runs: ["r4"] }
+  ] },
+{ id: "wicked", game: "wicked", title: "Wicked Ward", src: "https://psnprofiles.com/guide/7334-the-escapists-2-wicked-ward-dlc-trophy-guide",
+  intro: "A haunted asylum: a coffin escape, a co-op monster, two random favours and the ghost.",
+  items: [
+  { id: "ww_escape", name: "Scared Stiff", desc: "Escape Wicked Ward by any means.", pct: 12.41, tags: ["story"], runs: ["r5"] },
+  { id: "ww_solo", name: "A Grave Affair", desc: "Complete the unique single player escape.", pct: 7.16, tags: [], runs: ["r5"] },
+  { id: "ww_multi", name: "Monster Mash", desc: "Complete the unique multiplayer escape.", pct: 9.94, tags: [], runs: ["r7"] },
+  { id: "ww_coffin", name: "Coffin Dodger", desc: "Complete the ‘What it does in the shadows…’ quest.", pct: 5.29, tags: [], runs: ["r5"] },
+  { id: "ww_bump", name: "Almost Haunted", desc: "Complete the ‘Bump in the night’ quest.", pct: 5.83, tags: [], runs: ["r5"] },
+  { id: "ww_ghost", name: "I ain’t afraid of no Ghost", desc: "Witness the ghost perform an otherworldly feat…", pct: 15.97, tags: [], runs: ["r5"] }
+  ] },
+{ id: "dungeons", game: "dungeons", title: "Dungeons and Duct Tape", src: "https://psnprofiles.com/guide/26265-the-escapists-2-dungeons-and-duct-tape-dlc-trophy-guide",
+  intro: "A castle prison: a suit of armour, a co-op catapult, two random favours and a golden toilet.",
+  items: [
+  { id: "dd_escape", name: "Oh What A Knight!", desc: "Escape Dungeons and Duct Tape by any means.", pct: 15.28, tags: ["story"], runs: ["r6"] },
+  { id: "dd_solo", name: "‘Tis But A Scratch", desc: "Complete the unique single player escape.", pct: 7.19, tags: [], runs: ["r6"] },
+  { id: "dd_multi", name: "Siege The Day", desc: "Complete the unique multiplayer escape.", pct: 12.4, tags: [], runs: ["r7"] },
+  { id: "dd_museum", name: "Yo Dawg, I heard you like Exhibits", desc: "Complete the ‘It Belongs In A Museum’ quest.", pct: 6.16, tags: [], runs: ["r6"] },
+  { id: "dd_grateful", name: "To Antiquity And Beyond", desc: "Complete the ‘Eternally Grateful’ Quest.", pct: 5.95, tags: [], runs: ["r6"] },
+  { id: "dd_throne", name: "Royal Flush", desc: "Use the Royal throne.", pct: 7.58, tags: [], runs: ["r6"] }
+  ] }
+];
+
+/* Achievements already unlocked on Steam when this was made: ticked in a fresh save. */
+const PRE = [];
+
+/* Guide text per achievement (HTML; [X] style tokens become button glyphs). */
+const GUIDES = {"great": "<p>Escape all seven Classic prisons by any method. Comes with I've Got A Cunning Plan if you do the unique escapes.</p>", "cunning": "<p>One unique escape in each of the seven Classic prisons (not the standard perimeter escapes). Solo or co-op unique escapes both count. The solo route for every prison is in the 100% Guide, prison by prison; ticking all seven ticks this.</p>", "holiday": "<p>Escape Centre Perks 2.0 by any method. Unique solo route (Meet The Crew): Intellect 50, follow the film crew to their room and take a civilian outfit and a radio receiver, craft fake audio equipment from a broom and duct tape, then wear both and walk out of the north-east entrance. Mind the cameras by the door. <a href=\"https://www.youtube.com/watch?v=mqHvdXmS9Ds\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "forte": "<p>Escape Rattlesnake Springs by any method. Unique solo route (Zip It Up): Intellect 70; gather 2 timber, a bolt, string, 2 tubes of glue and a dowel (rare: buy one if desks don't have it), craft the crossbow lathe, body and crossbow. Copy the red key from a guard, go through the north red double doors and climb to the top to the noose. <a href=\"https://www.youtube.com/watch?v=rDskN2VDwKQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "camp": "<p>Escape K.A.P.O.W. Camp by any method. Unique solo route (Speedy McQueen): Intellect 40; 3 tins of paint, a screwdriver, a can of soda and a sugar mint (often on guards). Craft a makeshift ladder and a makeshift rocket thruster. In the small room before the bike room (south), climb to the vent, unscrew it, crawl through, drop down and put the thruster on the bike. <a href=\"https://www.youtube.com/watch?v=G7AehBMNg7M\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "drying": "<p>Escape H.M.P. Offshore by any method. Do it with Snooty the dolphin: that's Call Of Snooty, and The Cake Is A Lie? on the way. Route in Call Of Snooty.</p>", "chilled": "<p>Escape Fort Tundra by any method. The unique solo route (Rock Hammer Hard Place) is the longest:</p><ul><li>Find the inmate with the Rock Hammer Hard Place favour (often Sasha). It's 8 parts and ends with the hammer. If a part wants a book from a riot guard, restart or craft a makeshift stun gun.</li><li>Collect a guard uniform, the yellow and purple keys, lightweight cutters and a bed dummy.</li><li>After the last roll call put the dummy in your bed, wait for lights out, then go to the sewer manhole under the statue in the middle of the map.</li><li>Break it with the hammer, climb down, cut the north fence, then the west fence, and climb out. Be quick: dogs come once the hole is spotted.</li></ul><p><a href=\"https://www.youtube.com/watch?v=TphoPe4DDhk\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "believe": "<p>Escape Area 17 by any method. Unique solo route (I'm Only Human…): Intellect 60, copy the cyan and red keys, and take a blank security pass from a guard. Combine it with a jar of ink and a feather. Civilian clothes are in the desk of the maintenance room (middle of the ground floor). Wear both and go into the security room in the south-west corner. <a href=\"https://www.youtube.com/watch?v=sKfTdPfTlPM\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "pixel": "<p>Escape the U.S.S. Anomaly by any method. Unique solo route (Race From Space): Intellect 60, copy the red key and take a guard uniform. Through the double doors north-east of the cells, then the red door: the jetpack is in the contraband chest. Carry only the jetpack and uniform (contraband detectors) to the warden's office west of the cells and use the gravity control. <a href=\"https://www.youtube.com/watch?v=9GCRymmzw0s\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "snooty": "<p>H.M.P. Offshore, Swimming With Dolphins:</p><ol><li>Intellect 70. Craft a fishing pole (timber, string, paper clip) and add a worm (desks, but usually from a guard).</li><li>Make a plastic copy of the red key.</li><li>Take the west stairs (past the red door) to the bottom floor and head south to Snooty.</li><li>Fish through the gap in the fence above him and give him the fish. Follow his favours until you've made a cake.</li><li>Hold the cake (don't eat it) and punch a guard with it: The Cake Is A Lie?.</li><li>Finish the favours, give Snooty the cake and ride out.</li></ol><p><a href=\"https://www.youtube.com/watch?v=XxvJxl9eqh4\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "mobile": "<p>Escape all three transport prisons: Cougar Creek Railroad, H.M.S. Orca and Air Force Con. Each has a short solo route; all three are in the 100% Guide with the escape point.</p>", "crook": "<p>Fill a quota once in each of the 12 jobs (counts across prisons and sessions). Take jobs at the job board during job time; some need Intellect or Strength. If someone already has the job you want, talk to them through job time so they miss it, or knock them out, and they're fired. The 100% Guide lists one prison for each job.</p>", "statistician": "<p>Max Strength, Fitness and Intellect to 100 in the same prison. Gym equipment raises Strength and Fitness, books raise Intellect. Watch your energy.</p>", "mastermind": "<p>Intellect to 100: read books at the bookshelves (usually the social room or library).</p>", "ripped": "<p>Strength to 100 on the gym equipment.</p>", "olympian": "<p>Fitness to 100 on the gym equipment.</p>", "artisan": "<p>Craft 50 different items. Escapes and jobs get you most of the way; finish in Centre Perks 2.0, where desks are plentiful and security is low. Higher Intellect opens more recipes.</p>", "dodger": "<p>Craft anything.</p>", "drlove": "<p>Let your health hit 0; a medic carries you off.</p>", "worstfriend": "<p>Get attacked by a guard dog. Dogs appear at 2 stars of heat: miss routines, or steal a guard's key and wait.</p>", "bestfriend": "<p>Fill a Kennel job quota (H.M.P. Offshore or Fort Tundra, Intellect 40): feed all the dogs.</p>", "nakedlunch": "<p>Take off your prison outfit before dinner, walk in and pick up a plate. <a href=\"https://www.youtube.com/watch?v=YUy1KUMKce0\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "nakedchef": "<p>Get the Kitchen job (K.A.P.O.W. Camp or U.S.S. Anomaly, Intellect 40), undress at the kitchen door at job time and fill the quota (4 pies). <a href=\"https://www.youtube.com/watch?v=bKc6k5yLnww\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "tea": "<p>Craft a cup of tea (mug, tea bag, sugar cube) and give it to an inmate or guard through the gift menu.</p>", "cake": "<p>Hit a guard with a cake. Easiest during Snooty's favours in H.M.P. Offshore; otherwise craft one from flour, milk and sugar (Intellect 60). <a href=\"https://www.youtube.com/watch?v=bTlvLRcQ3m0\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "music": "<p>Play an instrument for 1 in-game hour, then walk away. Centre Perks 2.0 has them in the far south-east room on the ground floor. <a href=\"https://www.youtube.com/watch?v=SIo-FunmnWs\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p><img data-img=\"s_music\" alt=\"Instruments in Centre Perks 2.0\">", "tag": "<p>Tag 200 spots: [L3] on a controller, T on keyboard. Just mash it while walking.</p>", "allmod": "<p>Customise a character under My Characters, then play any prison with it.</p>", "daddy": "<p>Knock out every inmate at least once in one prison. Area 17 has only four: Ladrar, Pluto, Xerloog and Snoop Zogg.</p>", "bad100": "<p>100 inmate knockouts in total. Favours give plenty; finish in Centre Perks 2.0 with a weapon.</p>", "bad50": "<p>50 guard knockouts in total. Lock on, charge attacks and block; it adds up across prisons.</p>", "favours": "<p>Complete 100 favours (exclamation mark over an inmate). The prisons get you close; finish in Centre Perks 2.0.</p>", "good": "<p>Three days in a row with Guard Heat at 0, in one session. The reliable way, which also gets Are You Lonesome Tonight?: start K.A.P.O.W. Camp and surrender straight away (the Steam guide's keyboard route is F4 then F1). In solitary, surrender again whenever the timer runs low so it keeps growing. Keep it up until the morning of day 4 and attend roll call.</p>", "lonesome": "<p>3 in-game days (72 real minutes) in solitary in total. Comes with Good Intentions using the surrender loop.</p>", "soap": "<p>3 in-game days (72 real minutes) standing in the showers in total. No shortcut: stand there whenever you're idle, and leave the game running there.</p>", "tome": "<p>Enter a multiplayer-only area: the big brown doors in every prison. One player holds the door open by tapping [L2] and [R2]; the other crawls through and presses the button inside. A second controller in split screen works.</p><img data-img=\"s_coopdoor\" alt=\"Crawling through a multiplayer passage\">", "father": "<p>In the U.S.S. Anomaly with a second player: Intellect 70, collect 4 batteries (guards only), 4 wires and 2 broom handles. Craft 2 energy modules, then 2 energy swords. Both equip one and one hits the other. <a href=\"https://www.youtube.com/watch?v=9sWcdfc_PVQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>", "openprison": "<p>Play any Classic prison (not the tutorial) online: Find Games, or a friend's invite.</p>", "riot": "<p>Join any online Versus game.</p>", "enforcer": "<p>Win 10 online Versus games: escape first. Transport prisons are the fastest; a friend who lets you win makes it simple.</p>", "bt_escape": "<p>Escape by any method. Comes with It's A Long Shot or Wind Up Merchant.</p>", "bt_solo": "<p>The cannon escape:</p><ol><li>Intellect 60 (library, right of the Show Time tent).</li><li>Get a crowbar (desks, or buy one) and fix the cannon.</li><li>Makeshift Launcher: 2 springs and 1 timber. Springs are in two special desks: left of Nero's room (up his ladder, left, down the ladder) and up the ladder in the middle of the Show Time tent's second floor. Put it in the cannon.</li><li>Makeshift Helmet: coconut, hammer and duct tape. Use it on the cannon and fire.</li></ol>", "bt_multi": "<p>Two players (gather solo, then add a second controller):</p><ol><li>Intellect 70. 2 circuit boards (guard desks or inmates) and 2 wires.</li><li>Fake cyan and red key cards: key card from a guard + circuit board + wire makes a mould; molten plastic (lighter + comb or toothbrush) + mould makes the fake.</li><li>Enclosure keys: in the co-op area right of the library (one holds the door).</li><li>Chattering teeth: up the ladder in the hut right of the dinner hall, across the plank, red key card panel. The other player presses the button inside to let you out.</li><li>Wind-up mouse: teeth, handkerchief and string.</li><li>Animal room bottom-left: open the gates with the keys, cyan card on the left panel, mouse on the elephant, ride out.</li></ol>", "bt_mirrors": "<p>Nero's three-part 'Smoke and Mirrors' favour (he's at the top of the map):</p><ol><li>Take his bed dummy from the desk mid-way along the Show Time tent's second floor and flush it.</li><li>2 paper mâché and a jar of ink from marked cells; craft a fake wall block (Intellect 40) for him.</li><li>2 timber and duct tape from marked cells; craft a baseball bat and beat up The Fantastic Mac indoors (outside, the snipers shoot you).</li></ol><img data-img=\"s_nero\" alt=\"Map with Nero's location circled\">", "bt_laughing": "<p>'No Laughing Matter' comes from a random inmate: decline favours until it appears.</p><ol><li>Deliver the letter.</li><li>Take the bow tie from a guard desk (pinned on the map) and return it.</li><li>2 files and duct tape from marked desks; craft flimsy cutters (Intellect 40) and hand them over.</li></ol>", "bt_stage": "<p>Skip Show Time (18:00 to 19:00) three days in a row.</p>", "ww_escape": "<p>Escape by any method. Comes with A Grave Affair.</p>", "ww_solo": "<p>Decline favours until an inmate offers 'My Zombie': 8 parts, ending with a special key. Some parts may send you to the lower floor with riot guards: a red key copy (Intellect 60) and a guard outfit cover it. Then go to the north-west building outside, the north-east room with the open coffin, and use the key.</p>", "ww_multi": "<p>Two players:</p><ol><li>Leg: desk in the multiplayer area, second floor north-east.</li><li>Arm: fake cyan key card and 2 infirmary outfits (bleach on inmate outfits); multiplayer area in the infirmary, first floor south-west.</li><li>Bolts: fake red key, warden's office (second floor, red door stairs on the west).</li><li>Lightning conductor (Intellect 60): weathervane (rare: desks early or buy one) and 2 wires.</li><li>In the professor's lab (south, first floor) assemble the monster through the multiplayer door. Place the conductor on the roof (red door above the lab), then flip the light switch in the lab.</li></ol>", "ww_coffin": "<p>Random favour 'What it does in the shadows…': aftershave, then a bed dummy (2 pillows and a sheet, Intellect 40), then a wooden stake behind a red door (key copy, Intellect 60).</p>", "ww_bump": "<p>Random favour 'Bump in the night': a family photo, a tin of paint, then an Escapists figurine (glue, molten plastic, readied paintbrush, Intellect 60) placed in the marked box. A part may send you to the guards' room: bring a red key copy and a guard outfit.</p>", "ww_ghost": "<p>Follow the wandering ghosts until one passes through a wall. Most just vanish; keep watching new ones. Reported as unreliable, so be patient.</p><img data-img=\"s_ghost\" alt=\"Route a ghost took through a wall\">", "dd_escape": "<p>Escape by any method. Comes with 'Tis But A Scratch; skip the perimeter breakout.</p>", "dd_solo": "<p>The armour escape:</p><ol><li>Intellect 70 (library, south of the first-floor cells) and Strength 90 (gym, north-east of the third floor).</li><li>Craft: sword (hammer, tool handle, molten metal); knight's helmet (sheet metal, feather, rivets); chest plate (2 sheet metal, rivets); greaves (leather strap, shoes, sheet metal); gauntlets (sheet metal, rivets, white gloves).</li><li>Shoes: grappling hook (head + rope) up from the first floor wall between the meal hall and the cell block, desk on the second floor. Molten metal: the Making Horseshoes job, or the 'It Belongs In A Museum' favour (using it there cancels the favour).</li><li>Place everything on the plinth on the fifth floor, east side.</li></ol>", "dd_multi": "<p>Two players. Intellect 70, then craft the catapult beam (2 timber, wooden peg), bucket (2 iron bars, leather strap), 2 half frames (timber, bracket, wooden peg) and a grappling hook. Make a fake red key card, open the red door south-east of the main block on the fourth floor, grapple up two floors: the counterweight is in the desk. Take every part through the multiplayer door on the third floor south-west, build the catapult and launch.</p>", "dd_museum": "<p>Random favour 'It Belongs In A Museum': deliver a letter to a guard; beat up an inmate and flush his toothbrush shiv; craft a makeshift halberd (broom handle, molten metal, iron bar, Intellect 70) and beat up the marked inmate with it.</p>", "dd_grateful": "<p>Random favour 'Eternally Grateful': bring the marked book; take the stone tablet from the warden's office; take the plastic chalice from the marked inmate.</p><p>Three ways into the warden's office, pick whichever suits your stats and items:</p><ul><li><b>Red key copy</b> (Intellect 60).</li><li><b>Grappling hook</b> (grappling head + length of rope): from the fifth-floor balcony with the white arrow, climb to the sixth floor and go left. You need the hook for both escapes anyway.</li><li><b>Vents</b>: a screwdriver and cutters (Intellect 40 or more) get you in through the ventilation.</li></ul>", "dd_throne": "<p>Flush any item down the golden toilet in the warden's office. Do it while fetching the stone tablet.</p><p>Getting in: a red key copy (Intellect 60), the grappling hook from the fifth-floor balcony with the white arrow, or the vents with a screwdriver and cutters (Intellect 40 or more).</p>"};
+
+/* Playthroughs. */
+const RUNS = [{"id": "r1", "game": "base", "n": "Run 1", "title": "Blind first playthrough", "mode": "Tutorial, Classic and Transport prisons · solo", "summary": "Work through the prisons in order and escape however you work out. Every prison can be replayed, so nothing is lost by improvising. The escape, crafting and early prison-life achievements come on their own.", "tasks": [["Make a custom character and use it", "All Mod Cons"], ["Centre Perks 2.0", ""], ["Rattlesnake Springs", ""], ["K.A.P.O.W. Camp", ""], ["H.M.P. Offshore", ""], ["Fort Tundra", ""], ["Area 17", ""], ["U.S.S. Anomaly", "The Great Escape if all seven are out"], ["Cougar Creek Railroad, H.M.S. Orca, Air Force Con", "The Mobile Escapist"]]}, {"id": "r2", "game": "base", "n": "Run 2", "title": "Unique escapes and jobs", "mode": "Classic prisons again · solo", "summary": "Replay each Classic prison with the 100% Guide: fill the job quotas listed for it, then do its unique solo escape. Max all three stats in one of them, and ride Snooty out of Offshore.", "tasks": [["Each prison's jobs, then its unique escape", "Crook Of All Trades and I've Got A Cunning Plan"], ["All three stats to 100 in one prison", "Statistician"], ["Kennel and Kitchen (naked) quotas", "Man's Best Friend and The Naked Chef"], ["Snooty's favours and the cake punch in Offshore", "Call Of Snooty and The Cake Is A Lie?"]], "body": [{"box": "schedules"}]}, {"id": "r3", "game": "base", "n": "Run 3", "title": "Prison-life grinds", "mode": "K.A.P.O.W. Camp, Centre Perks 2.0, Area 17", "summary": "The counters and timers. Do the solitary loop in K.A.P.O.W. Camp, then settle into Centre Perks 2.0 for favours, knockouts, crafting and the showers. Area 17 for the four-inmate knockout.", "tasks": [["Surrender loop until day 4", "Good Intentions and Are You Lonesome Tonight?"], ["72 minutes in the showers", "Soap On A Rope"], ["Favours to 100, inmates to 100, guards to 50", ""], ["50 unique crafts", "Artisan"], ["Tag 200 spots, play music for an hour, tea, naked dinner", ""], ["Knock out all four in Area 17", "I'm The Daddy"]]}, {"id": "r4", "game": "bigtop", "n": "Run 4", "title": "Big Top Breakout", "mode": "DLC prison · solo", "summary": "Both favours first for the money, skip Show Time three evenings running, then the cannon. Gather the co-op parts too if you like, for Run 7.", "tasks": [["'Smoke and Mirrors' from Nero", "It's An Illusion, Not A Trick"], ["Decline favours until 'No Laughing Matter'", "Clowning Around"], ["Skip Show Time 3 days running", "Stage Fright"], ["The cannon", "It's A Long Shot"]]}, {"id": "r5", "game": "wicked", "n": "Run 5", "title": "Wicked Ward", "mode": "DLC prison · solo", "summary": "Decline favours until the three you need turn up, and follow every ghost you see.", "tasks": [["'What it does in the shadows…'", "Coffin Dodger"], ["'Bump in the night'", "Almost Haunted"], ["A ghost through a wall", "I ain't afraid of no Ghost"], ["'My Zombie', then the coffin", "A Grave Affair"]]}, {"id": "r6", "game": "dungeons", "n": "Run 6", "title": "Dungeons and Duct Tape", "mode": "DLC prison · solo", "summary": "Build the grappling hook early: it reaches the shoes, the warden's office and the golden toilet. Use the museum favour's molten metal only after finishing that favour.", "tasks": [["'It Belongs In A Museum'", "Yo Dawg, I heard you like Exhibits"], ["'Eternally Grateful' and the throne", "To Antiquity And Beyond and Royal Flush"], ["Armour on the plinth", "'Tis But A Scratch"]]}, {"id": "r7", "game": "base", "n": "Run 7", "title": "Local co-op", "mode": "Split screen · second controller", "summary": "Gather everything solo, then add a second controller for the co-op doors and the escape itself. A friend online or Remote Play Together works too.", "tasks": [["Any multiplayer door", "To Me, To You"], ["Energy swords in the U.S.S. Anomaly", "I Am Your Father..."], ["Elephant ride", "Wind Up Merchant"], ["Monster", "Monster Mash"], ["Catapult", "Siege The Day"]]}, {"id": "r8", "game": "base", "n": "Run 8", "title": "Online", "mode": "Online matchmaking", "summary": "Needs other players online. A friend makes Online Enforcer quick: pick a transport prison and race out.", "tasks": [["Online Classic game", "Open Prison"], ["Online Versus game", "Riot Act"], ["10 Versus wins", "Online Enforcer"]]}];
+
+/* Reference boxes. */
+const BOXES = {"schedules": {"title": "Daily schedules", "html": "<p>The order of each Classic prison's daily routines, from the Steam guide. Missing a routine raises your heat, so plan crafting and escapes around the free time and lights out.</p><ul><li><b>Centre Perks 2.0:</b> roll call, breakfast, free time, lunch, job, exercise, shower, dinner, free time, roll call.</li><li><b>Rattlesnake Springs:</b> roll call, breakfast, job, exercise, free time, lunch, roll call, job, shower, dinner, free time, roll call.</li><li><b>K.A.P.O.W. Camp:</b> roll call, breakfast, job, exercise, free time, dinner, job, shower, free time, roll call.</li><li><b>H.M.P. Offshore:</b> roll call, breakfast, job, free time, exercise, lunch, shower, job, free time, roll call.</li><li><b>Fort Tundra:</b> roll call, exercise, breakfast, job, roll call, exercise, shower, free time, dinner, job, roll call.</li><li><b>Area 17:</b> roll call, shower, job, free time, exercise, roll call, breakfast, shower, job, free time, shower, roll call.</li><li><b>U.S.S. Anomaly:</b> roll call, breakfast, free time, job, free time, exercise, lunch, roll call, free time, job, dinner, shower, roll call, free time.</li></ul>"}};
+
+/* 100% Guide chapters: one per prison. */
+const COLL = [{"key": "cp", "game": "base", "title": "Centre Perks 2.0", "obj": "The easiest prison: the place to finish favours, knockouts and crafting.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "holiday", "note": "Any escape."}, {"k": "ach", "ach": "music", "note": "Instruments in the far south-east room, ground floor."}]}, {"title": "Jobs", "items": [{"key": "job_waste", "k": "job", "title": "Waste Disposal", "loc": "Available from the start."}]}, {"title": "Unique escape", "items": [{"key": "esc_cp", "k": "escape", "title": "Meet The Crew", "loc": "Intellect 50. Civilian outfit and radio receiver from the film crew's room; fake audio equipment from a broom and duct tape; out of the north-east entrance.", "html": "<p><a href=\"https://www.youtube.com/watch?v=mqHvdXmS9Ds\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "rs", "game": "base", "title": "Rattlesnake Springs", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "forte", "note": "Any escape."}]}, {"title": "Jobs", "items": [{"key": "job_shoe", "k": "job", "title": "Shoe Making", "loc": "Available from the start."}, {"key": "job_paint", "k": "job", "title": "Painting", "loc": ""}]}, {"title": "Unique escape", "items": [{"key": "esc_rs", "k": "escape", "title": "Zip It Up", "loc": "Intellect 70. Crossbow from 2 timber, bolt, string, 2 glue and a dowel; red key copy; north red doors, up to the noose.", "html": "<p><a href=\"https://www.youtube.com/watch?v=rDskN2VDwKQ\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "kc", "game": "base", "title": "K.A.P.O.W. Camp", "obj": "Also the place for the solitary loop (Run 3).", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "camp", "note": "Any escape."}, {"k": "ach", "ach": "good", "note": "Surrender at the start and keep it going to day 4."}, {"k": "ach", "ach": "lonesome", "note": "Comes with the same loop."}]}, {"title": "Jobs", "items": [{"key": "job_farm", "k": "job", "title": "Farming", "loc": "Available from the start."}, {"key": "job_mail", "k": "job", "title": "Mail Sorting", "loc": ""}, {"key": "job_plumb", "k": "job", "title": "Plumbing", "loc": "Also in Fort Tundra and Area 17."}]}, {"title": "Unique escape", "items": [{"key": "esc_kc", "k": "escape", "title": "Speedy McQueen", "loc": "Intellect 40. Makeshift ladder (3 paint tins) and rocket thruster (soda and mint); vent above the small room before the bike, unscrew, crawl, thruster on the bike.", "html": "<p><a href=\"https://www.youtube.com/watch?v=G7AehBMNg7M\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "ho", "game": "base", "title": "H.M.P. Offshore", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "drying", "note": "Ride out on Snooty."}, {"k": "ach", "ach": "snooty", "note": "Snooty's favour chain."}, {"k": "ach", "ach": "cake", "note": "Punch a guard with Snooty's cake."}, {"k": "ach", "ach": "bestfriend", "note": "Fill the Kennel quota."}]}, {"title": "Jobs", "items": [{"key": "job_wood", "k": "job", "title": "Woodwork", "loc": "Available from the start."}, {"key": "job_mine", "k": "job", "title": "Mining", "loc": ""}, {"key": "job_kennel", "k": "job", "title": "Kennels", "loc": "Intellect 40. Also gives Man's Best Friend."}]}, {"title": "Unique escape", "items": [{"key": "esc_ho", "k": "escape", "title": "Swimming With Dolphins", "loc": "Intellect 70. Fishing pole with a worm, red key copy, west stairs past the red door to the bottom floor, fish for Snooty and follow his favours.", "html": "<p><a href=\"https://www.youtube.com/watch?v=XxvJxl9eqh4\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "ft", "game": "base", "title": "Fort Tundra", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "chilled", "note": "Any escape."}]}, {"title": "Jobs", "items": [{"key": "job_smith", "k": "job", "title": "Blacksmith", "loc": "Available from the start. Also in Offshore and Area 17."}]}, {"title": "Unique escape", "items": [{"key": "esc_ft", "k": "escape", "title": "Rock Hammer Hard Place", "loc": "Eight-part favour for the hammer; uniform, yellow and purple keys, cutters and a dummy; sewer under the statue after lights out.", "html": "<p><a href=\"https://www.youtube.com/watch?v=TphoPe4DDhk\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "a17", "game": "base", "title": "Area 17", "obj": "Only four other inmates: Ladrar, Pluto, Xerloog and Snoop Zogg.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "believe", "note": "Any escape."}, {"k": "ach", "ach": "daddy", "note": "Knock out all four inmates."}]}, {"title": "Jobs", "items": [{"key": "job_eng", "k": "job", "title": "Engineering", "loc": "Also in the U.S.S. Anomaly."}]}, {"title": "Unique escape", "items": [{"key": "esc_a17", "k": "escape", "title": "I'm Only Human…", "loc": "Intellect 60. Cyan and red key copies, security pass (blank pass, ink, feather), civilian clothes from the maintenance room; security room in the south-west.", "html": "<p><a href=\"https://www.youtube.com/watch?v=sKfTdPfTlPM\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "uss", "game": "base", "title": "U.S.S. Anomaly", "obj": "", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "pixel", "note": "Any escape."}, {"k": "ach", "ach": "father", "note": "Energy swords with a second player."}]}, {"title": "Jobs", "items": [{"key": "job_kitchen", "k": "job", "title": "Kitchen", "loc": "Available from the start, Intellect 40. Do one quota naked for The Naked Chef."}]}, {"title": "Unique escape", "items": [{"key": "esc_uss", "k": "escape", "title": "Race From Space", "loc": "Intellect 60. Red key copy and guard uniform; jetpack from the contraband chest behind the red door; gravity control in the warden's office.", "html": "<p><a href=\"https://www.youtube.com/watch?v=9GCRymmzw0s\" target=\"_blank\" rel=\"noopener\">Video reference ↗</a></p>"}]}]}, {"key": "tr", "game": "base", "title": "Transport prisons", "obj": "Get past or dress as the guards, then each one is a single craft.", "sections": [{"title": "Achievements here", "items": [{"k": "story", "ach": "mobile", "note": "All three escapes."}]}, {"title": "Escapes", "items": [{"key": "tr_cougar", "k": "transport", "title": "Cougar Creek Railroad: My Little Phoney", "loc": "Green pen, orange pen and a handkerchief from desks make a pretend carrot. Equip it at the horse on the south side of the last carriage (west end).", "html": "<img data-img=\"s_cougar\" alt=\"Cougar Creek escape point\">"}, {"key": "tr_orca", "k": "transport", "title": "H.M.S. Orca: Wave Goodbye!", "loc": "Tubing and a bolt from desks; use both on the jet ski at the far east of the bottom deck.", "html": "<img data-img=\"s_orca\" alt=\"H.M.S. Orca escape point\">"}, {"key": "tr_air", "k": "transport", "title": "Air Force Con: Plane Crazy", "loc": "Your red bed sheet plus 3 rope from desks: craft a makeshift harness, then a makeshift parachute. Use the double doors just outside your cell.", "html": "<img data-img=\"s_airforce\" alt=\"Air Force Con escape point\">"}]}]}, {"key": "bt", "game": "bigtop", "title": "Big Top Breakout", "obj": "", "sections": [{"title": "", "items": [{"k": "ach", "ach": "bt_mirrors", "note": "Nero's favour."}, {"k": "ach", "ach": "bt_laughing", "note": "Random favour."}, {"k": "ach", "ach": "bt_stage", "note": "Skip Show Time 3 days."}, {"k": "ach", "ach": "bt_solo", "note": "The cannon."}, {"k": "story", "ach": "bt_escape", "note": "Any escape."}, {"k": "ach", "ach": "bt_multi", "note": "Co-op elephant."}]}]}, {"key": "ww", "game": "wicked", "title": "Wicked Ward", "obj": "", "sections": [{"title": "", "items": [{"k": "ach", "ach": "ww_coffin", "note": "Random favour."}, {"k": "ach", "ach": "ww_bump", "note": "Random favour."}, {"k": "ach", "ach": "ww_ghost", "note": "Watch the ghosts."}, {"k": "ach", "ach": "ww_solo", "note": "'My Zombie' then the coffin."}, {"k": "story", "ach": "ww_escape", "note": "Any escape."}, {"k": "ach", "ach": "ww_multi", "note": "Co-op monster."}]}]}, {"key": "dd", "game": "dungeons", "title": "Dungeons and Duct Tape", "obj": "", "sections": [{"title": "", "items": [{"k": "ach", "ach": "dd_museum", "note": "Random favour."}, {"k": "ach", "ach": "dd_grateful", "note": "Random favour."}, {"k": "ach", "ach": "dd_throne", "note": "Warden's office toilet."}, {"k": "ach", "ach": "dd_solo", "note": "Armour on the plinth."}, {"k": "story", "ach": "dd_escape", "note": "Any escape."}, {"k": "ach", "ach": "dd_multi", "note": "Co-op catapult."}]}]}];
+
+/* Totals that tick an achievement automatically. */
+const AUTO = [{"ach": "cunning", "kind": "escape", "label": "Unique escapes"}, {"ach": "crook", "kind": "job", "label": "Job quotas"}, {"ach": "mobile", "kind": "transport", "label": "Transport escapes"}];
+
+/* Guide images (WebP files in ../img/guides/escapists-2/). */
+const IMGS = {"s_cougar": "../img/guides/escapists-2/escapists-2-transport-cougar-creek-escape-point.webp", "s_orca": "../img/guides/escapists-2/escapists-2-transport-hms-orca-escape-point.webp", "s_airforce": "../img/guides/escapists-2/escapists-2-transport-air-force-con-escape-point.webp", "s_nero": "../img/guides/escapists-2/escapists-2-big-top-nero-location-map.webp", "s_music": "../img/guides/escapists-2/escapists-2-base-centre-perks-instruments.webp", "s_coopdoor": "../img/guides/escapists-2/escapists-2-base-multiplayer-area-passage.webp", "s_ghost": "../img/guides/escapists-2/escapists-2-wicked-ward-ghost-route.webp"};
+
+const PADS = {
+  ps: { X: ["✕", "ps-X"], SQ: ["□", "ps-SQ"], O: ["○", "ps-O"], TR: ["△", "ps-TR"], L1: ["L1", "sh"], L2: ["L2", "sh"], R1: ["R1", "sh"], R2: ["R2", "sh"], L3: ["L3", "sh"], R3: ["R3", "sh"], ST: ["Options", "sh"] },
+  xb: { X: ["A", "xb-X"], SQ: ["X", "xb-SQ"], O: ["B", "xb-O"], TR: ["Y", "xb-TR"], L1: ["LB", "sh"], L2: ["LT", "sh"], R1: ["RB", "sh"], R2: ["RT", "sh"], L3: ["LS", "sh"], R3: ["RS", "sh"], ST: ["Menu", "sh"] }
+};
+const TAGS = { story: "Story", missable: "Missable", collect: "Collectable", timed: "Time limited" };
+const KIND_LABEL = { ach: "Achievement", story: "Story", job: "Job", escape: "Unique escape", transport: "Transport escape" };
+const KIND_PLURAL = { ach: "Achievements", story: "Story", job: "Jobs", escape: "Unique escapes", transport: "Transport escapes" };
+const PART_BY = Object.fromEntries(PARTS.map(p => [p.key, p]));
+const RUN_BY_ID = Object.fromEntries(RUNS.map(r => [r.id, r]));
+const ALL = SECTIONS.flatMap(s => s.items.map(a => Object.assign(a, { game: s.game })));
+const BY_ID = Object.fromEntries(ALL.map(a => [a.id, a]));
+const CITEMS = COLL.flatMap(ch => ch.sections.flatMap(s => s.items.map(it => Object.assign(it, { ch: ch.key }))));
+const CBY = Object.fromEntries(CITEMS.filter(i => i.key).map(i => [i.key, i]));
+
+/* ---------------- state ---------------- */
+function blank() { return { got: {}, open: {}, tasks: {}, coll: {}, pad: "ps", tab: "ach", spoil: false }; }
+function clean(src) {
+  const out = blank();
+  if (!src || typeof src !== "object") return out;
+  for (const k of ["got", "open", "tasks", "coll"]) if (src[k] && typeof src[k] === "object") for (const x in src[k]) if (src[k][x] === true) out[k][x] = true;
+  if (src.pad === "xb") out.pad = "xb";
+  if (src.spoil === true) out.spoil = true;
+  if (["runs", "coll"].includes(src.tab)) out.tab = src.tab;
+  return out;
+}
+let state;
+try { const raw = localStorage.getItem(KEY); state = raw ? clean(JSON.parse(raw)) : fresh(); } catch (e) { state = fresh(); }
+function fresh() { const s = blank(); PRE.forEach(id => { s.got[id] = true; }); return s; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+let filter = "all", game = "all", runFilter = "all", query = "", kindFilter = "all", hideGot = false;
+
+/* ---------------- helpers ---------------- */
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function targetId(id) {
+  if (BY_ID[id]) return "a-" + id;
+  if (RUN_BY_ID[id]) return "run-" + id;
+  if (id === "coll") return "coll-top";
+  if (id === "runs") return "runs-top";
+  return id;
+}
+function buttons(t) { return t.replace(/\[(X|SQ|O|TR|L1|L2|R1|R2|L3|R3|ST)\]/g, (_, k) => { const [g, c] = PADS[state.pad][k]; return `<kbd class="b ${state.pad}-${k} ${c}">${g}</kbd>`; }); }
+/* spoilers: ||text|| in data strings, <span class="spoil"> in guide HTML, sp: "n" | "d" | "g" on achievements */
+const SP = h => `<span class="spoil" tabindex="0">${h}</span>`;
+const nm = a => a.sp === "n" ? SP(esc(a.name)) : esc(a.name);
+const ds = a => a.sp === "n" || a.sp === "d" ? SP(esc(a.desc)) : esc(a.desc);
+const plain = s => String(s).replace(/\|\|/g, "");
+function fmt(s) {
+  let t = esc(s);
+  t = t.replace(/\|\|(.+?)\|\|/g, (_, x) => SP(x));
+  t = t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  t = t.replace(/\{\{([\w-]+)\|([^}]+)\}\}/g, (_, id, label) => `<a href="#${targetId(id)}" data-jump="${id}">${label}</a>`);
+  return buttons(t);
+}
+function blocks(list) {
+  return list.map(b => typeof b === "string" ? `<p>${fmt(b)}</p>` : b.h ? `<h4>${esc(b.h)}</h4>` : b.ul ? `<ul>${b.ul.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : b.box ? `<details class="more"><summary>${esc(BOXES[b.box].title)}</summary><div class="prose">${rich(BOXES[b.box].html)}</div></details>` : "").join("");
+}
+/* PSN guide HTML: button tokens, trophy lists as jump chips, wide tables scroll inside their box */
+function rich(h) {
+  return buttons(h)
+    .replace(/<div class="achrefs" data-ids="([^"]*)"><\/div>/g, (_, ids) => `<div class="tlinks">${ids.split(",").filter(id => BY_ID[id]).map(id => `<a class="tlink" href="#a-${id}" data-jump="${id}" data-tl="${id}">${nm(BY_ID[id])}</a>`).join("")}</div>`)
+    .replace(/<(span|div) class="spoil">/g, '<$1 class="spoil" tabindex="0">')
+    .replace(/<img data-img="(\w+)" alt="([^"]*)">/g, (_, k, alt) => IMGS[k] ? `<img class="${k[0] === "c" ? "card" : "shot"}" src="${IMGS[k]}" alt="${alt}" loading="lazy" decoding="async">` : "")
+    .replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, "</table></div>");
+}
+/* after inserting guide HTML: tables holding screenshots become labelled cards */
+function enhance(root) {
+  root.querySelectorAll(".tablewrap").forEach(w => {
+    if (w.classList.contains("stack") || !w.querySelector("img.shot")) return;
+    w.classList.add("stack");
+    const rows = [...w.querySelectorAll("tr")];
+    const head = rows.find(r => r.querySelector("th") && !r.querySelector("td"));
+    const labels = head ? [...head.cells].map(c => c.textContent.trim()) : [];
+    rows.forEach(r => [...r.cells].forEach((c, i) => {
+      if (c.tagName === "TD" && labels[i] && !/^image$/i.test(labels[i]) && !c.querySelector("img.shot")) c.dataset.label = labels[i];
+    }));
+  });
+}
+const runBadge = id => { const r = RUN_BY_ID[id]; return `<a class="run-badge" data-p="${r.game}" href="#run-${id}" data-jump="${id}">${esc(r.n)}</a>`; };
+const autoGot = rule => CITEMS.filter(i => [].concat(rule.kind).includes(i.k) && i.ch !== undefined && (!rule.ch || rule.ch.includes(i.ch)) && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part) && state.coll[i.key]).length;
+const autoTotal = rule => CITEMS.filter(i => [].concat(rule.kind).includes(i.k) && (!rule.ch || rule.ch.includes(i.ch)) && (!rule.part || COLL.find(c => c.key === i.ch).game === rule.part)).length;
+
+/* ---------------- progress & auto ticks ---------------- */
+function snapshot() { return AUTO.map(autoGot); }
+function applyAuto(before) {
+  AUTO.forEach((r, i) => {
+    const now = autoGot(r), need = r.min || autoTotal(r);
+    if (now >= need && before[i] < need) state.got[r.ach] = true;
+  });
+}
+function change(fn) { const b = snapshot(); fn(); applyAuto(b); save(); update(); }
+
+/* ---------------- render: achievements ---------------- */
+function renderItem(a) {
+  const auto = AUTO.find(r => r.ach === a.id && !r.min);
+  return `<li class="item" id="a-${a.id}"><div class="row">
+    <input type="checkbox" class="check" id="c-${a.id}" data-ach="${a.id}" aria-label="Mark ${a.sp === "n" ? "this achievement" : esc(a.name)} as unlocked">
+    <div>
+      <div class="title-line">
+        <h3><label for="c-${a.id}">${nm(a)}</label></h3>
+        ${a.runs.map(runBadge).join("")}
+        ${(a.tags || []).map(t => `<span class="tag ${t}">${TAGS[t]}</span>`).join("")}
+      </div>
+      <p class="desc">${ds(a)}</p>
+      ${auto ? `<div class="summary-line" data-autoline="${a.id}"></div>` : ""}
+      ${GUIDES[a.id] ? `<button class="guide-btn" aria-expanded="false" aria-controls="g-${a.id}">Show guide</button>
+      <div class="guide" id="g-${a.id}" data-p="${a.game}" hidden></div>` : ""}
+    </div></div></li>`;
+}
+function renderAch() {
+  const runOpts = RUNS.map(r => `<option value="${r.id}">${esc(r.n + ": " + r.title)}</option>`).join("");
+  document.getElementById("view-ach").innerHTML = `
+    <div class="row-tools" style="margin-bottom:.6rem">
+      <span class="seg" role="group" aria-label="Status"><button data-filter="all" aria-pressed="true">All</button><button data-filter="todo" aria-pressed="false">To do</button><button data-filter="done" aria-pressed="false">Unlocked</button><button data-filter="missable" aria-pressed="false">Missable</button></span>
+      <span class="seg" role="group" aria-label="Game or DLC"><button data-game="all" aria-pressed="true">All</button>${PARTS.map(p => `<button data-game="${p.key}" aria-pressed="false">${esc(p.short)}</button>`).join("")}</span>
+      <select class="select" id="run-filter" aria-label="Filter by playthrough"><option value="all">Any playthrough</option>${runOpts}</select>
+      <button class="chip" id="expand" aria-pressed="false">Show all guides</button>
+    </div>
+    <nav class="jumps" aria-label="Categories">${SECTIONS.map(s => `<a class="jump" data-p="${s.game}" href="#sec-${s.id}">${esc(s.title)} <span data-jcount="${s.id}"></span></a>`).join("")}</nav>
+    ${SECTIONS.map(sec => `<section class="sheet" data-p="${sec.game}" id="sec-${sec.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[sec.game].label)}</small>${esc(sec.title)}</h2><span class="sub" data-sub="${sec.id}"></span></div>
+      <p class="intro">${fmt(sec.intro)}${sec.src ? ` <a href="${sec.src}" target="_blank" rel="noopener">Guide source ↗</a>` : ""}</p>
+      <ul class="items">${sec.items.map(renderItem).join("")}</ul>
+      <p class="empty" data-empty="${sec.id}" hidden>Nothing here for this filter.</p>
+    </section>`).join("")}`;
+}
+
+/* ---------------- render: runs ---------------- */
+function renderRuns() {
+  const achFor = id => ALL.filter(a => a.runs.includes(id));
+  document.getElementById("view-runs").innerHTML = `
+    <section class="sheet" id="runs-top"><div class="sheet-head"><h2><small>Your plan</small>Playthroughs</h2><span class="sub" id="runs-count"></span></div>
+      <p class="intro">A blind first pass through every prison, then replays for the unique escapes and jobs, the long prison-life grinds, the three DLC prisons, and finally the co-op and online achievements. Each run's tasks are tickable, and its chips show which achievements it should unlock.</p>
+      <div class="runmap">${RUNS.map(r => `<a href="#run-${r.id}" data-jump="${r.id}" data-p="${r.game}" data-runcard="${r.id}"><b>${esc(r.n)}</b><span>${esc(r.title)}</span><br><span data-runprog="${r.id}"></span></a>`).join("")}</div>
+    </section>
+    ${RUNS.map(r => `<section class="sheet run" data-p="${r.game}" id="run-${r.id}">
+      <div class="sheet-head"><h2><small>${esc(PART_BY[r.game].label)} · ${esc(r.n)}</small>${esc(r.title)}</h2><span class="sub" data-runsub="${r.id}"></span></div>
+      <div class="mode">${esc(r.mode)}</div>
+      <p class="intro">${fmt(r.summary)}</p>
+      <ul class="tasks">${r.tasks.map((t, i) => `<li data-task="${r.id}:${i}"><input type="checkbox" class="check small" id="t-${r.id}-${i}" data-taskcheck="${r.id}:${i}"><label for="t-${r.id}-${i}"><span class="st-name">${fmt(t[0])}</span>${t[1] ? `<span class="st-desc">${fmt(t[1])}</span>` : ""}</label></li>`).join("")}</ul>
+      ${achFor(r.id).length ? `<div class="tlinks">${achFor(r.id).map(a => `<a class="tlink" href="#a-${a.id}" data-jump="${a.id}" data-tl="${a.id}">${nm(a)}</a>`).join("")}</div>` : ""}
+      ${r.body ? `<div class="prose" style="margin-top:.7rem">${blocks(r.body)}</div>` : ""}
+      <p></p>
+    </section>`).join("")}`;
+  enhance(document.getElementById("view-runs"));
+}
+
+/* ---------------- render: 100% guide ---------------- */
+function renderColl() {
+  const kinds = [...new Set(CITEMS.map(i => i.k))];
+  document.getElementById("view-coll").innerHTML = `
+    <section class="sheet" id="coll-top"><div class="sheet-head"><h2><small>Run 2 onwards</small>100% Guide</h2><span class="sub" id="coll-count"></span></div>
+      <p class="intro">Prison by prison: its achievements, the job quotas worth filling there (12 in total) and its unique solo escape, then the three transport prisons and the DLC prisons. Ticking the last unique escape, job or transport escape ticks its achievement for you.</p>
+      <div class="row-tools">
+        <span class="seg" role="group" aria-label="Show"><button data-kind="all" aria-pressed="true">All</button>${kinds.map(k => `<button data-kind="${k}" aria-pressed="false">${esc(KIND_PLURAL[k])}</button>`).join("")}</span>
+        <button class="chip" id="hide-got" aria-pressed="false">Hide ticked</button>
+      </div>
+      <div class="summary-line" id="coll-kinds"></div><p></p>
+    </section>
+    ${COLL.map(ch => `<details class="chapter" id="ch-${ch.key}" data-ch="${ch.key}" data-p="${ch.game}">
+      <summary><span class="ch-title">${fmt(ch.title)}</span><span class="ch-count" data-chcount="${ch.key}"></span><span class="ch-meta" data-chmeta="${ch.key}"></span></summary>
+      <div class="ch-body" data-chbody="${ch.key}"></div></details>`).join("")}`;
+  document.querySelector("#coll-top .intro").innerHTML = fmt(document.querySelector("#coll-top .intro").textContent);
+}
+function ciHtml(it) {
+  if (it.k === "ach" || it.k === "story") {
+    const a = BY_ID[it.ach];
+    return `<div class="ci" data-ciach="${a.id}" data-k="${it.k}">
+      <input type="checkbox" class="check small" id="cca-${a.id}-${it.ch}" data-ach="${a.id}" aria-label="Unlocked: ${a.sp === "n" ? "this achievement" : esc(a.name)}">
+      <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cca-${a.id}-${it.ch}">${nm(a)}</label></div>
+      <div class="ci-loc">${ds(a)}</div>
+      ${it.note ? `<div class="ci-desc"><p>${fmt(it.note)}</p></div>` : ""}
+      <a class="maplink" href="#a-${a.id}" data-jump="${a.id}">Open its guide ›</a></div></div>`;
+  }
+  return `<div class="ci" id="ci-${it.key}" data-ci="${it.key}" data-k="${it.k}">
+    <input type="checkbox" class="check small" id="cc-${it.key}" data-coll="${it.key}" aria-label="Collected: ${esc(plain(it.title))}">
+    <div><div class="ci-head"><span class="kind k-${it.k}">${KIND_LABEL[it.k]}</span><label class="ci-title" for="cc-${it.key}">${fmt(it.title)}</label></div>
+    ${it.loc ? `<div class="ci-loc">${fmt(it.loc)}</div>` : ""}
+    ${it.html ? `<div class="ci-desc">${rich(it.html)}</div>` : ""}</div></div>`;
+}
+function renderChapter(key) {
+  const ch = COLL.find(c => c.key === key), body = document.querySelector(`[data-chbody="${key}"]`);
+  if (body.dataset.done) return;
+  body.dataset.done = "1";
+  body.innerHTML = (ch.obj ? `<p class="ch-obj">${fmt(ch.obj)}</p>` : "") +
+    ch.sections.map(s => `${s.title ? `<div class="sec-h">${esc(s.title)}</div>` : ""}${s.items.map(ciHtml).join("")}`).join("");
+  enhance(body);
+  updateColl();
+}
+
+function render() {
+  renderAch(); renderRuns(); renderColl();
+  document.querySelectorAll(".guide-btn").forEach(b => { if (state.open[b.getAttribute("aria-controls").slice(2)]) toggleGuide(b, true); });
+  setTab(state.tab, true);
+  syncChips(); syncPad(); syncSpoil();
+  update();
+}
+
+/* ---------------- behaviour ---------------- */
+function toggleGuide(btn, force) {
+  const id = btn.getAttribute("aria-controls").slice(2), panel = document.getElementById("g-" + id);
+  const open = force !== undefined ? force : panel.hidden;
+  if (open && !panel.dataset.done) { panel.innerHTML = BY_ID[id].sp ? `<div class="spoil" tabindex="0">${rich(GUIDES[id])}</div>` : rich(GUIDES[id]); panel.dataset.done = "1"; enhance(panel); update(); }
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.textContent = open ? "Hide guide" : "Show guide";
+  if (open) state.open[id] = true; else delete state.open[id];
+}
+/* phone tab bar: slide the highlight under the selected tab */
+function moveGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow"), a = bar && bar.querySelector('.tab[aria-selected="true"]');
+  if (!glow || !a) return;
+  glow.style.width = a.offsetWidth + "px";
+  glow.style.transform = "translateX(" + a.offsetLeft + "px)";
+  if (!bar.classList.contains("ready")) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ready")));
+}
+window.addEventListener("resize", moveGlow);
+(function dragGlow() {
+  const bar = document.querySelector(".tabs"), glow = bar && bar.querySelector(".tab-glow");
+  if (!glow) return;
+  const phone = () => matchMedia("(max-width: 699px)").matches;
+  const tabs = () => [...bar.querySelectorAll(".tab")];
+  const nearest = x => tabs().reduce((b, t) => { const c = t.offsetLeft + t.offsetWidth / 2; return Math.abs(c - x) < b.d ? { t, d: Math.abs(c - x) } : b; }, { t: null, d: Infinity }).t;
+  let start = null, dragging = false, skipClick = false;
+  bar.addEventListener("pointerdown", e => { if (!phone() || e.button > 0) return; start = { x: e.clientX, id: e.pointerId }; dragging = false; });
+  bar.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - start.x) < 8) return;
+      dragging = true; bar.classList.add("dragging");
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const w = glow.offsetWidth, pad = 4;
+    let x = e.clientX - bar.getBoundingClientRect().left - bar.clientLeft - w / 2;
+    x = Math.max(pad, Math.min(bar.clientWidth - pad - w, x));
+    glow.style.transform = "translateX(" + x + "px)";
+    const n = nearest(x + w / 2);
+    tabs().forEach(t => t.classList.toggle("near", t === n));
+  });
+  const end = e => {
+    if (!start || e.pointerId !== start.id) return;
+    const was = dragging; start = null; dragging = false;
+    if (!was) return;
+    const n = bar.querySelector(".tab.near");
+    bar.classList.remove("dragging"); tabs().forEach(t => t.classList.remove("near"));
+    skipClick = true; setTimeout(() => { skipClick = false; }, 80);
+    if (e.type === "pointerup" && n && n.dataset.tab !== state.tab) setTab(n.dataset.tab); else moveGlow();
+  };
+  bar.addEventListener("pointerup", end);
+  bar.addEventListener("pointercancel", end);
+  bar.addEventListener("click", e => { if (skipClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+})();
+function setTab(t, quiet) {
+  state.tab = t;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  ["ach", "runs", "coll"].forEach(v => document.getElementById("view-" + v).hidden = v !== t);
+  moveGlow();
+  if (!quiet) { save(); const v = document.getElementById("view-" + t); window.scrollTo({ top: Math.min(window.scrollY, v.getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 8), behavior: "auto" }); }
+}
+function jumpTo(id) {
+  const el = document.getElementById(targetId(id));
+  if (!el) return;
+  const view = el.closest("[role=tabpanel]").id.slice(5);
+  if (view !== state.tab) setTab(view, true), save();
+  if (el.classList.contains("hidden") || (el.closest("section.sheet") || {}).hidden) { filter = "all"; game = "all"; runFilter = "all"; query = ""; searchEl.value = ""; clearEl.hidden = true; document.getElementById("run-filter").value = "all"; syncChips(); update(); }
+  const btn = el.querySelector(":scope > .row .guide-btn");
+  if (btn && btn.getAttribute("aria-expanded") !== "true") { toggleGuide(btn, true); save(); }
+  requestAnimationFrame(() => {
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+  });
+}
+
+const mainEl = document.querySelector("main");
+mainEl.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.ach) change(() => { if (t.checked) state.got[t.dataset.ach] = true; else delete state.got[t.dataset.ach]; });
+  else if (t.dataset.taskcheck) { if (t.checked) state.tasks[t.dataset.taskcheck] = true; else delete state.tasks[t.dataset.taskcheck]; save(); update(); }
+  else if (t.dataset.coll) change(() => { if (t.checked) state.coll[t.dataset.coll] = true; else delete state.coll[t.dataset.coll]; });
+  else if (t.id === "run-filter") { runFilter = t.value; update(); }
+});
+const searchEl = document.getElementById("search"), clearEl = document.getElementById("clear-search");
+function runSearch(v) {
+  query = v.trim().toLowerCase();
+  clearEl.hidden = !v;
+  if (query && state.tab !== "ach") setTab("ach", true);
+  if (query) { filter = "all"; game = "all"; runFilter = "all"; const rf = document.getElementById("run-filter"); if (rf) rf.value = "all"; syncChips(); }
+  update();
+  if (query) {
+    const first = document.querySelector("#view-ach li.item:not(.hidden)");
+    const top = (first || document.getElementById("view-ach")).getBoundingClientRect().top + window.scrollY - document.querySelector(".topbar").offsetHeight - 12;
+    window.scrollTo({ top, behavior: "auto" });
+  }
+}
+searchEl.addEventListener("input", () => runSearch(searchEl.value));
+searchEl.addEventListener("keydown", e => { if (e.key === "Enter") searchEl.blur(); if (e.key === "Escape") { searchEl.value = ""; runSearch(""); } });
+clearEl.addEventListener("click", () => { searchEl.value = ""; runSearch(""); searchEl.focus(); });
+const toTop = document.getElementById("totop");
+let ticking = false;
+window.addEventListener("scroll", () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 500); ticking = false; }); }, { passive: true });
+toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+mainEl.addEventListener("toggle", e => { const d = e.target; if (d.matches && d.matches("details.chapter") && d.open) renderChapter(d.dataset.ch); }, true);
+function reveal(e) {
+  const sp = e.target.closest && e.target.closest(".spoil");
+  if (!sp || state.spoil || sp.classList.contains("shown")) return false;
+  e.preventDefault(); e.stopPropagation(); sp.classList.add("shown"); return true;
+}
+mainEl.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("spoil")) reveal(e); });
+mainEl.addEventListener("click", e => {
+  if (reveal(e)) return;
+  if (e.target.matches("img.shot")) { openShot(e.target); return; }
+  const t = e.target.closest("button, a[data-jump]");
+  if (!t) return;
+  if (t.classList.contains("tab")) setTab(t.dataset.tab);
+  else if (t.dataset.filter) { filter = t.dataset.filter; syncChips(); update(); }
+  else if (t.dataset.game) { game = t.dataset.game; syncChips(); update(); }
+  else if (t.dataset.kind) { kindFilter = t.dataset.kind; syncChips(); updateColl(); }
+  else if (t.id === "hide-got") { hideGot = !hideGot; syncChips(); updateColl(); }
+  else if (t.id === "expand") { const open = t.getAttribute("aria-pressed") !== "true"; t.setAttribute("aria-pressed", String(open)); t.textContent = open ? "Hide all guides" : "Show all guides"; document.querySelectorAll("#view-ach .guide-btn").forEach(b => toggleGuide(b, open)); save(); }
+  else if (t.classList.contains("guide-btn")) { toggleGuide(t); save(); }
+  else if (t.id === "spoilers") { state.spoil = !state.spoil; save(); syncSpoil(); }
+  else if (t.dataset.pad) { state.pad = t.dataset.pad; save(); render(); }
+  else if (t.dataset.jump) { e.preventDefault(); jumpTo(t.dataset.jump); }
+});
+
+/* tap a screenshot to see it full size */
+const lb = document.createElement("div");
+lb.className = "lightbox"; lb.hidden = true; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Screenshot, tap to close");
+lb.innerHTML = '<img alt="">';
+document.body.appendChild(lb);
+function openShot(img) { lb.firstChild.src = img.src; lb.firstChild.alt = img.alt; lb.hidden = false; }
+lb.addEventListener("click", () => { lb.hidden = true; lb.firstChild.removeAttribute("src"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) lb.click(); });
+
+function syncChips() {
+  document.querySelectorAll("[data-filter]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
+  document.querySelectorAll("[data-game]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.game === game)));
+  document.querySelectorAll("[data-kind]").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.kind === kindFilter)));
+  const h = document.getElementById("hide-got"); if (h) h.setAttribute("aria-pressed", String(hideGot));
+}
+function syncSpoil() {
+  document.body.classList.toggle("spoilers", state.spoil);
+  const b = document.getElementById("spoilers"); if (b) { b.setAttribute("aria-pressed", String(state.spoil)); b.textContent = state.spoil ? "Hide spoilers" : "Show all spoilers"; }
+}
+function syncPad() { document.querySelectorAll("[data-pad]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pad === state.pad))); }
+
+const flat = h => String(h || "").replace(/<[^>]+>/g, " ");
+function matches(a) {
+  const d = !!state.got[a.id];
+  if (filter === "todo" && d) return false;
+  if (filter === "done" && !d) return false;
+  if (filter === "missable" && !(a.tags || []).some(t => t === "missable" || t === "timed")) return false;
+  if (game !== "all" && a.game !== game) return false;
+  if (runFilter !== "all" && !a.runs.includes(runFilter)) return false;
+  if (query && ![a.name, a.desc, flat(GUIDES[a.id])].join(" ").toLowerCase().includes(query)) return false;
+  return true;
+}
+
+const isGot = it => it.ach ? !!state.got[it.ach] : !!state.coll[it.key];
+function updateColl() {
+  const got = CITEMS.filter(isGot).length;
+  const cc = document.getElementById("coll-count"); if (cc) cc.textContent = `${got} / ${CITEMS.length}`;
+  const totals = {};
+  CITEMS.forEach(i => { (totals[i.k] = totals[i.k] || [0, 0])[1]++; if (isGot(i)) totals[i.k][0]++; });
+  const ck = document.getElementById("coll-kinds");
+  if (ck) ck.innerHTML = Object.keys(KIND_LABEL).filter(k => totals[k]).map(k => `${KIND_PLURAL[k]} <b>${totals[k][0]}/${totals[k][1]}</b>`).join(" · ");
+  COLL.forEach(ch => {
+    const items = ch.sections.flatMap(s => s.items), g = items.filter(isGot).length, kc = {};
+    items.forEach(i => { (kc[i.k] = kc[i.k] || [0, 0])[1]++; if (isGot(i)) kc[i.k][0]++; });
+    document.querySelector(`[data-chcount="${ch.key}"]`).textContent = `${g} / ${items.length}`;
+    document.querySelector(`[data-chmeta="${ch.key}"]`).innerHTML = Object.keys(KIND_LABEL).filter(k => kc[k]).map(k => `<span>${KIND_PLURAL[k]} <span class="kd">${kc[k][0]}/${kc[k][1]}</span></span>`).join("");
+    document.getElementById("ch-" + ch.key).classList.toggle("full", g === items.length);
+  });
+  document.querySelectorAll(".ci").forEach(el => {
+    const on = el.dataset.ci ? !!state.coll[el.dataset.ci] : !!state.got[el.dataset.ciach];
+    el.classList.toggle("got", on);
+    const cb = el.querySelector("input.check"); if (cb) cb.checked = on;
+    el.classList.toggle("hidden", (kindFilter !== "all" && el.dataset.k !== kindFilter) || (hideGot && on));
+  });
+}
+
+function update() {
+  const per = Object.fromEntries(PARTS.map(p => [p.key, [0, 0]]));
+  SECTIONS.forEach(sec => {
+    let sd = 0, vis = 0;
+    sec.items.forEach(a => {
+      const d = !!state.got[a.id];
+      per[a.game][1]++; if (d) { per[a.game][0]++; sd++; }
+      const li = document.getElementById("a-" + a.id);
+      li.classList.toggle("done", d);
+      const cb = document.getElementById("c-" + a.id);
+      cb.checked = d;
+      const rule = AUTO.find(r => r.ach === a.id && !r.min);
+      cb.indeterminate = !d && !!rule && autoGot(rule) > 0;
+      const al = li.querySelector("[data-autoline]");
+      if (al && rule) al.innerHTML = `${esc(rule.label)} ticked in the <a href="#coll-top" data-jump="coll">100% Guide</a>: <b>${autoGot(rule)} / ${autoTotal(rule)}</b>`;
+      const show = matches(a); li.classList.toggle("hidden", !show); if (show) vis++;
+    });
+    document.querySelector(`[data-sub="${sec.id}"]`).textContent = `${sd} / ${sec.items.length}`;
+    document.querySelector(`[data-jcount="${sec.id}"]`).textContent = `${sd}/${sec.items.length}`;
+    document.querySelector(`[data-empty="${sec.id}"]`).hidden = vis > 0;
+    document.getElementById("sec-" + sec.id).hidden = vis === 0 && (game !== "all" || runFilter !== "all" || !!query);
+  });
+  const sc = document.getElementById("search-count");
+  if (sc) { const n = ALL.filter(matches).length; sc.textContent = query ? `${n} found` : ""; let nm = document.getElementById("no-match"); if (!nm) { nm = document.createElement("p"); nm.id = "no-match"; nm.className = "empty"; document.getElementById("view-ach").appendChild(nm); } nm.hidden = !(query && n === 0); nm.textContent = "No achievements match that search."; }
+  let runsDone = 0;
+  RUNS.forEach(r => {
+    let g = 0;
+    r.tasks.forEach((_, i) => { const on = !!state.tasks[`${r.id}:${i}`]; if (on) g++; document.getElementById(`t-${r.id}-${i}`).checked = on; document.querySelector(`[data-task="${r.id}:${i}"]`).classList.toggle("got", on); });
+    const ach = ALL.filter(a => a.runs.includes(r.id)), ag = ach.filter(a => state.got[a.id]).length;
+    const full = g === r.tasks.length; if (full) runsDone++;
+    document.querySelector(`[data-runsub="${r.id}"]`).textContent = `${g} / ${r.tasks.length} tasks`;
+    document.querySelector(`[data-runprog="${r.id}"]`).textContent = `${g}/${r.tasks.length} tasks · ${ag}/${ach.length} achievements`;
+    document.querySelector(`[data-runcard="${r.id}"]`).classList.toggle("full", full);
+  });
+  document.getElementById("runs-count").textContent = `${runsDone} / ${RUNS.length} done`;
+  document.querySelectorAll("[data-tl]").forEach(l => l.classList.toggle("done", !!state.got[l.dataset.tl]));
+  updateColl();
+  const done = Object.values(per).reduce((s, v) => s + v[0], 0), total = Object.values(per).reduce((s, v) => s + v[1], 0), pct = Math.round(done / total * 100);
+  document.getElementById("count").innerHTML = `${done} / ${total} <small>unlocked · ${pct}%</small>`;
+  document.getElementById("bar").innerHTML = PARTS.map(p => `<span data-p="${p.key}" style="width:${per[p.key][0] / total * 100}%"></span>`).join("");
+  document.getElementById("legend").innerHTML = PARTS.map(p => `<span data-p="${p.key}"><i></i>${esc(p.label)} ${per[p.key][0]}/${per[p.key][1]}</span>`).join("");
+  document.getElementById("bar").setAttribute("aria-valuenow", pct);
+}
+
+/* ---------------- panel ---------------- */
+let statusTimer = null;
+function status(msg) { const el = document.getElementById("save-status"), d = el.dataset.d || (el.dataset.d = el.textContent); el.textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { el.textContent = d; }, 4500); }
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "escapists-2-progress.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  status("Backup saved as escapists-2-progress.json.");
+});
+const fileInput = document.getElementById("import-file");
+document.getElementById("import").addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const f = fileInput.files[0]; if (!f) return;
+  f.text().then(txt => { const d = JSON.parse(txt); if (!d || typeof d !== "object" || !d.got || typeof d.got !== "object") throw new Error(); state = clean(d); save(); render(); status("Backup restored."); })
+    .catch(() => status("That file isn't a checklist backup. Choose a escapists-2-progress.json file."));
+  fileInput.value = "";
+});
+
+render();
+})();
+
+</script>
+<!-- hub:body -->
+<script src="../sync.js" defer></script>
+<script src="../steam-sync.js" defer></script>
+<script>
+(function () {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");
+  var page = location.pathname.split("/").pop() || "index.html";
+  var top = window.top === window;
+
+  // Slim "All games" link, lifted above any fixed bar along the bottom edge
+  document.body.appendChild(Object.assign(document.createElement("div"), { className: "hub-spacer" }));
+  if (top) {
+    var a = document.createElement("a");
+    a.className = "hub-back"; a.href = "../"; a.textContent = "← All games";
+    document.body.appendChild(a);
+    var lift = function () {
+      var h = 0, vh = innerHeight, all = document.body.getElementsByTagName("*");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i]; if (el === a) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && r.bottom >= vh - 4 && r.left < 170 && r.height < vh / 2) h = Math.max(h, vh - r.top);
+      }
+      a.style.setProperty("--hub-lift", h ? (h + 2) + "px" : "0px");
+    };
+    var lt; var queue = function () { clearTimeout(lt); lt = setTimeout(lift, 150); };
+    addEventListener("resize", queue); addEventListener("load", queue); lift();
+  }
+
+  // Mirror the page's own "x / N" readout into a shared cache for the home page
+  var RE = /(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)\s*(?:unlocked|done|collectibles)/;
+  var node = null, timer;
+  function find() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (var n; (n = w.nextNode());) {
+      if (RE.test(n.nodeValue)) return n.parentElement;
+      var p = n.parentElement;
+      if (p && p.childElementCount && RE.test(p.textContent)) return p;
+    }
+    return null;
+  }
+  function record() {
+    if (!node || !node.isConnected) node = find();
+    if (!node) return;
+    var m = RE.exec(node.textContent); if (!m) return;
+    try {
+      var all = JSON.parse(localStorage.getItem("hub-progress-v1") || "{}") || {};
+      all[page] = { done: +m[1].replace(/,/g, ""), total: +m[2].replace(/,/g, ""), t: Date.now() };
+      localStorage.setItem("hub-progress-v1", JSON.stringify(all));
+    } catch (e) {}
+  }
+  function soon() { clearTimeout(timer); timer = setTimeout(record, 250); }
+  function start() {
+    record();
+    var host = node; for (var i = 0; host && i < 3 && host.parentElement && host.parentElement !== document.body; i++) host = host.parentElement;
+    new MutationObserver(soon).observe(host || document.body, { subtree: true, childList: true, characterData: true });
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
+  addEventListener("pagehide", record);
+})();
+</script>
+<!-- /hub:body -->
+</body>
+</html>

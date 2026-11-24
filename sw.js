@@ -1,5 +1,5 @@
 // Bump CACHE (a version like 1.3.0) whenever any file changes, so phones pick up the new version.
-const CACHE = "checklists-v1.4.16";
+const CACHE = "checklists-v1.4.17";
 const FILES = [
   "./",
   "manifest.json",
@@ -75,7 +75,15 @@ const FILES = [
   "img/guides/unpacking/unpacking-2013-fridge-magnets.webp",
   "img/guides/unpacking/unpacking-2013-microwave.webp",
   "img/guides/unpacking/unpacking-2015-tiger-and-pig.webp",
-  "img/guides/unpacking/unpacking-2018-baby-blocks.webp"
+  "img/guides/unpacking/unpacking-2018-baby-blocks.webp",
+  "img/cards/escapists-2.webp",
+  "img/guides/escapists-2/escapists-2-base-centre-perks-instruments.webp",
+  "img/guides/escapists-2/escapists-2-base-multiplayer-area-passage.webp",
+  "img/guides/escapists-2/escapists-2-big-top-nero-location-map.webp",
+  "img/guides/escapists-2/escapists-2-transport-air-force-con-escape-point.webp",
+  "img/guides/escapists-2/escapists-2-transport-cougar-creek-escape-point.webp",
+  "img/guides/escapists-2/escapists-2-transport-hms-orca-escape-point.webp",
+  "img/guides/escapists-2/escapists-2-wicked-ward-ghost-route.webp"
 ];
 
 self.addEventListener("install", e => {
